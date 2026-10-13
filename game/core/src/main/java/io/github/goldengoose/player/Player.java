@@ -1,0 +1,35 @@
+package io.github.goldengoose.player;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import io.github.goldengoose.shared.Entity;
+import io.github.goldengoose.shared.InputManager;
+
+public class Player extends Entity {
+    private final float speed = 100f;
+
+    private final Vector2 velocity = new Vector2();
+
+    public Player() {
+        texture = new Texture("test_player.png");
+    }
+
+    @Override
+    public void gameStart() {
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        velocity.set(0f, 0f);
+        velocity.y = InputManager.getVertical();
+        velocity.x = InputManager.getHorizontal();
+
+        position.add(velocity);
+    }
+
+    @Override
+    public void render(SpriteBatch batch) {
+        batch.draw(texture, position.x, position.y);
+    }
+}
