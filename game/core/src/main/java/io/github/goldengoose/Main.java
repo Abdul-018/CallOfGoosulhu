@@ -6,6 +6,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -17,35 +21,49 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture image;
     private final Viewport viewport = new FitViewport(
-        800,
-        600,
+        400,
+        300,
         new OrthographicCamera()
     );
 
     GameWorld world = new GameWorld();
     Player player;
 
+    TiledMap tiledMap;
+    TiledMapRenderer tiledMapRenderer;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
-        //image = new Texture("libgdx.png");
         player = new Player();
         world.addEntity(player);
         world.init();
+
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+
+        tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
     }
 
     @Override
     public void render() {
-        viewport.apply();
-        batch.setProjectionMatrix(viewport.getCamera().combined);
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+
+        viewport.apply();
+        var camera = (OrthographicCamera) viewport.getCamera();
+        camera.position.set(player.getPosition().x, player.getPosition().y, 0);
+        camera.update();
+
+        batch.setProjectionMatrix(viewport.getCamera().combined);
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render();
 
         float deltaTime = Gdx.graphics.getDeltaTime();
         world.update(deltaTime);
 
         batch.begin();
-        //batch.draw(image, 140, 210);
         world.render(batch);
         batch.end();
 
