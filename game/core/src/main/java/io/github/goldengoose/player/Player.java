@@ -7,7 +7,7 @@ import io.github.goldengoose.shared.Entity;
 import io.github.goldengoose.shared.InputManager;
 
 public class Player extends Entity {
-    private final float speed = 100f;
+    private static final float SPEED = 50f;
 
     private final Vector2 velocity = new Vector2();
 
@@ -25,7 +25,7 @@ public class Player extends Entity {
         velocity.y = InputManager.getVertical();
         velocity.x = InputManager.getHorizontal();
 
-        position.add(velocity);
+        position.add(velocity.scl(SPEED*deltaTime));
     }
 
     @Override
