@@ -65,7 +65,7 @@ legend right
   |<#ffffff> Jack |
   |<#ffffff> Lisa |
 
-  |= Colours |
+  |= Progress |
   |<#0000000> Unstarted |
   |<#BBBB00> In Progress |
   |<#00FF00> Complete |
@@ -81,8 +81,8 @@ endlegend
 ***< "Enemy animation" as eAnim
 *** Enemy AI <<milan_prog>>
 ** Map
-*** Tileset
-*** Base map
+*** Tileset <<charlie_prog>>
+*** Base map <<charlie_prog>>
 *** Buildings
 ** Interface
 *** Start screen
