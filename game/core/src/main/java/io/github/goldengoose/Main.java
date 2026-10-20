@@ -21,8 +21,8 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture image;
     private final Viewport viewport = new FitViewport(
-        400,
-        300,
+        1200,
+        900,
         new OrthographicCamera()
     );
 

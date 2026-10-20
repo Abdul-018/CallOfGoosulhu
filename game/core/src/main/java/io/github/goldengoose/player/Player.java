@@ -24,8 +24,7 @@ public class Player extends Entity {
         velocity.set(0f, 0f);
         velocity.y = InputManager.getVertical();
         velocity.x = InputManager.getHorizontal();
-
-        position.add(velocity.scl(SPEED*deltaTime));
+        position.mulAdd(velocity, SPEED * deltaTime);
     }
 
     @Override
