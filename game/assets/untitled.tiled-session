@@ -1,17 +1,35 @@
 {
-    "activeFile": "",
+    "activeFile": "maps/base_map.tmx",
     "expandedProjectPaths": [
+        "maps",
+        "."
     ],
     "fileStates": {
+        "maps/base_map.tmx": {
+            "scale": 1.0229,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 231.20539642193765,
+                "y": 179.391924919347
+            }
+        },
+        "maps/base_tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 6.12
+        }
     },
     "last.imagePath": "/Users/milan/source/repos/CallOfGoosulhu/game/assets",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
+        "maps/base_map.tmx",
+        "maps/base_tileset.tsx"
     ],
     "project": "untitled.tiled-project",
     "recentFiles": [
+        "maps/base_tileset.tsx",
+        "maps/base_map.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

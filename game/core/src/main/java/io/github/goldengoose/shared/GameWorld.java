@@ -1,6 +1,9 @@
 package io.github.goldengoose.shared;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import io.github.goldengoose.goose.Goose;
+import io.github.goldengoose.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,7 @@ public class GameWorld {
     }
 
     public void init() {
+        entities.add(new Goose((Player) entities.get(0), new Vector2(100, 100)));
         for (Entity entity : entities) {
             entity.gameStart();
         }
