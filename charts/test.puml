@@ -16,15 +16,15 @@
 }
 ' Charlie
 .charlie {
-  BackgroundColor #ffffff;
+  BackgroundColor #bbeeff;
 }
 .charlie_prog {
-  BackgroundColor #ffffff;
+  BackgroundColor #bbeeff;
   LineColor #BBBB00;
   LineThickness 5.0
 }
 .charlie_done {
-  BackgroundColor #ffffff;
+  BackgroundColor #bbeeff;
   LineColor #00FF00;
   LineThickness 5.0
 }
@@ -61,7 +61,7 @@
 legend right
   |= People |
   |<#ffaa77> Milan |
-  |<#ffffff> Charlie |
+  |<#bbeeff> Charlie |
   |<#ffffff> Jack |
   |<#ffffff> Lisa |
 
@@ -87,8 +87,11 @@ endlegend
 ** Interface
 *** Start screen
 *** Game screen
+**** "Timer" as timer_ui
 **** Inventory
-**** Timer
+** Timer
+***< "Timer logic <<charlie_done>>" as timer_logic
+***< Pausing <<charlie_done>>
 ** Sound
 *** Music
 *** Subtitles/Speech bubbles
@@ -96,4 +99,5 @@ endlegend
 ' Arrows here
 anim -> pAnim
 anim -> eAnim
+timer_logic -> timer_ui
 @endwbs
