@@ -1,0 +1,99 @@
+@startwbs
+<style>
+' Milan
+.milan {
+  BackgroundColor #ffaa77;
+}
+.milan_prog {
+  BackgroundColor #ffaa77;
+  LineColor #BBBB00;
+  LineThickness 5.0
+}
+.milan_done {
+  BackgroundColor #ffaa77;
+  LineColor #00FF00;
+  LineThickness 5.0
+}
+' Charlie
+.charlie {
+  BackgroundColor #ffffff;
+}
+.charlie_prog {
+  BackgroundColor #ffffff;
+  LineColor #BBBB00;
+  LineThickness 5.0
+}
+.charlie_done {
+  BackgroundColor #ffffff;
+  LineColor #00FF00;
+  LineThickness 5.0
+}
+' Jack
+.jack {
+  BackgroundColor #ffffff;
+}
+.jack_prog {
+  BackgroundColor #ffffff;
+  LineColor #BBBB00;
+  LineThickness 5.0
+}
+.jack_done {
+  BackgroundColor #ffffff;
+  LineColor #00FF00;
+  LineThickness 5.0
+}
+' Lisa
+.lisa {
+  BackgroundColor #ffffff;
+}
+.lisa_prog {
+  BackgroundColor #ffffff;
+  LineColor #BBBB00;
+  LineThickness 5.0
+}
+.lisa_done {
+  BackgroundColor #ffffff;
+  LineColor #00FF00;
+  LineThickness 5.0
+}
+
+</style>
+legend right
+  |= People |
+  |<#ffaa77> Milan |
+  |<#ffffff> Charlie |
+  |<#ffffff> Jack |
+  |<#ffffff> Lisa |
+
+  |= Colours |
+  |<#0000000> Unstarted |
+  |<#BBBB00> In Progress |
+  |<#00FF00> Complete |
+endlegend
+* Development Work Breakdown Structure
+** Player
+*** "Player animation" as pAnim
+*** Player movement <<milan_prog>>
+*** Inventory
+**** Picking up and using items
+** "Animation Controller" as anim
+** Enemies
+***< "Enemy animation" as eAnim
+*** Enemy AI <<milan_prog>>
+** Map
+*** Tileset
+*** Base map
+*** Buildings
+** Interface
+*** Start screen
+*** Game screen
+**** Inventory
+**** Timer
+** Sound
+*** Music
+*** Subtitles/Speech bubbles
+
+' Arrows here
+anim -> pAnim
+anim -> eAnim
+@endwbs
