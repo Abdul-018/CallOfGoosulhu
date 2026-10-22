@@ -3,6 +3,7 @@ package io.github.goldengoose;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -79,11 +80,8 @@ public class Main extends ApplicationAdapter {
 
         batch.begin();
         world.render(batch);
-
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        world.renderDebug(shapeRenderer);
-        shapeRenderer.end();
+        // Comment/uncomment to see debugging lines
+        //renderDebug(camera);
 
         float x = camera.position.x - 190;
         float y = camera.position.y + 140;
@@ -99,6 +97,13 @@ public class Main extends ApplicationAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
+    }
+
+    private void renderDebug(Camera camera) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        world.renderDebug(shapeRenderer);
+        shapeRenderer.end();
     }
 
     @Override
