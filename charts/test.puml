@@ -1,88 +1,75 @@
 @startwbs
 <style>
-' Milan
+' Ownership colours
 .milan {
   BackgroundColor #ffaa77;
 }
-.milan_prog {
-  BackgroundColor #ffaa77;
-  LineColor #BBBB00;
-  LineThickness 5.0
-}
-.milan_done {
-  BackgroundColor #ffaa77;
-  LineColor #00FF00;
-  LineThickness 5.0
-}
-' Charlie
 .charlie {
   BackgroundColor #bbeeff;
 }
-.charlie_prog {
-  BackgroundColor #bbeeff;
-  LineColor #BBBB00;
-  LineThickness 5.0
-}
-.charlie_done {
-  BackgroundColor #bbeeff;
-  LineColor #00FF00;
-  LineThickness 5.0
-}
-' Jack
 .jack {
   BackgroundColor #ffffff;
 }
-.jack_prog {
-  BackgroundColor #ffffff;
-  LineColor #BBBB00;
-  LineThickness 5.0
-}
-.jack_done {
-  BackgroundColor #ffffff;
-  LineColor #00FF00;
-  LineThickness 5.0
-}
-' Lisa
 .lisa {
-  BackgroundColor #ffffff;
-}
-.lisa_prog {
-  BackgroundColor #ffffff;
-  LineColor #BBBB00;
-  LineThickness 5.0
-}
-.lisa_done {
-  BackgroundColor #ffffff;
-  LineColor #00FF00;
-  LineThickness 5.0
+  BackgroundColor #f7fc51;
 }
 
+' Shared ownership colours
+.milan_charlie {
+  BackgroundColor #ffaa77/#bbeeff;
+}
+.milan_jack {
+  BackgroundColor #ffaa77/#ffffff;
+}
+.milan_lisa {
+  BackgroundColor #ffaa77/#f7fc51;
+}
+.charlie_jack {
+  BackgroundColor #bbeeff/#ffffff;
+}
+.charlie_lisa {
+  BackgroundColor #bbeeff/#f7fc51;
+}
+.jack_lisa {
+  BackgroundColor #ffffff/#f7fc51;
+}
+
+' Progress indicators
+.prog {
+  LineColor #BBBB00;
+  LineThickness 5.0;
+}
+.done {
+  LineColor #00FF00;
+  LineThickness 5.0;
+}
 </style>
 legend right
   |= People |
   |<#ffaa77> Milan |
   |<#bbeeff> Charlie |
   |<#ffffff> Jack |
-  |<#ffffff> Lisa |
+  |<#f7fc51> Lisa |
 
   |= Progress |
   |<#0000000> Unstarted |
   |<#BBBB00> In Progress |
   |<#00FF00> Complete |
 endlegend
+
 * Development Work Breakdown Structure
 ** Player
 *** "Player animation" as pAnim
-*** Player movement <<milan_prog>>
+*** Player movement <<milan>><<prog>>
 *** Inventory
 **** Picking up and using items
 ** "Animation Controller" as anim
 ** Enemies
 ***< "Enemy animation" as eAnim
-*** Enemy AI <<milan_prog>>
+*** Enemy AI <<milan>><<prog>>
 ** Map
-*** Tileset <<charlie_prog>>
-*** Base map <<charlie_prog>>
+*** Tileset <<charlie>><<prog>>
+*** Base map <<charlie_lisa>><<prog>>
 *** Buildings
 ** Interface
 *** Start screen
@@ -90,8 +77,8 @@ endlegend
 **** "Timer" as timer_ui
 **** Inventory
 ** Timer
-***< "Timer logic <<charlie_done>>" as timer_logic
-***< Pausing <<charlie_done>>
+***< "Timer logic <<charlie>><<done>>" as timer_logic
+***< Pausing <<charlie>><<done>>
 ** Sound
 *** Music
 *** Subtitles/Speech bubbles
