@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -36,8 +37,11 @@ public class Main extends ApplicationAdapter {
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
+    private ShapeRenderer shapeRenderer;
+
     @Override
     public void create() {
+        shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         player = new Player();
         world.addEntity(player);
@@ -76,6 +80,11 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         world.render(batch);
 
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        world.renderDebug(shapeRenderer);
+        shapeRenderer.end();
+
         float x = camera.position.x - 190;
         float y = camera.position.y + 140;
 
@@ -96,6 +105,8 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         image.dispose();
+        shapeRenderer.dispose();
+        tiledMap.dispose();
     }
 
     @Override

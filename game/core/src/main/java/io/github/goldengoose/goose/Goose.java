@@ -3,6 +3,7 @@ package io.github.goldengoose.goose;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.player.Player;
 import io.github.goldengoose.shared.Entity;
@@ -31,6 +32,10 @@ public class Goose extends Entity {
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x, position.y);
+    }
+
+    public void renderDebug(ShapeRenderer shapes) {
+        gooseAI.renderDebug(shapes);
     }
 
     public Player getPlayer() {
