@@ -3,9 +3,11 @@ package io.github.goldengoose;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -24,8 +26,8 @@ public class Main extends ApplicationAdapter {
     private Texture image;
     BitmapFont font;
     private final Viewport viewport = new FitViewport(
-        400,
-        300,
+        1200,
+        900,
         new OrthographicCamera()
     );
 
@@ -36,8 +38,11 @@ public class Main extends ApplicationAdapter {
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
+    private ShapeRenderer shapeRenderer;
+
     @Override
     public void create() {
+        shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         player = new Player();
         world.addEntity(player);
@@ -75,6 +80,8 @@ public class Main extends ApplicationAdapter {
 
         batch.begin();
         world.render(batch);
+        // Comment/uncomment to see debugging lines
+        //renderDebug(camera);
 
         float x = camera.position.x - 190;
         float y = camera.position.y + 140;
@@ -92,10 +99,19 @@ public class Main extends ApplicationAdapter {
         }
     }
 
+    private void renderDebug(Camera camera) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        world.renderDebug(shapeRenderer);
+        shapeRenderer.end();
+    }
+
     @Override
     public void dispose() {
         batch.dispose();
         image.dispose();
+        shapeRenderer.dispose();
+        tiledMap.dispose();
     }
 
     @Override
