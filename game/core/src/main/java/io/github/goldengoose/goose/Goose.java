@@ -7,12 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.player.Player;
 import io.github.goldengoose.shared.Entity;
 
-/**
- * Goose AI plan:
- * IDLE: Wander around the campus, has cone-like visual detection, circular audial detection
- * ALERT: possibly not needed
- * CHASING: Chasing the player
- */
 public class Goose extends Entity {
     private final GooseAI gooseAI = new GooseAI(this);
     private final Player player;

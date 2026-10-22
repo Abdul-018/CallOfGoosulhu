@@ -2,6 +2,12 @@ package io.github.goldengoose.goose;
 
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * Goose AI plan:
+ * IDLE: Wander around the campus, has cone-like visual detection, circular audial detection
+ * ALERT: possibly not needed
+ * CHASING: Chasing the player
+ */
 public class GooseAI {
     enum GooseState {
         IDLE,
