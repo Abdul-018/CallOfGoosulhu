@@ -15,11 +15,14 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.goldengoose.player.Player;
 import io.github.goldengoose.shared.GameWorld;
+import io.github.goldengoose.shared.GameTimer;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture image;
+    BitmapFont font;
     private final Viewport viewport = new FitViewport(
         1200,
         900,
@@ -27,6 +30,7 @@ public class Main extends ApplicationAdapter {
     );
 
     GameWorld world = new GameWorld();
+    GameTimer timer = new GameTimer();
     Player player;
 
     TiledMap tiledMap;
@@ -45,6 +49,8 @@ public class Main extends ApplicationAdapter {
         tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
+        font = new BitmapFont();
+
     }
 
     @Override
@@ -61,10 +67,23 @@ public class Main extends ApplicationAdapter {
         tiledMapRenderer.render();
 
         float deltaTime = Gdx.graphics.getDeltaTime();
-        world.update(deltaTime);
+        timer.update(deltaTime);
+
+        if (!timer.isPaused()) {
+            world.update(deltaTime);
+        }
 
         batch.begin();
         world.render(batch);
+
+        float x = camera.position.x - 190;
+        float y = camera.position.y + 140;
+
+        String timeLeft = String.format("%.1f", timer.getSecondsRemaining());
+
+        font.draw(batch, timeLeft, x, y);
+        font.draw(batch, "Press P to pause", x, y -20);
+
         batch.end();
 
         //TODO: Remove once game has proper exit feature, this is just for testing
