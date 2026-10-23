@@ -15,20 +15,15 @@ public class GameTimer {
     /** Game starts paused, also check. (UR_PAUSE_GAME) */
     private boolean isPaused = true;
 
-    private float xPos, yPos;
+    private final float xPos;
+    private final float yPos;
 
     BitmapFont font;
     OrthographicCamera camera;
-    OrthographicCamera hudCamera;
 
     public GameTimer(OrthographicCamera camera) {
         font = new BitmapFont();
         this.camera = camera;
-
-        hudCamera = new OrthographicCamera();
-        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(),
-            Gdx.graphics.getHeight());
-        hudCamera.update();
 
         xPos = 20;
         yPos = Gdx.graphics.getHeight() - 20;
@@ -50,7 +45,7 @@ public class GameTimer {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.setProjectionMatrix(hudCamera.combined);
+        batch.setProjectionMatrix(camera.combined);
 
         font.draw(batch, String.format("%.1f", secondsRemaining), xPos, yPos);
         font.draw(batch, "Press P to pause", xPos, yPos - 20);

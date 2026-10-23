@@ -29,6 +29,7 @@ public class Main extends ApplicationAdapter {
         300,
         new OrthographicCamera()
     );
+    OrthographicCamera hudCamera;
 
     GameWorld world = new GameWorld();
     GameTimer timer;
@@ -44,10 +45,16 @@ public class Main extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         player = new Player();
+
+        hudCamera = new OrthographicCamera();
+        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(),
+            Gdx.graphics.getHeight());
+        hudCamera.update();
+
         world.addEntity(player);
         world.init();
 
-        timer = new GameTimer((OrthographicCamera) viewport.getCamera());
+        timer = new GameTimer(hudCamera);
 
         tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
