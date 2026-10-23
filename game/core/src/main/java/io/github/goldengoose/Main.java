@@ -26,8 +26,8 @@ public class Main extends ApplicationAdapter {
     private Texture image;
     BitmapFont font;
     private final Viewport viewport = new FitViewport(
-        1200,
-        900,
+        400,
+        300,
         new OrthographicCamera()
     );
 
