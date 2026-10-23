@@ -56,35 +56,103 @@ legend right
   |<#BBBB00> In Progress |
   |<#00FF00> Complete |
 endlegend
-
 * Development Work Breakdown Structure
-** Player
-*** "Player animation" as pAnim
-*** Player movement <<milan>><<prog>>
-*** Inventory
-**** Picking up and using items
-** "Animation Controller" as anim
-** Enemies
-***< "Enemy animation" as eAnim
-*** Enemy AI <<milan>><<prog>>
-** Map
+
+** 1. Player
+*** Player movement <<milan>><<prog>><<done>>
+*** Player collision\n and environmental interaction
+*** Player state management
+*** Player animation
+
+** 2. Enemy System
+*** Goose AI <<milan>><<prog>>
+**** Visual detection <<milan>><<done>>
+**** Auditory detection <<milan>><<done>>
+**** Pursuit and\n stopping distance <<milan>><<done>>
+**** Honking behaviour
+**** Goose response to spells\n and environmental effects
+*** Goose types
+**** Normal goose
+**** Student goose
+**** Security goose
+*** Goose animation
+*** Goose audio
+
+** 3. Map and\n Environment
 *** Tileset <<charlie>><<prog>>
 *** Base map <<charlie_lisa>><<prog>>
-*** Buildings
-** Interface
-*** Start screen
-*** Game screen
-**** "Timer" as timer_ui
-**** Inventory
-** Timer
-***< "Timer logic <<charlie>><<done>>" as timer_logic
-***< Pausing <<charlie>><<done>>
-** Sound
-*** Music
-*** Subtitles/Speech bubbles
+*** Buildings and\n environmental decoration
+**** Entering/leaving\n buildings
+**** Goose-building/environment\n behaviour
+*** Collision boundaries\n and obstacles
+*** Environmental hazards
+**** Mud puddles
+**** Tall grass\n concealment
+*** Escape destination\n and objective location
 
-' Arrows here
-anim -> pAnim
-anim -> eAnim
-timer_logic -> timer_ui
+** 4. Core Game Flow
+*** Game state\n management <<milan>><<prog>>
+**** Start screen state
+**** Introduction/cutscene
+**** Alternate-world transition
+**** Active gameplay
+**** Victory state
+**** Defeat state
+*** Win/lose\n conditions
+**** Escape destination detection
+**** Five-minute time limit
+**** End-of-game transition
+*** Game restart
+
+** 5. Timer
+*** Timer logic <<charlie>><<done>>
+*** Timer integration\n with game states
+*** Timer UI
+*** Timer expiry\n and defeat handling
+
+** 6. Spell System \n To be decided\n which spells
+*** Spell system foundation
+**** Spell selection
+**** Spell activation
+**** Spell effects
+**** Cooldowns/charges
+*** Initial spell availability
+*** Pentagram spell
+*** Spell feedback and effects
+*** Spell integration with goose AI
+
+** 7. Sanity System
+*** Sanity value\n and initial state
+*** Sanity reduction\n from honking
+*** Sanity bar UI
+*** Sanity thresholds\n and effects
+
+** 8. Events\n and Interactions
+*** Event triggers and effects
+*** Bread dispenser
+*** Other hidden events
+*** Event feedback
+
+** 9. User Interface
+*** Start screen
+*** Gameplay HUD
+**** Timer
+**** Sanity bar
+**** Spell-tome\n interface
+*** Victory screen
+*** Defeat screen
+*** Restart interface
+
+** 10. Audio and\n Dialogue
+*** Background music
+*** Goose honking
+*** Environmental sound effects
+*** Spell sound effects
+*** Event and transition sound effects
+*** Speech bubbles/subtitles
+
+** 11. Animation
+*** Animation controller \n(if libgdx doesn't have \nits own thing)
+*** Player animation integration
+*** Goose animation integration
 @endwbs
