@@ -24,7 +24,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture image;
-    BitmapFont font;
     private final Viewport viewport = new FitViewport(
         400,
         300,
@@ -32,7 +31,7 @@ public class Main extends ApplicationAdapter {
     );
 
     GameWorld world = new GameWorld();
-    GameTimer timer = new GameTimer();
+    GameTimer timer;
     Player player;
 
     TiledMap tiledMap;
@@ -48,14 +47,10 @@ public class Main extends ApplicationAdapter {
         world.addEntity(player);
         world.init();
 
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
+        timer = new GameTimer((OrthographicCamera) viewport.getCamera());
 
         tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-
-        font = new BitmapFont();
-
     }
 
     @Override
@@ -72,24 +67,18 @@ public class Main extends ApplicationAdapter {
         tiledMapRenderer.render();
 
         float deltaTime = Gdx.graphics.getDeltaTime();
-        timer.update(deltaTime);
 
         if (!timer.isPaused()) {
             world.update(deltaTime);
         }
+        timer.update(deltaTime);
 
         batch.begin();
         world.render(batch);
+        timer.draw(batch);
+
         // Comment/uncomment to see debugging lines
         //renderDebug(camera);
-
-        float x = camera.position.x - 190;
-        float y = camera.position.y + 140;
-
-        String timeLeft = String.format("%.1f", timer.getSecondsRemaining());
-
-        font.draw(batch, timeLeft, x, y);
-        font.draw(batch, "Press P to pause", x, y -20);
 
         batch.end();
 
