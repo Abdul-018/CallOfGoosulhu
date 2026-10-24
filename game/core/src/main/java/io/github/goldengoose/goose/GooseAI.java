@@ -103,8 +103,6 @@ public class GooseAI {
         goosePosition.mulAdd(velocity, speed * deltaTime);
     }
 
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
-
     private void wander(float deltaTime) {
         if (idleTarget == null) {
             chooseNewTarget();
