@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -35,10 +36,13 @@ public class GameScreen implements Screen {
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
-    private ShapeRenderer shapeRenderer;
+    private final ShapeRenderer shapeRenderer;
 
     public GameScreen(final Cog game) {
         this.game = game;
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         shapeRenderer = new ShapeRenderer();
         player = new Player();
@@ -55,11 +59,6 @@ public class GameScreen implements Screen {
 
         tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-    }
-
-    @Override
-    public void show() {
-
     }
 
     @Override
@@ -83,11 +82,14 @@ public class GameScreen implements Screen {
 
         game.batch.begin();
         world.render(game.batch);
-        timer.draw(game.batch);
-
         // Comment/uncomment to see debugging lines
         //renderDebug(camera);
+        game.batch.end();
 
+        timer.drawPauseOverlay(shapeRenderer);
+
+        game.batch.begin();
+        timer.draw(game.batch);
         game.batch.end();
 
         //TODO: Remove once game has proper exit feature, this is just for testing
@@ -109,24 +111,14 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-
-    @Override
     public void dispose() {
         shapeRenderer.dispose();
         tiledMap.dispose();
     }
+
+    // Unused overrides
+    @Override public void show() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
 }

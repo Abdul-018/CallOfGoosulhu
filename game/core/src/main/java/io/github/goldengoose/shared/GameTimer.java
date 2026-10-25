@@ -2,9 +2,11 @@ package io.github.goldengoose.shared;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /** Game timer, press p to pause and unpause. (UR_GAME_TIMER, UR_PAUSE_GAME) */
 public class GameTimer {
@@ -49,6 +51,33 @@ public class GameTimer {
 
         font.draw(batch, String.format("%.1f", secondsRemaining), xPos, yPos);
         font.draw(batch, "Press P to pause", xPos, yPos - 20);
+    }
+
+    public void drawPauseOverlay(ShapeRenderer shapeRenderer) {
+        if (isPaused) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(
+                GL20.GL_SRC_ALPHA,
+                GL20.GL_ONE_MINUS_SRC_ALPHA
+            );
+
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+            shapeRenderer.setColor(0f, 0f, 0f, 0.5f);
+            shapeRenderer.rect(
+                0,
+                0,
+                camera.viewportWidth,
+                camera.viewportHeight
+            );
+
+            shapeRenderer.end();
+        }
+    }
+
+    public void setPaused(boolean paused) {
+        isPaused = paused;
     }
 
     /** True while game is paused. (UR_PAUSE_GAME) */

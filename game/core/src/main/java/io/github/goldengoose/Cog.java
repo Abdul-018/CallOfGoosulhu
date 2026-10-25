@@ -16,7 +16,7 @@ public class Cog extends Game {
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        viewport = new FitViewport(8, 5);
+        viewport = new FitViewport(80, 50);
 
         font.setUseIntegerPositions(false);
         font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
@@ -25,7 +25,7 @@ public class Cog extends Game {
     }
 
     public void render() {
-        super.render(); // important!
+        super.render();
     }
 
     public void dispose() {
