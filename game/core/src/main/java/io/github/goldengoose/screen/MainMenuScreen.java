@@ -37,7 +37,7 @@ public class MainMenuScreen implements Screen {
     }
 
     private void createMenu() {
-        menuFont = Utilities.createFont(CogFonts.CRISTOFORO);
+        menuFont = Utilities.createFont(CogFonts.CRISTOFORO, 64);
 
         com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle titleStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle();
         titleStyle.font = menuFont;

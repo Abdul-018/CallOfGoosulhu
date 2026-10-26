@@ -1,18 +1,22 @@
 package io.github.goldengoose.shared;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.goldengoose.Cog;
+import io.github.goldengoose.screen.MainMenuScreen;
 import io.github.goldengoose.shared.enums.CogFonts;
 
 /** Game timer, press p to pause and unpause. (UR_GAME_TIMER, UR_PAUSE_GAME) */
@@ -31,15 +35,19 @@ public class GameTimer {
     OrthographicCamera camera;
     private final Stage stage;
     private BitmapFont pauseFont;
+    private BitmapFont buttonFont;
+    private final Cog game;
 
     public GameTimer(OrthographicCamera camera, Cog game) {
         font = new BitmapFont();
         this.camera = camera;
+        this.game = game;
 
         xPos = 20;
         yPos = Gdx.graphics.getHeight() - 20;
 
         stage = new Stage(new ScreenViewport(), game.batch);
+        Gdx.input.setInputProcessor(stage);
         createPauseMenu();
     }
 
@@ -56,6 +64,7 @@ public class GameTimer {
         if (secondsRemaining < 0) {
             secondsRemaining = 0;
         }
+        stage.act(deltaTime);
     }
 
     public void draw(SpriteBatch batch) {
@@ -91,7 +100,8 @@ public class GameTimer {
     }
 
     private void createPauseMenu() {
-        pauseFont = Utilities.createFont(CogFonts.CRISTOFORO);
+        pauseFont = Utilities.createFont(CogFonts.CRISTOFORO, 48);
+        buttonFont = Utilities.createFont(CogFonts.CRISTOFORO, 16);
 
         com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle titleStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle();
         titleStyle.font = pauseFont;
@@ -99,10 +109,47 @@ public class GameTimer {
 
         Label title = new Label("Press 'P' to unpause", titleStyle);
 
+        TextButton.TextButtonStyle buttonStyle =
+            new TextButton.TextButtonStyle();
+
+        buttonStyle.font = buttonFont;
+        buttonStyle.fontColor = Color.WHITE;
+        buttonStyle.overFontColor = Color.YELLOW;
+
+        buttonStyle.up = new BaseDrawable();
+        buttonStyle.down = new BaseDrawable();
+        buttonStyle.over = new BaseDrawable();
+
+        TextButton quitMenu =
+            new TextButton("QUIT TO MENU", buttonStyle);
+
+        TextButton quitDesktop =
+            new TextButton("QUIT TO DESKTOP", buttonStyle);
+
+        quitMenu.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new MainMenuScreen(game));
+                dispose();
+            }
+        });
+
+        quitDesktop.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
+                dispose();
+            }
+        });
+
         Table table = new Table();
         table.setFillParent(true);
 
-        table.add(title);
+        table.add(title).padBottom(50).colspan(2);
+        table.row();
+
+        table.add(quitMenu);
+        table.add(quitDesktop);
 
         stage.addActor(table);
     }
@@ -118,6 +165,7 @@ public class GameTimer {
     public void dispose() {
         stage.dispose();
         pauseFont.dispose();
+        buttonFont.dispose();
     }
 
     /** True while game is paused. (UR_PAUSE_GAME) */
