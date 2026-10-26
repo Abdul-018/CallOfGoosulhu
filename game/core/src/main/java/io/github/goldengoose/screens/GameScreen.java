@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
         world.addEntity(player);
         world.init();
 
-        timer = new GameTimer(hudCamera);
+        timer = new GameTimer(hudCamera, game);
 
         tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -114,6 +114,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         shapeRenderer.dispose();
         tiledMap.dispose();
+        timer.dispose();
     }
 
     // Unused overrides

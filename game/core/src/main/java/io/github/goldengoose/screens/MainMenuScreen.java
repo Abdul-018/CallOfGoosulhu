@@ -4,10 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -17,6 +14,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.goldengoose.Cog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import io.github.goldengoose.shared.Utilities;
+import io.github.goldengoose.shared.enums.CogFonts;
 
 
 import java.awt.*;
@@ -41,7 +40,7 @@ public class MainMenuScreen implements Screen {
     }
 
     private void createMenu() {
-        menuFont = createFont();
+        menuFont = Utilities.createFont(CogFonts.CRISTOFORO);
 
         com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle titleStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle();
         titleStyle.font = menuFont;
@@ -63,6 +62,9 @@ public class MainMenuScreen implements Screen {
         TextButton playButton =
             new TextButton("PLAY", buttonStyle);
 
+        TextButton quitButton =
+            new TextButton("QUIT", buttonStyle);
+
         playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -71,12 +73,22 @@ public class MainMenuScreen implements Screen {
             }
         });
 
+        quitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
+                dispose();
+            }
+        });
+
         Table table = new Table();
         table.setFillParent(true);
 
-        table.add(title).padBottom(50);
+        table.add(title).padBottom(50).colspan(2);
         table.row();
-        table.add(playButton).width(250).height(80);
+
+        table.add(playButton);
+        table.add(quitButton);
 
         stage.addActor(table);
     }
@@ -101,22 +113,6 @@ public class MainMenuScreen implements Screen {
     public void dispose() {
         stage.dispose();
         menuFont.dispose();
-    }
-
-    private BitmapFont createFont() {
-        FreeTypeFontGenerator generator =
-            new FreeTypeFontGenerator(Gdx.files.internal("fonts/Cristoforo.ttf"));
-
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
-            new FreeTypeFontGenerator.FreeTypeFontParameter();
-
-        parameter.size = 64;
-
-        BitmapFont font = generator.generateFont(parameter);
-
-        generator.dispose();
-
-        return font;
     }
 
     // Unused overrides

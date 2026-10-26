@@ -2,11 +2,18 @@ package io.github.goldengoose.shared;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.goldengoose.Cog;
+import io.github.goldengoose.shared.enums.CogFonts;
 
 /** Game timer, press p to pause and unpause. (UR_GAME_TIMER, UR_PAUSE_GAME) */
 public class GameTimer {
@@ -22,13 +29,18 @@ public class GameTimer {
 
     BitmapFont font;
     OrthographicCamera camera;
+    private final Stage stage;
+    private BitmapFont pauseFont;
 
-    public GameTimer(OrthographicCamera camera) {
+    public GameTimer(OrthographicCamera camera, Cog game) {
         font = new BitmapFont();
         this.camera = camera;
 
         xPos = 20;
         yPos = Gdx.graphics.getHeight() - 20;
+
+        stage = new Stage(new ScreenViewport(), game.batch);
+        createPauseMenu();
     }
 
     /** Every frame, check pause key (P) and run timer. (UR_GAME_TIMER, UR_PAUSE_GAME) */
@@ -73,11 +85,35 @@ public class GameTimer {
             );
 
             shapeRenderer.end();
+
+            stage.draw();
         }
+    }
+
+    private void createPauseMenu() {
+        pauseFont = Utilities.createFont(CogFonts.CRISTOFORO);
+
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle titleStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle();
+        titleStyle.font = pauseFont;
+        titleStyle.fontColor = Color.WHITE;
+
+        Label title = new Label("Press 'P' to unpause", titleStyle);
+
+        Table table = new Table();
+        table.setFillParent(true);
+
+        table.add(title);
+
+        stage.addActor(table);
     }
 
     public void setPaused(boolean paused) {
         isPaused = paused;
+    }
+
+    public void dispose() {
+        stage.dispose();
+        pauseFont.dispose();
     }
 
     /** True while game is paused. (UR_PAUSE_GAME) */
