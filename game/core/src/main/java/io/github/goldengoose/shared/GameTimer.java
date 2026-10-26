@@ -45,7 +45,7 @@ public class GameTimer {
 
     /** Every frame, check pause key (P) and run timer. (UR_GAME_TIMER, UR_PAUSE_GAME) */
     public void update(float deltaTime) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+        if (InputManager.pause()) {
             isPaused = !isPaused;
         }
 
