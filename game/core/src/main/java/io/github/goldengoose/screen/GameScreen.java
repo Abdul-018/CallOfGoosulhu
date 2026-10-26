@@ -1,12 +1,11 @@
-package io.github.goldengoose;
+package io.github.goldengoose.screen;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -15,51 +14,55 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.goldengoose.Cog;
 import io.github.goldengoose.player.Player;
-import io.github.goldengoose.shared.GameWorld;
 import io.github.goldengoose.shared.GameTimer;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import io.github.goldengoose.shared.GameWorld;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main extends ApplicationAdapter {
-    private SpriteBatch batch;
-    private Texture image;
-    BitmapFont font;
+public class GameScreen implements Screen {
+    final Cog game;
+
     private final Viewport viewport = new FitViewport(
         400,
         300,
         new OrthographicCamera()
     );
+    OrthographicCamera hudCamera;
 
     GameWorld world = new GameWorld();
-    GameTimer timer = new GameTimer();
+    GameTimer timer;
     Player player;
 
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
-    private ShapeRenderer shapeRenderer;
+    private final ShapeRenderer shapeRenderer;
 
-    @Override
-    public void create() {
+    public GameScreen(final Cog game) {
+        this.game = game;
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
         shapeRenderer = new ShapeRenderer();
-        batch = new SpriteBatch();
         player = new Player();
+
+        hudCamera = new OrthographicCamera();
+        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(),
+            Gdx.graphics.getHeight());
+        hudCamera.update();
+
         world.addEntity(player);
         world.init();
 
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
+        timer = new GameTimer(hudCamera, game);
 
         tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-
-        font = new BitmapFont();
-
     }
 
     @Override
-    public void render() {
+    public void render(float delta) {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
         viewport.apply();
@@ -67,31 +70,27 @@ public class Main extends ApplicationAdapter {
         camera.position.set(player.getPosition().x, player.getPosition().y, 0);
         camera.update();
 
-        batch.setProjectionMatrix(viewport.getCamera().combined);
+        game.batch.setProjectionMatrix(viewport.getCamera().combined);
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        timer.update(deltaTime);
 
         if (!timer.isPaused()) {
-            world.update(deltaTime);
+            world.update(delta);
         }
+        timer.update(delta);
 
-        batch.begin();
-        world.render(batch);
+        game.batch.begin();
+        world.render(game.batch);
         // Comment/uncomment to see debugging lines
         //renderDebug(camera);
+        game.batch.end();
 
-        float x = camera.position.x - 190;
-        float y = camera.position.y + 140;
+        timer.drawPauseOverlay(shapeRenderer);
 
-        String timeLeft = String.format("%.1f", timer.getSecondsRemaining());
-
-        font.draw(batch, timeLeft, x, y);
-        font.draw(batch, "Press P to pause", x, y -20);
-
-        batch.end();
+        game.batch.begin();
+        timer.draw(game.batch);
+        game.batch.end();
 
         //TODO: Remove once game has proper exit feature, this is just for testing
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
@@ -107,15 +106,21 @@ public class Main extends ApplicationAdapter {
     }
 
     @Override
-    public void dispose() {
-        batch.dispose();
-        image.dispose();
-        shapeRenderer.dispose();
-        tiledMap.dispose();
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
+        timer.resize(width, height);
     }
 
     @Override
-    public void resize(int width, int height) {
-        viewport.update(width, height, true);
+    public void dispose() {
+        shapeRenderer.dispose();
+        tiledMap.dispose();
+        timer.dispose();
     }
+
+    // Unused overrides
+    @Override public void show() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
 }
