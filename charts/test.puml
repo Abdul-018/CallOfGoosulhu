@@ -69,7 +69,7 @@ endlegend
 **** Visual detection <<milan>><<done>>
 **** Auditory detection <<milan>><<done>>
 **** Pursuit and\n stopping distance <<milan>><<done>>
-**** Honking behaviour
+**** Honking behaviour <<lisa>>
 **** Goose response to spells\n and environmental effects
 *** Goose types
 **** Normal goose
@@ -110,21 +110,21 @@ endlegend
 *** Timer UI
 *** Timer expiry\n and defeat handling
 
-** 6. Spell System \n To be decided\n which spells
-*** Spell system foundation
-**** Spell selection
-**** Spell activation
-**** Spell effects
-**** Cooldowns/charges
-*** Initial spell availability
-*** Pentagram spell
-*** Spell feedback and effects
+** 6. Spell System \n To be decided\n which spells <<milan>>
+*** Spell system\n foundation <<milan>>
+**** Spell selection <<milan>>
+**** Spell activation <<milan>>
+**** Spell effects <<milan>>
+**** Cooldowns/charges <<milan>>
+*** Initial spell availability <<milan>>
+*** Pentagram spell <<milan>>
+*** Spell feedback and effects <<milan>>
 *** Spell integration with goose AI
 
-** 7. Patience System
-*** Patience value\n and initial state
-*** Patience reduction\n from honking
-*** Patience bar UI
+** 7. Patience System <<lisa>>
+*** Patience value\n and initial state <<lisa>>
+*** Patience reduction\n from honking <<lisa>>
+*** Patience bar UI\n integration
 *** Patience thresholds\n and effects
 
 ** 8. Events\n and Interactions
