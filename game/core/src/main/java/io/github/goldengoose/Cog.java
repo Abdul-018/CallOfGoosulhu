@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import io.github.goldengoose.screens.MainMenuScreen;
+import io.github.goldengoose.screen.MainMenuScreen;
 
 public class Cog extends Game {
     public SpriteBatch batch;

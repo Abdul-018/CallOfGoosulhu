@@ -1,4 +1,4 @@
-package io.github.goldengoose.screens;
+package io.github.goldengoose.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

@@ -1,4 +1,4 @@
-package io.github.goldengoose.screens;
+package io.github.goldengoose.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -16,9 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import io.github.goldengoose.shared.Utilities;
 import io.github.goldengoose.shared.enums.CogFonts;
-
-
-import java.awt.*;
 
 public class MainMenuScreen implements Screen {
 
