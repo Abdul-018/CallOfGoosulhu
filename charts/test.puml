@@ -8,7 +8,7 @@
   BackgroundColor #bbeeff;
 }
 .jack {
-  BackgroundColor #ffffff;
+  BackgroundColor #aa88bb;
 }
 .lisa {
   BackgroundColor #f7fc51;
@@ -19,19 +19,19 @@
   BackgroundColor #ffaa77/#bbeeff;
 }
 .milan_jack {
-  BackgroundColor #ffaa77/#ffffff;
+  BackgroundColor #ffaa77/#aa88bb;
 }
 .milan_lisa {
   BackgroundColor #ffaa77/#f7fc51;
 }
 .charlie_jack {
-  BackgroundColor #bbeeff/#ffffff;
+  BackgroundColor #bbeeff/#aa88bb;
 }
 .charlie_lisa {
   BackgroundColor #bbeeff/#f7fc51;
 }
 .jack_lisa {
-  BackgroundColor #ffffff/#f7fc51;
+  BackgroundColor #aa88bb/#f7fc51;
 }
 
 ' Progress indicators
@@ -48,7 +48,7 @@ legend right
   |= People |
   |<#ffaa77> Milan |
   |<#bbeeff> Charlie |
-  |<#ffffff> Jack |
+  |<#aa88bb> Jack |
   |<#f7fc51> Lisa |
 
   |= Progress |
@@ -65,10 +65,10 @@ endlegend
 *** Player animation
 
 ** 2. Enemy System
-*** Goose AI <<milan>><<prog>>
+*** Goose AI <<milan_jack>><<prog>>
 **** Visual detection <<milan>><<done>>
 **** Auditory detection <<milan>><<done>>
-**** Pursuit and\n stopping distance <<milan>><<done>>
+**** Pursuit and\n stopping distance <<milan_jack>><<prog>>
 **** Honking behaviour <<lisa>>
 **** Goose response to spells\n and environmental effects
 *** Goose types
@@ -127,11 +127,10 @@ endlegend
 *** Patience bar UI\n integration
 *** Patience thresholds\n and effects
 
-** 8. Events\n and Interactions
-*** Event triggers and effects
-*** Bread dispenser
-*** Other hidden events
-*** Event feedback
+** 8. Events\n and Interactions <<jack>>
+*** Event triggers and effects <<jack>>
+*** Event 1 <<jack>>
+*** Event 2 <<jack>>
 
 ** 9. User Interface
 *** Start screen <<milan>><<prog>>
