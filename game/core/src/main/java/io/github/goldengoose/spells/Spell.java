@@ -48,4 +48,12 @@ public abstract class Spell {
 
         cooldownCounter -= deltaTime;
     }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public float getCooldownPercent() {
+        return cooldownCounter/cooldown;
+    }
 }
