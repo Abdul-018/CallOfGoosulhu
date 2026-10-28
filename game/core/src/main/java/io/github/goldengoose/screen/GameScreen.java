@@ -18,6 +18,8 @@ import io.github.goldengoose.Cog;
 import io.github.goldengoose.player.Player;
 import io.github.goldengoose.shared.GameTimer;
 import io.github.goldengoose.shared.GameWorld;
+import io.github.goldengoose.spells.PentagramTrapSpell;
+import io.github.goldengoose.spells.SpellTome;
 
 public class GameScreen implements Screen {
     final Cog game;
@@ -31,6 +33,7 @@ public class GameScreen implements Screen {
 
     GameWorld world = new GameWorld();
     GameTimer timer;
+    SpellTome spellTome;
     Player player;
 
     TiledMap tiledMap;
@@ -41,16 +44,20 @@ public class GameScreen implements Screen {
     public GameScreen(final Cog game) {
         this.game = game;
 
+        hudCamera = new OrthographicCamera();
+        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(),
+            Gdx.graphics.getHeight());
+        hudCamera.update();
+
+        spellTome = new SpellTome(hudCamera, this.game);
+        PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(this.player);
+        spellTome.addSpell(pentagramTrapSpell);
+
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         shapeRenderer = new ShapeRenderer();
         player = new Player();
-
-        hudCamera = new OrthographicCamera();
-        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(),
-            Gdx.graphics.getHeight());
-        hudCamera.update();
 
         world.addEntity(player);
         world.init();
@@ -79,6 +86,7 @@ public class GameScreen implements Screen {
             world.update(delta);
         }
         timer.update(delta);
+        spellTome.update(delta);
 
         game.batch.begin();
         world.render(game.batch);
@@ -90,6 +98,7 @@ public class GameScreen implements Screen {
 
         game.batch.begin();
         timer.draw(game.batch);
+        spellTome.draw(game.batch);
         game.batch.end();
 
         //TODO: Remove once game has proper exit feature, this is just for testing
@@ -109,6 +118,7 @@ public class GameScreen implements Screen {
     public void resize(int width, int height) {
         viewport.update(width, height, true);
         timer.resize(width, height);
+        spellTome.resize(width, height);
     }
 
     @Override
@@ -116,6 +126,7 @@ public class GameScreen implements Screen {
         shapeRenderer.dispose();
         tiledMap.dispose();
         timer.dispose();
+        spellTome.dispose();
     }
 
     // Unused overrides
