@@ -21,7 +21,6 @@ public class SpellTome {
     private final Cog game;
     private Texture texture;
 
-    // 10 because max will be 5 starting and 5 findable items
     private final List<Spell> spells = new ArrayList<>();
     private int selectedSpell = 0;
 
@@ -42,10 +41,8 @@ public class SpellTome {
 
         float screenWidth = stage.getViewport().getWorldWidth();
 
-        // Scale relative to screen width
         float scale = screenWidth / 800f;
 
-        // Spell tome dimensions
         float width = texture.getWidth() * scale * 2f;
         float height = texture.getHeight() * scale * 1.5f;
 
@@ -54,10 +51,8 @@ public class SpellTome {
         float x = screenWidth - width - padding;
         float y = padding;
 
-        // Draw the spell tome
         batch.draw(texture, x, y, width, height);
 
-        // Draw the current spell on the left page
         Spell currentSpell = getSelectedSpell();
 
         if (currentSpell != null) {
@@ -65,7 +60,7 @@ public class SpellTome {
 
             float spellX = x + 11f * scale * 2f;
             float spellY = y + 19f * scale * 1.5f;
-            
+
             float spellWidth = spellTexture.getWidth() * scale * 2f;
             float spellHeight = spellTexture.getHeight() * scale * 1.5f;
 
