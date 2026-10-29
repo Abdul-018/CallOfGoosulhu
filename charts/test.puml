@@ -110,15 +110,15 @@ endlegend
 *** Timer UI
 *** Timer expiry\n and defeat handling
 
-** 6. Spell System \n To be decided\n which spells <<milan>>
-*** Spell system\n foundation <<milan>>
-**** Spell selection <<milan>>
-**** Spell activation <<milan>>
-**** Spell effects <<milan>>
-**** Cooldowns/charges <<milan>>
-*** Initial spell availability <<milan>>
-*** Pentagram spell <<milan>>
-*** Spell feedback and effects <<milan>>
+** 6. Spell System \n To be decided\n which spells <<milan>><<prog>>
+*** Spell system\n foundation <<milan>><<done>>
+**** Spell selection <<milan>><<done>>
+**** Spell activation <<milan>><<prog>>
+**** Spell effects <<milan>><<prog>>
+**** Cooldowns/charges <<milan>><<prog>>
+*** Initial spell availability <<milan>><<prog>>
+*** Pentagram spell <<milan>><<prog>>
+*** Spell feedback and effects <<milan>><<prog>>
 *** Spell integration with goose AI
 
 ** 7. Patience System <<lisa>>
