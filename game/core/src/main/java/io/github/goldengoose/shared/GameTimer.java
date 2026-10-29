@@ -154,6 +154,9 @@ public class GameTimer {
         stage.addActor(table);
     }
 
+    public Stage getStage() {
+        return stage;
+    }
     public void setPaused(boolean paused) {
         isPaused = paused;
     }

@@ -1,5 +1,5 @@
 {
-    "activeFile": "maps/base_map.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
         "maps",
         "."
@@ -9,8 +9,8 @@
             "scale": 1.0229,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 231.20539642193765,
-                "y": 179.391924919347
+                "x": 231.20539642193768,
+                "y": 179.8807312542771
             }
         },
         "maps/base_tileset.tsx": {
@@ -23,8 +23,6 @@
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
-        "maps/base_map.tmx",
-        "maps/base_tileset.tsx"
     ],
     "project": "untitled.tiled-project",
     "recentFiles": [

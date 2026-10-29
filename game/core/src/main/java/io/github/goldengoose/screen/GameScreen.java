@@ -2,6 +2,7 @@ package io.github.goldengoose.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,9 +19,14 @@ import io.github.goldengoose.Cog;
 import io.github.goldengoose.player.Player;
 import io.github.goldengoose.shared.GameTimer;
 import io.github.goldengoose.shared.GameWorld;
+import io.github.goldengoose.spells.PentagramTrapSpell;
+import io.github.goldengoose.spells.SpellTome;
+import io.github.goldengoose.spells.TestSpell;
 
 public class GameScreen implements Screen {
     final Cog game;
+    InputMultiplexer multiplexer = new InputMultiplexer();
+
 
     private final Viewport viewport = new FitViewport(
         400,
@@ -31,6 +37,7 @@ public class GameScreen implements Screen {
 
     GameWorld world = new GameWorld();
     GameTimer timer;
+    SpellTome spellTome;
     Player player;
 
     TiledMap tiledMap;
@@ -41,16 +48,22 @@ public class GameScreen implements Screen {
     public GameScreen(final Cog game) {
         this.game = game;
 
+        hudCamera = new OrthographicCamera();
+        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(),
+            Gdx.graphics.getHeight());
+        hudCamera.update();
+
+        spellTome = new SpellTome(hudCamera, this.game);
+        PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(this.player);
+        TestSpell testSpell = new TestSpell(this.player);
+        spellTome.addSpell(pentagramTrapSpell);
+        spellTome.addSpell(testSpell);
+
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         shapeRenderer = new ShapeRenderer();
         player = new Player();
-
-        hudCamera = new OrthographicCamera();
-        hudCamera.setToOrtho(false, Gdx.graphics.getWidth(),
-            Gdx.graphics.getHeight());
-        hudCamera.update();
 
         world.addEntity(player);
         world.init();
@@ -59,6 +72,12 @@ public class GameScreen implements Screen {
 
         tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+
+        multiplexer.addProcessor(timer.getStage());
+        multiplexer.addProcessor(spellTome.getInputProcessor());
+
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
@@ -77,6 +96,7 @@ public class GameScreen implements Screen {
 
         if (!timer.isPaused()) {
             world.update(delta);
+            spellTome.update(delta);
         }
         timer.update(delta);
 
@@ -90,6 +110,7 @@ public class GameScreen implements Screen {
 
         game.batch.begin();
         timer.draw(game.batch);
+        spellTome.draw(game.batch);
         game.batch.end();
 
         //TODO: Remove once game has proper exit feature, this is just for testing
@@ -109,6 +130,7 @@ public class GameScreen implements Screen {
     public void resize(int width, int height) {
         viewport.update(width, height, true);
         timer.resize(width, height);
+        spellTome.resize(width, height);
     }
 
     @Override
@@ -116,6 +138,7 @@ public class GameScreen implements Screen {
         shapeRenderer.dispose();
         tiledMap.dispose();
         timer.dispose();
+        spellTome.dispose();
     }
 
     // Unused overrides
