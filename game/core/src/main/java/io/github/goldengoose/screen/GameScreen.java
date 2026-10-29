@@ -2,6 +2,7 @@ package io.github.goldengoose.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,9 +21,12 @@ import io.github.goldengoose.shared.GameTimer;
 import io.github.goldengoose.shared.GameWorld;
 import io.github.goldengoose.spells.PentagramTrapSpell;
 import io.github.goldengoose.spells.SpellTome;
+import io.github.goldengoose.spells.TestSpell;
 
 public class GameScreen implements Screen {
     final Cog game;
+    InputMultiplexer multiplexer = new InputMultiplexer();
+
 
     private final Viewport viewport = new FitViewport(
         400,
@@ -51,7 +55,9 @@ public class GameScreen implements Screen {
 
         spellTome = new SpellTome(hudCamera, this.game);
         PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(this.player);
+        TestSpell testSpell = new TestSpell(this.player);
         spellTome.addSpell(pentagramTrapSpell);
+        spellTome.addSpell(testSpell);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -66,6 +72,12 @@ public class GameScreen implements Screen {
 
         tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+
+        multiplexer.addProcessor(timer.getStage());
+        multiplexer.addProcessor(spellTome.getInputProcessor());
+
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
@@ -84,9 +96,9 @@ public class GameScreen implements Screen {
 
         if (!timer.isPaused()) {
             world.update(delta);
+            spellTome.update(delta);
         }
         timer.update(delta);
-        spellTome.update(delta);
 
         game.batch.begin();
         world.render(game.batch);

@@ -1,12 +1,15 @@
 package io.github.goldengoose.spells;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.goldengoose.Cog;
+import io.github.goldengoose.shared.InputManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +36,6 @@ public class SpellTome {
         yPos = Gdx.graphics.getHeight() - 20;
 
         stage = new Stage(new ScreenViewport(), game.batch);
-        Gdx.input.setInputProcessor(stage);
     }
 
     public void draw(SpriteBatch batch) {
@@ -79,6 +81,11 @@ public class SpellTome {
      * @return the currently selected spell
      */
     public Spell getSelectedSpell() {
+        if (spells.isEmpty() || selectedSpell < 0 ||
+            selectedSpell >= spells.size()) {
+            return null;
+        }
+
         return spells.get(selectedSpell);
     }
 
@@ -88,7 +95,9 @@ public class SpellTome {
      * @return true if spell change happened, false if there was no spell at that id;
      */
     public boolean selectSpell(int i) {
-        if (i >= spells.size() || spells.get(i) == null) return false;
+        if (spells.isEmpty()) return false;
+        if (i >= spells.size() || i < 0 || spells.get(i) == null) return false;
+
         selectedSpell = i;
         return true;
     }
@@ -101,6 +110,27 @@ public class SpellTome {
 
     public void update(float deltaTime) {
         stage.act(deltaTime);
+    }
+
+    public InputAdapter getInputProcessor() {
+        return new InputAdapter() {
+            @Override
+            public boolean keyDown(int keycode) {
+                if (spells.isEmpty()) return false;
+
+                if (keycode == Input.Keys.RIGHT) {
+                    selectSpell((selectedSpell + 1) % spells.size());
+                    return true;
+                } else if (keycode == Input.Keys.LEFT) {
+                    selectSpell(
+                        (selectedSpell - 1 + spells.size()) % spells.size()
+                    );
+                    return true;
+                }
+
+                return false;
+            }
+        };
     }
 
     public void resize(int width, int height) {
