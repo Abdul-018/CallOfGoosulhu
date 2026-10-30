@@ -13,6 +13,7 @@ public class Goose extends Entity {
     private final Player player;
 
     private boolean honk;
+    private float trappedTimer = 0f;
 
     public Goose(Player player, Vector2 position) {
         texture = new Texture("goose.png");
@@ -26,6 +27,11 @@ public class Goose extends Entity {
 
     @Override
     public void update(float deltaTime) {
+        if (trappedTimer > 0f) {
+            trappedTimer -= deltaTime;
+            return;
+        }
+
         gooseAI.update(deltaTime);
     }
 
@@ -40,5 +46,13 @@ public class Goose extends Entity {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void trap(float duration) {
+        trappedTimer = Math.max(trappedTimer, duration);
+    }
+
+    public boolean isTrapped() {
+        return trappedTimer > 0f;
     }
 }

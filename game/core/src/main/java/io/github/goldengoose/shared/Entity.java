@@ -50,4 +50,11 @@ public abstract class Entity {
     public void setPosition(float x, float y) {
         position.set(x, y);
     }
+
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
+            texture = null;
+        }
+    }
 }

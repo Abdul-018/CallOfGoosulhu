@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.goose.Goose;
 import io.github.goldengoose.player.Player;
+import io.github.goldengoose.spells.PentagramTrap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +28,46 @@ public class GameWorld {
         for (Entity entity : entities) {
             entity.update(deltaTime);
         }
+
+        updateTraps();
+
+        entities.removeIf(entity -> {
+            if (entity instanceof PentagramTrap trap) {
+                if (trap.isExpired()) {
+                    entity.dispose();
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
+
+    private void updateTraps() {
+        for (Entity entity : entities) {
+            if (!(entity instanceof PentagramTrap trap)) {
+                continue;
+            }
+
+            for (Entity other : entities) {
+                if (other instanceof Goose goose) {
+                    trap.checkGoose(goose);
+                }
+            }
+        }
     }
 
     public void render(SpriteBatch batch) {
         for (Entity entity : entities) {
-            entity.render(batch);
+            if (entity instanceof PentagramTrap) {
+                entity.render(batch);
+            }
+        }
+
+        for (Entity entity : entities) {
+            if (!(entity instanceof PentagramTrap)) {
+                entity.render(batch);
+            }
         }
     }
 
@@ -41,5 +77,15 @@ public class GameWorld {
                 goose.renderDebug(shapes);
             }
         }
+    }
+
+    public void dispose() {
+        for (Entity entity : entities) {
+            entity.dispose();
+        }
+
+        entities.clear();
+
+        PentagramTrap.disposeTexture();
     }
 }

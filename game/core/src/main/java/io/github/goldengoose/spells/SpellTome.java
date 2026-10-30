@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.goldengoose.Cog;
@@ -77,6 +78,19 @@ public class SpellTome {
     }
 
     /**
+     * Activates the currently selected spell
+     * @param worldPos world position where the spell should be cast
+     * @return true if spell activated
+     */
+    public boolean activateSelectedSpell(Vector2 worldPos) {
+        Spell spell = getSelectedSpell();
+
+        if (spell == null) return false;
+
+        return spell.activate(worldPos);
+    }
+
+    /**
      * Returns the currently selected spell
      * @return the currently selected spell
      */
@@ -110,6 +124,10 @@ public class SpellTome {
 
     public void update(float deltaTime) {
         stage.act(deltaTime);
+
+        for (Spell spell : spells) {
+            spell.reduceCooldown(deltaTime);
+        }
     }
 
     public InputAdapter getInputProcessor() {
