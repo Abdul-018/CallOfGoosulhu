@@ -24,7 +24,7 @@ public abstract class Spell {
      */
     public boolean activate(Vector2 worldPos) {
         if (cooldownCounter > 0 ||
-            player.getPosition().dst2(worldPos) <= range * range) {
+            player.getPosition().dst2(worldPos) > range * range) {
             return false;
         }
 
