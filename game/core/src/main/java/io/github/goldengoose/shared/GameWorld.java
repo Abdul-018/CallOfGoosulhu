@@ -18,6 +18,12 @@ public class GameWorld {
 
     public void init() {
         entities.add(new Goose((Player) entities.get(0), new Vector2(200, 200)));
+        entities.add(new Goose((Player) entities.get(0), new Vector2(200, 200)));
+        entities.add(new Goose((Player) entities.get(0), new Vector2(200, 200)));
+        entities.add(new Goose((Player) entities.get(0), new Vector2(200, 200)));
+        entities.add(new Goose((Player) entities.get(0), new Vector2(200, 200)));
+        entities.add(new Goose((Player) entities.get(0), new Vector2(200, 200)));
+        entities.add(new Goose((Player) entities.get(0), new Vector2(200, 200)));
         for (Entity entity : entities) {
             entity.gameStart();
         }

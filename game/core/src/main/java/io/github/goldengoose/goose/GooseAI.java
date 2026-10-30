@@ -39,6 +39,15 @@ public class GooseAI {
     private static final float HONK_RANGE = 50f;
     // Range from which it will still follow the player, ie simply running far enough won't make the goose forget
     private static final float FOLLOW_RANGE = 200f;
+
+    // Instead of chasing the player's exact position, each goose heads for it's own spot on a ring around the player
+    // This prevents them from stacking ontop of each other like a blob when the player runs in a circle around them
+    private static final float CHASE_RING_RADIUS = HONK_RANGE * .8f;
+
+    // Geese's chasing target is picke7d within this many degrees either side of the direction the goose is running from
+    // (So they don't pick a target on the otherside of the player - thus running through them)
+    private static final float CHASE_SPREAD_ANGLE = 90f;
+
     //------------
     // END CONSTANTS
     //------------
@@ -56,6 +65,8 @@ public class GooseAI {
 
     private final Vector2 facingDirection = new Vector2(1f, 0f);
     private final Vector2 toPlayer = new Vector2();
+    private final Vector2 chaseOffset = new Vector2();
+    private final Vector2 chaseTarget = new Vector2();
     private static final float VISION_DOT_THRESHOLD =
         (float) Math.cos(Math.toRadians(VISION_HALF_ANGLE_DEGREES));
 
@@ -80,6 +91,7 @@ public class GooseAI {
             }
         } else if (detected) {
             state = GooseState.CHASING;
+            pickOffset(playerPosition, goosePosition);
         }
 
         velocity.setZero();
@@ -87,9 +99,14 @@ public class GooseAI {
         if (state == GooseState.CHASING) {
             idleTarget = null;
 
-            if (playerDist2 > HONK_RANGE * HONK_RANGE) {
-                moveTo(playerPosition);
-            } else {
+            chaseTarget.set(playerPosition).add(chaseOffset);
+            moveTo(chaseTarget);
+
+            // if (playerDist2 > HONK_RANGE * HONK_RANGE) {
+                // moveTo(playerPosition);
+            // } else {
+
+            if (playerDist2 <= HONK_RANGE * HONK_RANGE){
                 // TODO: Honk at the player.
             }
         } else {
@@ -103,6 +120,13 @@ public class GooseAI {
         goosePosition.mulAdd(velocity, speed * deltaTime);
     }
 
+    private void pickOffset(Vector2 playerPosition, Vector2 goosePosition) {
+        Vector2 playerToGoose = goosePosition.cpy().sub(playerPosition);
+        float approachAngle = playerToGoose.isZero() ? 0f : playerToGoose.angleDeg();
+        float spread = ((float) Math.random() * 2f - 1f) * CHASE_SPREAD_ANGLE;
+
+        chaseOffset.set(CHASE_RING_RADIUS, 0f).setAngleDeg(approachAngle + spread);
+    }
     private void wander(float deltaTime) {
         if (idleTarget == null) {
             chooseNewTarget();
