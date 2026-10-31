@@ -54,6 +54,7 @@ public abstract class Spell {
     }
 
     public float getCooldownPercent() {
-        return cooldownCounter/cooldown;
+        if (cooldown <= 0) return 0f;
+        return Math.max(0f, cooldownCounter / cooldown);
     }
 }

@@ -16,7 +16,7 @@ public class PentagramTrapSpell extends Spell {
 
         texture = new Texture("pentagram_spell.png");
 
-        range = 300f;
+        range = 120f;
         cooldown = 10f;
     }
 

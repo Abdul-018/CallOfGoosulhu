@@ -8,11 +8,11 @@ import io.github.goldengoose.shared.Entity;
 
 public class PentagramTrap extends Entity {
 
-    private static final float RADIUS = 10f;
+    private static final float RADIUS = 15f;
     private static final float LIFETIME = 8f;
 
     private static final Texture TEXTURE =
-        new Texture("pentagram_spell.png");
+        new Texture("pentagram.png");
 
     private float lifetime = LIFETIME;
     private boolean triggered = false;

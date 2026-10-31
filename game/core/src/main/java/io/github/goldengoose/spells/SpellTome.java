@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -28,10 +29,18 @@ public class SpellTome {
     private final List<Spell> spells = new ArrayList<>();
     private int selectedSpell = 0;
 
-    public SpellTome(OrthographicCamera camera, Cog game) {
+    private final ShapeRenderer shapes;
+
+    public SpellTome(
+        OrthographicCamera camera,
+        Cog game,
+        ShapeRenderer shapes
+    ) {
         this.camera = camera;
         this.game = game;
-        texture = new Texture("spell_tome.png");
+        this.shapes = shapes;
+
+        texture = new Texture("spell_tome_w_writing.png");
 
         xPos = 20;
         yPos = Gdx.graphics.getHeight() - 20;
@@ -54,9 +63,13 @@ public class SpellTome {
         float x = screenWidth - width - padding;
         float y = padding;
 
-        batch.draw(texture, x, y, width, height);
-
         Spell currentSpell = getSelectedSpell();
+
+        batch.end();
+        drawCooldownBar();
+        batch.begin();
+
+        batch.draw(texture, x, y, width, height);
 
         if (currentSpell != null) {
             Texture spellTexture = currentSpell.getTexture();
@@ -75,6 +88,41 @@ public class SpellTome {
                 spellHeight
             );
         }
+    }
+
+    private void drawCooldownBar() {
+        Spell currentSpell = getSelectedSpell();
+
+        if (currentSpell == null) return;
+
+        float screenWidth = stage.getViewport().getWorldWidth();
+
+        float scale = screenWidth / 800f;
+
+        float barX = screenWidth - 100f * scale;
+        float barY = 57f * scale;
+        float barWidth = 60f * scale;
+        float barHeight = 60f * scale;
+
+        float cooldownPercent = currentSpell.getCooldownPercent();
+
+        shapes.setProjectionMatrix(stage.getCamera().combined);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+
+        shapes.setColor(0f, 0f, 0f, 0.5f);
+        shapes.rect(barX, barY, barWidth, barHeight);
+
+        if (cooldownPercent > 0f) {
+            shapes.setColor(1f, 0f, 0f, 1f);
+            shapes.rect(
+                barX,
+                barY,
+                barWidth,
+                barHeight * cooldownPercent
+            );
+        }
+
+        shapes.end();
     }
 
     /**

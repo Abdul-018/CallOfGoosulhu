@@ -61,7 +61,7 @@ public class GameScreen implements Screen {
         world.addEntity(player);
         world.init();
 
-        spellTome = new SpellTome(hudCamera, this.game);
+        spellTome = new SpellTome(hudCamera, this.game, shapeRenderer);
         PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(this.player, world);
         TestSpell testSpell = new TestSpell(this.player);
         spellTome.addSpell(pentagramTrapSpell);
