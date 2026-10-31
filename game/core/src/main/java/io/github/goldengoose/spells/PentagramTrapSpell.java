@@ -3,16 +3,25 @@ package io.github.goldengoose.spells;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.player.Player;
+import io.github.goldengoose.shared.GameWorld;
 
-public class PentagramTrapSpell extends Spell{
+public class PentagramTrapSpell extends Spell {
 
-    public PentagramTrapSpell(Player player) {
+    private final GameWorld world;
+
+    public PentagramTrapSpell(Player player, GameWorld world) {
         super(player);
+
+        this.world = world;
+
         texture = new Texture("pentagram_spell.png");
+
+        range = 120f;
+        cooldown = 10f;
     }
 
     @Override
     protected void triggerEffect(Vector2 worldPos) {
-
+        world.addEntity(new PentagramTrap(worldPos));
     }
 }

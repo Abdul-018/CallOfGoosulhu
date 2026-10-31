@@ -113,9 +113,9 @@ endlegend
 ** 6. Spell System \n To be decided\n which spells <<milan>><<prog>>
 *** Spell system\n foundation <<milan>><<done>>
 **** Spell selection <<milan>><<done>>
-**** Spell activation <<milan>><<prog>>
+**** Spell activation <<milan>><<done>>
 **** Spell effects <<milan>><<prog>>
-**** Cooldowns/charges <<milan>><<prog>>
+**** Cooldowns/charges <<milan>><<done>>
 *** Initial spell availability <<milan>><<prog>>
 *** Pentagram spell <<milan>><<prog>>
 *** Spell feedback and effects <<milan>><<prog>>

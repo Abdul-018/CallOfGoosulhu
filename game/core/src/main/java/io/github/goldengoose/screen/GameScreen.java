@@ -1,9 +1,6 @@
 package io.github.goldengoose.screen;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,13 +25,14 @@ public class GameScreen implements Screen {
     final Cog game;
     InputMultiplexer multiplexer = new InputMultiplexer();
 
-
+    private final Vector2 mouseWorldPosition = new Vector2();
     private final Viewport viewport = new FitViewport(
         400,
         300,
         new OrthographicCamera()
     );
     OrthographicCamera hudCamera;
+
 
     GameWorld world = new GameWorld();
     GameTimer timer;
@@ -53,12 +52,6 @@ public class GameScreen implements Screen {
             Gdx.graphics.getHeight());
         hudCamera.update();
 
-        spellTome = new SpellTome(hudCamera, this.game);
-        PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(this.player);
-        TestSpell testSpell = new TestSpell(this.player);
-        spellTome.addSpell(pentagramTrapSpell);
-        spellTome.addSpell(testSpell);
-
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -68,6 +61,12 @@ public class GameScreen implements Screen {
         world.addEntity(player);
         world.init();
 
+        spellTome = new SpellTome(hudCamera, this.game, shapeRenderer);
+        PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(this.player, world);
+        TestSpell testSpell = new TestSpell(this.player);
+        spellTome.addSpell(pentagramTrapSpell);
+        spellTome.addSpell(testSpell);
+
         timer = new GameTimer(hudCamera, game);
 
         tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
@@ -76,6 +75,7 @@ public class GameScreen implements Screen {
 
         multiplexer.addProcessor(timer.getStage());
         multiplexer.addProcessor(spellTome.getInputProcessor());
+        multiplexer.addProcessor(gameInput);
 
         Gdx.input.setInputProcessor(multiplexer);
     }
@@ -119,6 +119,27 @@ public class GameScreen implements Screen {
         }
     }
 
+    private InputAdapter gameInput = new InputAdapter() {
+        @Override
+        public boolean touchDown(int screenX, int screenY,
+                                 int pointer, int button) {
+
+            if (timer.isPaused()) return false;
+
+            if (button == Input.Buttons.LEFT) {
+                viewport.unproject(
+                    mouseWorldPosition.set(screenX, screenY)
+                );
+
+                spellTome.activateSelectedSpell(mouseWorldPosition);
+
+                return true;
+            }
+
+            return false;
+        }
+    };
+
     private void renderDebug(Camera camera) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -139,6 +160,7 @@ public class GameScreen implements Screen {
         tiledMap.dispose();
         timer.dispose();
         spellTome.dispose();
+        world.dispose();
     }
 
     // Unused overrides
