@@ -48,6 +48,14 @@ public class Goose extends Entity {
         return player;
     }
 
+    public float getWidth() {
+        return texture.getWidth();
+    }
+
+    public float getHeight() {
+        return texture.getHeight();
+    }
+
     public void trap(float duration) {
         trappedTimer = Math.max(trappedTimer, duration);
     }

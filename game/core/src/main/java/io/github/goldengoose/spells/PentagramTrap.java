@@ -44,16 +44,18 @@ public class PentagramTrap extends Entity {
         );
     }
 
-    public boolean checkGoose(Goose goose) {
-        if (triggered || lifetime <= 0f) return false;
+    public void checkGoose(Goose goose) {
+        if (triggered || lifetime <= 0f) return;
 
         if (position.dst2(goose.getPosition()) <= RADIUS * RADIUS) {
+            goose.getPosition().set(
+                position.x - goose.getWidth() / 2f,
+                position.y - goose.getHeight() / 2f
+            );
             goose.trap(lifetime);
             triggered = true;
-            return true;
         }
 
-        return false;
     }
 
     public boolean isExpired() {
