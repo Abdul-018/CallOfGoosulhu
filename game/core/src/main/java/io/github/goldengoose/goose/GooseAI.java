@@ -179,6 +179,17 @@ public class GooseAI {
         return false;
     }
 
+    public boolean isMoving() {
+        return !velocity.isZero();
+    }
+
+    public boolean isChasing() {
+        return state == GooseState.CHASING;
+    }
+
+    public Vector2 getFacingDirection() {
+        return facingDirection;
+    }
 
     public void renderDebug(ShapeRenderer shapes) {
         Vector2 position = goose.getPosition();
