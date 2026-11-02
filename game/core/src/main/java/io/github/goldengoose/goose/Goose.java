@@ -1,15 +1,15 @@
 package io.github.goldengoose.goose;
 
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.player.Player;
-import io.github.goldengoose.shared.Entity;
-import io.github.goldengoose.shared.Utilities;
+import io.github.goldengoose.assets.Assets;
+import io.github.goldengoose.world.Entity;
+import io.github.goldengoose.util.Utilities;
 
 public class Goose extends Entity {
     //------------
@@ -32,25 +32,17 @@ public class Goose extends Entity {
     private boolean honk;
     private float trappedTimer = 0f;
 
-    private final Texture walkSheet;
-    private final Texture runSheet;
     private final Animation<TextureRegion>[] walkAnimations;
     private final Animation<TextureRegion>[] runAnimations;
 
     private float stateTime = 0f;
 
-    public Goose(Player player, Vector2 position) {
-        walkSheet = new Texture("cthulhu_goose_walking.png");
-        runSheet = new Texture("cthulhu_goose_running.png");
-        walkAnimations = Utilities.createAnimations(walkSheet, WALK_FRAME_TIME, FRAME_SIZE);
-        runAnimations = Utilities.createAnimations(runSheet, RUN_FRAME_TIME, FRAME_SIZE);
+    public Goose(Player player, Vector2 position, Assets assets) {
+        walkAnimations = Utilities.createAnimations(assets.getTexture(Assets.GOOSE_WALK), WALK_FRAME_TIME, FRAME_SIZE);
+        runAnimations = Utilities.createAnimations(assets.getTexture(Assets.GOOSE_RUN), RUN_FRAME_TIME, FRAME_SIZE);
 
         this.player = player;
         this.position.set(position);
-    }
-
-    @Override
-    public void gameStart() {
     }
 
     @Override
@@ -103,10 +95,12 @@ public class Goose extends Entity {
         return player;
     }
 
+    @Override
     public float getWidth() {
         return FRAME_SIZE;
     }
 
+    @Override
     public float getHeight() {
         return FRAME_SIZE;
     }
@@ -117,11 +111,5 @@ public class Goose extends Entity {
 
     public boolean isTrapped() {
         return trappedTimer > 0f;
-    }
-    
-    @Override
-    public void dispose() {
-        walkSheet.dispose();
-        runSheet.dispose();
     }
 }

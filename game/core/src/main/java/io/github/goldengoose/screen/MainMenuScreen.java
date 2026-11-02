@@ -8,14 +8,14 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.goldengoose.Cog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import io.github.goldengoose.shared.Utilities;
-import io.github.goldengoose.shared.enums.CogFonts;
+import io.github.goldengoose.ui.UiStyles;
+import io.github.goldengoose.util.Utilities;
+import io.github.goldengoose.assets.CogFonts;
 
 public class MainMenuScreen implements Screen {
 
@@ -39,34 +39,14 @@ public class MainMenuScreen implements Screen {
     private void createMenu() {
         menuFont = Utilities.createFont(CogFonts.CRISTOFORO, 64);
 
-        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle titleStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle();
-        titleStyle.font = menuFont;
-        titleStyle.fontColor = Color.WHITE;
-
-        Label title = new Label("Call of Goosulhu", titleStyle);
-
-        TextButton.TextButtonStyle buttonStyle =
-            new TextButton.TextButtonStyle();
-
-        buttonStyle.font = menuFont;
-        buttonStyle.fontColor = Color.WHITE;
-        buttonStyle.overFontColor = Color.YELLOW;
-
-        buttonStyle.up = new BaseDrawable();
-        buttonStyle.down = new BaseDrawable();
-        buttonStyle.over = new BaseDrawable();
-
-        TextButton playButton =
-            new TextButton("PLAY", buttonStyle);
-
-        TextButton quitButton =
-            new TextButton("QUIT", buttonStyle);
+        Label title = new Label("Call of Goosulhu", UiStyles.label(menuFont));
+        TextButton playButton = new TextButton("PLAY", UiStyles.button(menuFont));
+        TextButton quitButton = new TextButton("QUIT", UiStyles.button(menuFont));
 
         playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new GameScreen(game));
-                dispose();
+                game.changeScreen(new GameScreen(game));
             }
         });
 
@@ -74,7 +54,6 @@ public class MainMenuScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.exit();
-                dispose();
             }
         });
 
@@ -101,7 +80,6 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.viewport.update(width, height, true);
         stage.getViewport().update(width, height, true);
     }
 
