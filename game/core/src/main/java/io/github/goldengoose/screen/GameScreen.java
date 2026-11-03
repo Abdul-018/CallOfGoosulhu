@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.goldengoose.Cog;
 import io.github.goldengoose.GameTimer;
 import io.github.goldengoose.assets.Assets;
+import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.ui.PauseMenu;
 import io.github.goldengoose.util.InputManager;
 import io.github.goldengoose.world.*;
@@ -25,7 +26,7 @@ import io.github.goldengoose.spells.TestSpell;
 
 public class GameScreen implements Screen {
     private final Cog game;
-    private final Viewport worldViewport = new FitViewport(400, 300);
+    private final Viewport worldViewport = new FitViewport(600, 450);
     private final Viewport hudViewport = new ScreenViewport();
     private final ShapeRenderer shapes = new ShapeRenderer();
     private final InputMultiplexer multiplexer = new InputMultiplexer();
@@ -40,6 +41,7 @@ public class GameScreen implements Screen {
 
     private final TiledMap tiledMap;
     private final OrthogonalTiledMapRenderer mapRenderer;
+    private final GameLighting lighting;
 
     private boolean paused = true;
     private boolean debug = false;
@@ -47,6 +49,7 @@ public class GameScreen implements Screen {
     public GameScreen(final Cog game) {
         this.game = game;
         world = new GameWorld(game.assets);
+        world.getPlayer().setPosition(23 * 32, 2 * 32);
 
         pauseMenu = new PauseMenu(game);
 
@@ -56,8 +59,9 @@ public class GameScreen implements Screen {
         spellTome.addSpell(pentagramTrapSpell);
         spellTome.addSpell(testSpell);
 
-        tiledMap = new TmxMapLoader().load("maps/base_map.tmx");
+        tiledMap = new TmxMapLoader().load("maps/Outside_campus_cthulhu.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        lighting = new GameLighting(tiledMap, worldViewport);
 
 
         multiplexer.addProcessor(pauseMenu.getStage());
@@ -99,6 +103,7 @@ public class GameScreen implements Screen {
         game.batch.begin();
         world.render(game.batch);
         game.batch.end();
+        lighting.render();
 
         if (debug) renderDebug();
 
@@ -175,6 +180,7 @@ public class GameScreen implements Screen {
         shapes.dispose();
         tiledMap.dispose();
         mapRenderer.dispose();
+        lighting.dispose();
         pauseMenu.dispose();
         hudFont.dispose();
     }
