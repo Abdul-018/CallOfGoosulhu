@@ -9,11 +9,13 @@ import com.badlogic.gdx.math.Vector2;
  * IDLE: Wander around the campus, has cone-like visual detection, circular audial detection
  * ALERT: possibly not needed
  * CHASING: Chasing the player
+ * SWARMING: Attempt to surround the player
  */
 public class GooseAI {
     enum GooseState {
         IDLE,
-        CHASING
+        CHASING,
+        SWARMING
     }
 
     //------------
@@ -42,13 +44,19 @@ public class GooseAI {
     private static final float FOLLOW_RANGE = 200f;
 
     // Geese swarming separation behaviour:
-    // Geese closer than this distance push each other apart
-    private static final float SEPARATION_RADIUS = 12;
+    // Running geese closer than this push each other apart
+    private static final float SEPARATION_RADIUS_RUNNING = 24f;
+    // Swarming geese stand closer together than running ones
+    private static final float SEPARATION_RADIUS_STANDING = 16f;
     private static final float SEPARATION_WEIGHT = 1.6f;
     // pushes weaker than this are ignored - to prevent twitching
     private static final float SEPARATION_DEADZONE = 0.05f;
     private static final float HONK_RESUME_MARGIN = 10f;
-
+    private static final float CHASE_TARGET_RADIUS = HONK_RANGE * 0.9f;
+    // Geese that are pushed out of the swarming ring by this much is pulled back
+    private static final float RING_TOLERANCE = 1f;
+    // How strongly geese push each other around the player
+    private static final float SWARM_SLIDE_WEIGHT = 1f;
     //------------
     // END CONSTANTS
     //------------
@@ -72,7 +80,9 @@ public class GooseAI {
     // Vector to other goose's center, used for separation
     private final Vector2 otherCentre = new Vector2();
     private final Vector2 awayFromOther = new Vector2();
-    private boolean honking = false;
+    // The point on the ring this goose is heading for
+    private final Vector2 ringTarget = new Vector2();
+    private final Vector2 radial = new Vector2();
     private static final float VISION_DOT_THRESHOLD =
         (float) Math.cos(Math.toRadians(VISION_HALF_ANGLE_DEGREES));
 
@@ -90,14 +100,23 @@ public class GooseAI {
         float playerDist2 = gooseCentre.dst2(playerCentre);
 
         // TODO: Once we determine how player makes noise, replace true with variable:
+
         boolean detected = canSeePlayer()
             || canHearPlayer(true);
 
-        if (state == GooseState.CHASING) {
+        if (state != GooseState.IDLE) {
             if (playerDist2 > FOLLOW_RANGE * FOLLOW_RANGE) {
-                state = detected ? GooseState.CHASING : GooseState.IDLE;
+                state = detected ? state : GooseState.IDLE;
             }
         } else if (detected) {
+            state = GooseState.CHASING;
+        }
+
+        // Swarming goose goes back to chasing once player has left this range
+        float resumeRange = HONK_RANGE + HONK_RESUME_MARGIN;
+        if (state == GooseState.CHASING && playerDist2 <= HONK_RANGE * HONK_RANGE) {
+            state = GooseState.SWARMING;
+        } else if (state == GooseState.SWARMING && playerDist2 > resumeRange * resumeRange) {
             state = GooseState.CHASING;
         }
 
@@ -107,25 +126,31 @@ public class GooseAI {
             hasIdleTarget = false;
             idleWaiting = false;
 
-            float resumeRange = HONK_RANGE + HONK_RESUME_MARGIN;
-            if (playerDist2 <= HONK_RANGE * HONK_RANGE) {
-                honking = true;
-            } else if (playerDist2 > resumeRange * resumeRange) {
-                honking = false;
+            // aim for the point on the ring that is on this goose's own side of the player
+            // From player to this goose
+            radial.set(gooseCentre).sub(playerCentre);
+            if (radial.isZero()) {
+                radial.set(1f, 0f);
             }
+            radial.nor();
+            ringTarget.set(playerCentre).mulAdd(radial, CHASE_TARGET_RADIUS);
+            moveTo(ringTarget);
+            // Chasing geese get the full push seperation
+            applySeparation();
+        } else if (state == GooseState.SWARMING) {
+            hasIdleTarget = false;
+            idleWaiting = false;
+            // Stand on ring, surround player on ring.
+            swarm();
 
-            if (!honking) {
-                moveTo(playerCentre);
-            } else {
-                // TODO: Honk at the player.
-            }
+            // TODO: Honk at the player.
+
         } else {
-            honking = false;
             wander(deltaTime);
+            applySeparation();
         }
-        // Add the push away from nearby geese to the movement direction
-        applySeparation();
-        float speed = state == GooseState.CHASING
+
+        float speed = state != GooseState.IDLE
             ? CHASING_SPEED
             : IDLE_SPEED;
 
@@ -205,11 +230,14 @@ public class GooseAI {
     // Keep geese from stacking on top of each other and turning into a "blob"
     // Works by comparing distance between each goose every other frame and pushing them apart if so
     public void addSeparationFrom(Goose other) {
+        boolean eitherSwarming = state == GooseState.SWARMING || other.isSwarming();
+        // Crowds stand closer together than running geese
+        float radius = eitherSwarming ? SEPARATION_RADIUS_STANDING : SEPARATION_RADIUS_RUNNING;
         other.getCentre(otherCentre);
         goose.getCentre(awayFromOther);
         awayFromOther.sub(otherCentre);
         float dist = awayFromOther.len();
-        if (dist >= SEPARATION_RADIUS) {
+        if (dist >= radius) {
             return;
         }
         // Two geese are exactly ontop of each other
@@ -218,8 +246,43 @@ public class GooseAI {
             awayFromOther.set(1f, 0f).setAngleDeg(MathUtils.random(360f));
         }
         // forces geese to push harder apart when they're closer together - fading out as they get further away
-        float strength = 1f - dist / SEPARATION_RADIUS;
+        float strength = 1f - dist / radius;
         separation.add(awayFromOther.nor().scl(strength));
+    }
+
+    // Behaviour while standing on the honk ring. Geese attempt to spread out along the ring around the player
+    private void swarm() {
+        toPlayer.set(playerCentre).sub(gooseCentre);
+        if (!toPlayer.isZero()) {
+            facingDirection.set(toPlayer).nor();
+        }
+
+        radial.set(gooseCentre).sub(playerCentre);
+        float dist = radial.len();
+        if (dist < 0.001f) {
+            radial.set(1f, 0f);
+        } else {
+            radial.scl(1f / dist);
+        }
+
+        // Keeps the geese seperation to only trying to offset each other around the ring by removing any push towards/away from player.
+        separation.mulAdd(radial, -separation.dot(radial));
+        if (separation.len2() < SEPARATION_DEADZONE * SEPARATION_DEADZONE) {
+            separation.setZero();
+        }
+        velocity.set(separation).scl(SWARM_SLIDE_WEIGHT);
+        if (dist > HONK_RANGE + RING_TOLERANCE) {
+            velocity.mulAdd(radial, -1f);
+        } else if (dist < HONK_RANGE - RING_TOLERANCE) {
+            velocity.mulAdd(radial, 1f);
+        }
+        velocity.limit(1f);
+        separation.setZero();
+    }
+
+    // Allows other geese to see if this one is setted in on the ring.
+    public boolean isSwarming() {
+        return state == GooseState.SWARMING;
     }
 
     public void clearSeparation() {
@@ -290,8 +353,10 @@ public class GooseAI {
             32
         );
 
-        shapes.setColor(1f, 0.2f, 0.2f, 1f); // Red seperation circle
-        shapes.circle(x, y, SEPARATION_RADIUS / 2f, 24);
+        shapes.setColor(1f, 0.2f, 0.2f, 1f); // red separation circle
+        shapes.circle(x, y, (state == GooseState.SWARMING ? SEPARATION_RADIUS_STANDING : SEPARATION_RADIUS_RUNNING) / 2f, 24); // CHANGED: ...two geese's circles touch when they are the separation distance apart (depends on state)
+        shapes.setColor(0.2f, 1f, 0.2f, 1f); // green honk ring around the player
+        shapes.circle(playerCentre.x, playerCentre.y, HONK_RANGE, 64); // where swarming geese should stand
 
         // Facing direction: short white line.
         shapes.setColor(1f, 1f, 1f, 1f);
