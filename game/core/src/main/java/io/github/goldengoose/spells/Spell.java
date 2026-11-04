@@ -3,6 +3,7 @@ package io.github.goldengoose.spells;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.player.Player;
+import io.github.goldengoose.assets.Assets;
 
 public abstract class Spell {
     protected Texture texture;
@@ -10,9 +11,11 @@ public abstract class Spell {
     protected float cooldown;
 
     protected Player player;
+    protected Assets assets;
 
-    public Spell(Player player) {
+    public Spell(Player player, Assets assets) {
         this.player = player;
+        this.assets = assets;
     }
 
     private float cooldownCounter;
@@ -24,14 +27,14 @@ public abstract class Spell {
      */
     public boolean activate(Vector2 worldPos) {
         if (cooldownCounter > 0 ||
-            player.getPosition().dst2(worldPos) <= range * range) {
+            player.getPosition().dst2(worldPos) > range * range) {
             return false;
         }
 
         cooldownCounter = cooldown;
         triggerEffect(worldPos);
         return true;
-    };
+    }
 
     /**
      * Called to trigger actual effect of spell
@@ -54,6 +57,7 @@ public abstract class Spell {
     }
 
     public float getCooldownPercent() {
-        return cooldownCounter/cooldown;
+        if (cooldown <= 0) return 0f;
+        return Math.max(0f, cooldownCounter / cooldown);
     }
 }
