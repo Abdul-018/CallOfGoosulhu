@@ -41,13 +41,13 @@ public class GooseAI {
     // Range from which it will still follow the player, ie simply running far enough won't make the goose forget
     private static final float FOLLOW_RANGE = 200f;
 
-    // Instead of chasing the player's exact position, each goose heads for it's own spot on a ring around the player
-    // This prevents them from stacking ontop of each other like a blob when the player runs in a circle around them
-    private static final float CHASE_RING_RADIUS = HONK_RANGE * .8f;
-
-    // Geese's chasing target is picke7d within this many degrees either side of the direction the goose is running from
-    // (So they don't pick a target on the otherside of the player - thus running through them)
-    private static final float CHASE_SPREAD_ANGLE = 90f;
+    // Geese swarming separation behaviour:
+    // Geese closer than this distance push each other apart
+    private static final float SEPARATION_RADIUS = 12;
+    private static final float SEPARATION_WEIGHT = 1.6f;
+    // pushes weaker than this are ignored - to prevent twitching
+    private static final float SEPARATION_DEADZONE = 0.05f;
+    private static final float HONK_RESUME_MARGIN = 10f;
 
     //------------
     // END CONSTANTS
@@ -55,7 +55,6 @@ public class GooseAI {
 
 
     private GooseState state = GooseState.IDLE;
-
     private final Goose goose;
     private final Vector2 velocity = new Vector2();
     private final Vector2 direction = new Vector2();
@@ -69,8 +68,11 @@ public class GooseAI {
 
     private final Vector2 facingDirection = new Vector2(1f, 0f);
     private final Vector2 toPlayer = new Vector2();
-    private final Vector2 chaseOffset = new Vector2();
-    private final Vector2 chaseTarget = new Vector2();
+    private final Vector2 separation = new Vector2();
+    // Vector to other goose's center, used for separation
+    private final Vector2 otherCentre = new Vector2();
+    private final Vector2 awayFromOther = new Vector2();
+    private boolean honking = false;
     private static final float VISION_DOT_THRESHOLD =
         (float) Math.cos(Math.toRadians(VISION_HALF_ANGLE_DEGREES));
 
@@ -97,7 +99,6 @@ public class GooseAI {
             }
         } else if (detected) {
             state = GooseState.CHASING;
-            pickOffset(playerCentre, gooseCentre);
         }
 
         velocity.setZero();
@@ -106,20 +107,24 @@ public class GooseAI {
             hasIdleTarget = false;
             idleWaiting = false;
 
-            chaseTarget.set(playerCentre).add(chaseOffset);
-            moveTo(chaseTarget);
+            float resumeRange = HONK_RANGE + HONK_RESUME_MARGIN;
+            if (playerDist2 <= HONK_RANGE * HONK_RANGE) {
+                honking = true;
+            } else if (playerDist2 > resumeRange * resumeRange) {
+                honking = false;
+            }
 
-            // if (playerDist2 > HONK_RANGE * HONK_RANGE) {
-                // moveTo(playerPosition);
-            // } else {
-
-            if (playerDist2 <= HONK_RANGE * HONK_RANGE){
+            if (!honking) {
+                moveTo(playerCentre);
+            } else {
                 // TODO: Honk at the player.
             }
         } else {
+            honking = false;
             wander(deltaTime);
         }
-
+        // Add the push away from nearby geese to the movement direction
+        applySeparation();
         float speed = state == GooseState.CHASING
             ? CHASING_SPEED
             : IDLE_SPEED;
@@ -127,13 +132,6 @@ public class GooseAI {
         goose.getPosition().mulAdd(velocity, speed * deltaTime);
     }
 
-    private void pickOffset(Vector2 playerPosition, Vector2 goosePosition) {
-        Vector2 playerToGoose = goosePosition.cpy().sub(playerPosition);
-        float approachAngle = playerToGoose.isZero() ? 0f : playerToGoose.angleDeg();
-        float spread = ((float) Math.random() * 2f - 1f) * CHASE_SPREAD_ANGLE;
-
-        chaseOffset.set(CHASE_RING_RADIUS, 0f).setAngleDeg(approachAngle + spread);
-    }
     private void wander(float deltaTime) {
         if (!hasIdleTarget) {
             chooseNewTarget();
@@ -204,6 +202,42 @@ public class GooseAI {
         return false;
     }
 
+    // Keep geese from stacking on top of each other and turning into a "blob"
+    // Works by comparing distance between each goose every other frame and pushing them apart if so
+    public void addSeparationFrom(Goose other) {
+        other.getCentre(otherCentre);
+        goose.getCentre(awayFromOther);
+        awayFromOther.sub(otherCentre);
+        float dist = awayFromOther.len();
+        if (dist >= SEPARATION_RADIUS) {
+            return;
+        }
+        // Two geese are exactly ontop of each other
+        if (dist < 0.001f) {
+            // So choose random direction for them to separate
+            awayFromOther.set(1f, 0f).setAngleDeg(MathUtils.random(360f));
+        }
+        // forces geese to push harder apart when they're closer together - fading out as they get further away
+        float strength = 1f - dist / SEPARATION_RADIUS;
+        separation.add(awayFromOther.nor().scl(strength));
+    }
+
+    public void clearSeparation() {
+        separation.setZero();
+    }
+
+    private void applySeparation() {
+        if (separation.len2() < SEPARATION_DEADZONE * SEPARATION_DEADZONE) {
+            // Tiny push - ignore it
+            separation.setZero();
+            return;
+        }
+        // Movement direction + weighted push
+        velocity.add(separation.scl(SEPARATION_WEIGHT));
+        velocity.limit(1f);
+        separation.setZero();
+    }
+
     public boolean isMoving() {
         return !velocity.isZero();
     }
@@ -255,6 +289,9 @@ public class GooseAI {
             halfAngle * 2f,
             32
         );
+
+        shapes.setColor(1f, 0.2f, 0.2f, 1f); // Red seperation circle
+        shapes.circle(x, y, SEPARATION_RADIUS / 2f, 24);
 
         // Facing direction: short white line.
         shapes.setColor(1f, 1f, 1f, 1f);

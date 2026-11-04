@@ -49,6 +49,8 @@ public class Goose extends Entity {
     public void update(float deltaTime) {
         if (trappedTimer > 0f) {
             trappedTimer -= deltaTime;
+            // A goose that has been trapped between other geese isn't updating, so don t let the pushes pile up
+            gooseAI.clearSeparation();
             return;
         }
 
@@ -84,6 +86,14 @@ public class Goose extends Entity {
             batch.draw(frame, position.x + FRAME_SIZE, position.y, -FRAME_SIZE, FRAME_SIZE);
         } else {
             batch.draw(frame, position.x, position.y, FRAME_SIZE, FRAME_SIZE);
+        }
+    }
+
+    @Override
+    //GameWorld calls this for every pair of entities each frame
+    public void interact(Entity other) {
+        if (other instanceof Goose otherGoose) {
+            gooseAI.addSeparationFrom(otherGoose);
         }
     }
 
