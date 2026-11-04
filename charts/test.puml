@@ -75,7 +75,7 @@ endlegend
 **** Normal goose
 **** Student goose
 **** Security goose
-*** Goose animation
+*** Goose animation <<milan>><<prog>>
 *** Goose audio
 
 ** 3. Map and\n Environment
@@ -110,15 +110,15 @@ endlegend
 *** Timer UI
 *** Timer expiry\n and defeat handling
 
-** 6. Spell System \n To be decided\n which spells <<milan>>
-*** Spell system\n foundation <<milan>>
-**** Spell selection <<milan>>
-**** Spell activation <<milan>>
-**** Spell effects <<milan>>
-**** Cooldowns/charges <<milan>>
-*** Initial spell availability <<milan>>
-*** Pentagram spell <<milan>>
-*** Spell feedback and effects <<milan>>
+** 6. Spell System \n To be decided\n which spells <<milan>><<prog>>
+*** Spell system\n foundation <<milan>><<done>>
+**** Spell selection <<milan>><<done>>
+**** Spell activation <<milan>><<done>>
+**** Spell effects <<milan>><<prog>>
+**** Cooldowns/charges <<milan>><<done>>
+*** Initial spell availability <<milan>><<prog>>
+*** Pentagram spell <<milan>><<prog>>
+*** Spell feedback and effects <<milan>><<prog>>
 *** Spell integration with goose AI
 
 ** 7. Patience System <<lisa>>
@@ -137,7 +137,7 @@ endlegend
 *** Gameplay HUD
 **** Timer
 **** Patience bar
-**** Spell-tome\n interface
+**** Spell-tome\n interface <<milan>><<prog>>
 *** Victory screen
 *** Defeat screen
 *** Restart interface
@@ -151,7 +151,6 @@ endlegend
 *** Speech bubbles/subtitles
 
 ** 11. Animation
-*** Animation controller \n(if libgdx doesn't have \nits own thing)
 *** Player animation integration
-*** Goose animation integration
+*** Goose animation integration <<milan>><<prog>>
 @endwbs

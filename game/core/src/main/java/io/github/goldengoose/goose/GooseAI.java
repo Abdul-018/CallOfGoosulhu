@@ -1,6 +1,7 @@
 package io.github.goldengoose.goose;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -45,10 +46,12 @@ public class GooseAI {
 
 
     private GooseState state = GooseState.IDLE;
-    private Vector2 idleTarget;
     private final Goose goose;
     private final Vector2 velocity = new Vector2();
     private final Vector2 direction = new Vector2();
+
+    private final Vector2 idleTarget = new Vector2();
+    private boolean hasIdleTarget = false;
 
     private boolean idleWaiting = false;
     private float waitTimer;
@@ -59,16 +62,18 @@ public class GooseAI {
     private static final float VISION_DOT_THRESHOLD =
         (float) Math.cos(Math.toRadians(VISION_HALF_ANGLE_DEGREES));
 
+    private final Vector2 gooseCentre = new Vector2();
+    private final Vector2 playerCentre = new Vector2();
+
     public GooseAI(Goose goose) {
         this.goose = goose;
     }
 
 
     public void update(float deltaTime) {
-        Vector2 playerPosition = goose.getPlayer().getPosition();
-        Vector2 goosePosition = goose.getPosition();
-
-        float playerDist2 = goosePosition.dst2(playerPosition);
+        goose.getCentre(gooseCentre);
+        goose.getPlayer().getCentre(playerCentre);
+        float playerDist2 = gooseCentre.dst2(playerCentre);
 
         // TODO: Once we determine how player makes noise, replace true with variable:
         boolean detected = canSeePlayer()
@@ -85,10 +90,11 @@ public class GooseAI {
         velocity.setZero();
 
         if (state == GooseState.CHASING) {
-            idleTarget = null;
+            hasIdleTarget = false;
+            idleWaiting = false;
 
             if (playerDist2 > HONK_RANGE * HONK_RANGE) {
-                moveTo(playerPosition);
+                moveTo(playerCentre);
             } else {
                 // TODO: Honk at the player.
             }
@@ -100,11 +106,11 @@ public class GooseAI {
             ? CHASING_SPEED
             : IDLE_SPEED;
 
-        goosePosition.mulAdd(velocity, speed * deltaTime);
+        goose.getPosition().mulAdd(velocity, speed * deltaTime);
     }
 
     private void wander(float deltaTime) {
-        if (idleTarget == null) {
+        if (!hasIdleTarget) {
             chooseNewTarget();
             return;
         }
@@ -114,7 +120,7 @@ public class GooseAI {
             velocity.setZero();
 
             if (waitTimer <= 0f) {
-                idleTarget = null;
+                hasIdleTarget = false;
                 idleWaiting = false;
             }
 
@@ -125,21 +131,18 @@ public class GooseAI {
             velocity.setZero();
             idleWaiting = true;
 
-            waitTimer = MIN_IDLE_WAIT
-                + (float) Math.random() * (MAX_IDLE_WAIT - MIN_IDLE_WAIT);
+            waitTimer = MathUtils.random(MIN_IDLE_WAIT, MAX_IDLE_WAIT);
         }
     }
 
 
     private void chooseNewTarget() {
-        float angle = (float) (Math.random() * 2 * Math.PI);
-        float distance = MIN_WANDER_RANGE
-            + (float) Math.random() * (MAX_WANDER_RANGE - MIN_WANDER_RANGE);
+        float angle = MathUtils.random(MathUtils.PI2);
+        float distance = MathUtils.random(MIN_WANDER_RANGE, MAX_WANDER_RANGE);
 
-        idleTarget = new Vector2(
-            goose.getPosition().x + (float) Math.cos(angle) * distance,
-            goose.getPosition().y + (float) Math.sin(angle) * distance
-        );
+        idleTarget.set(gooseCentre).add(MathUtils.cos(angle) * distance, MathUtils.sin(angle) * distance);
+
+        hasIdleTarget = true;
         idleWaiting = false;
     }
 
@@ -148,14 +151,11 @@ public class GooseAI {
             return false;
         }
 
-        return goose.getPosition().dst2(goose.getPlayer().getPosition()) <= HEARING_RANGE * HEARING_RANGE;
+        return gooseCentre.dst2(playerCentre) <= HEARING_RANGE * HEARING_RANGE;
     }
 
     private boolean canSeePlayer() {
-        Vector2 goosePosition = goose.getPosition();
-        Vector2 playerPosition = goose.getPlayer().getPosition();
-
-        toPlayer.set(playerPosition).sub(goosePosition);
+        toPlayer.set(playerCentre).sub(gooseCentre);
 
         if (toPlayer.len2() > VISION_RANGE * VISION_RANGE) {
             return false;
@@ -167,9 +167,9 @@ public class GooseAI {
     }
 
     private boolean moveTo(Vector2 target) {
-        direction.set(target.cpy().sub(goose.getPosition()));
+        direction.set(target).sub(gooseCentre);
 
-        if (direction.len() < 3f) {
+        if (direction.len2() < 3f * 3f) {
             velocity.setZero();
             return true;
         }
@@ -179,12 +179,23 @@ public class GooseAI {
         return false;
     }
 
+    public boolean isMoving() {
+        return !velocity.isZero();
+    }
+
+    public boolean isChasing() {
+        return state == GooseState.CHASING;
+    }
+
+    public Vector2 getFacingDirection() {
+        return facingDirection;
+    }
 
     public void renderDebug(ShapeRenderer shapes) {
-        Vector2 position = goose.getPosition();
-
-        float x = position.x;
-        float y = position.y;
+        goose.getCentre(gooseCentre);
+        
+        float x = gooseCentre.x;
+        float y = gooseCentre.y;
 
         // Hearing radius: circular range.
         shapes.setColor(0f, 0.7f, 1f, 1f);
