@@ -55,7 +55,7 @@ public class GooseAI {
 
 
     private GooseState state = GooseState.IDLE;
-    private Vector2 idleTarget;
+
     private final Goose goose;
     private final Vector2 velocity = new Vector2();
     private final Vector2 direction = new Vector2();
@@ -97,7 +97,7 @@ public class GooseAI {
             }
         } else if (detected) {
             state = GooseState.CHASING;
-            pickOffset(playerPosition, goosePosition);
+            pickOffset(playerCentre, gooseCentre);
         }
 
         velocity.setZero();
@@ -106,7 +106,7 @@ public class GooseAI {
             hasIdleTarget = false;
             idleWaiting = false;
 
-            chaseTarget.set(playerPosition).add(chaseOffset);
+            chaseTarget.set(playerCentre).add(chaseOffset);
             moveTo(chaseTarget);
 
             // if (playerDist2 > HONK_RANGE * HONK_RANGE) {
