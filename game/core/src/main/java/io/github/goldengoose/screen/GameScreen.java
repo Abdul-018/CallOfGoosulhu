@@ -18,11 +18,12 @@ import io.github.goldengoose.GameTimer;
 import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.ui.PauseMenu;
+import io.github.goldengoose.ui.TomeMenu;
 import io.github.goldengoose.util.InputManager;
 import io.github.goldengoose.world.*;
 import io.github.goldengoose.spells.PentagramTrapSpell;
 import io.github.goldengoose.spells.SpellTome;
-import io.github.goldengoose.spells.TestSpell;
+import io.github.goldengoose.spells.ElderSignSpell;
 
 public class GameScreen implements Screen {
     private final Cog game;
@@ -36,6 +37,7 @@ public class GameScreen implements Screen {
     private final GameWorld world;
     private final GameTimer timer = new GameTimer(5 * 60);
     private final PauseMenu pauseMenu;
+    private final TomeMenu tomeMenu;
     private final SpellTome spellTome;
     private final BitmapFont hudFont = new BitmapFont();
 
@@ -44,6 +46,7 @@ public class GameScreen implements Screen {
     private final GameLighting lighting;
 
     private boolean paused = true;
+    private boolean tomeOpen = false;
     private boolean debug = false;
 
     public GameScreen(final Cog game) {
@@ -51,18 +54,18 @@ public class GameScreen implements Screen {
         world = new GameWorld(game.assets);
         world.getPlayer().setPosition(23 * 32, 2 * 32);
 
-        pauseMenu = new PauseMenu(game);
-
         PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(world.getPlayer(), world, game.assets);
-        TestSpell testSpell = new TestSpell(world.getPlayer(), game.assets);
+        ElderSignSpell elderSignSpell = new ElderSignSpell(world.getPlayer(),world, game.assets);
         spellTome = new SpellTome(game.assets.getTexture(Assets.SPELL_TOME));
         spellTome.addSpell(pentagramTrapSpell);
-        spellTome.addSpell(testSpell);
+        spellTome.addSpell(elderSignSpell);
 
         tiledMap = new TmxMapLoader().load("maps/Outside_campus_cthulhu.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         lighting = new GameLighting(tiledMap, worldViewport);
 
+        pauseMenu = new PauseMenu(game);
+        tomeMenu = new TomeMenu(game, game.assets.getTexture(Assets.SPELL_TOME_EMPTY), spellTome);
 
         multiplexer.addProcessor(pauseMenu.getStage());
         multiplexer.addProcessor(spellTome.getInputProcessor());
@@ -76,10 +79,16 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if (InputManager.pause()) {
+        if (!tomeOpen && InputManager.pause()) {
             paused = !paused;
             pauseMenu.setVisible(paused);
         }
+        if ((paused == tomeOpen) && InputManager.tome()) {
+            tomeOpen = !tomeOpen;
+            paused = tomeOpen;
+            spellTome.setVisible(!tomeOpen);
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) debug = !debug;
 
         if (!paused) {
@@ -103,6 +112,8 @@ public class GameScreen implements Screen {
         game.batch.begin();
         world.render(game.batch);
         game.batch.end();
+
+        world.emitLights(lighting);
         lighting.render();
 
         if (debug) renderDebug();
@@ -131,6 +142,11 @@ public class GameScreen implements Screen {
 
             pauseMenu.act(delta);
             pauseMenu.draw();
+        }
+        if (tomeOpen) {
+            game.batch.begin();
+            tomeMenu.draw(game.batch, hudViewport);
+            game.batch.end();
         }
 
         //TODO: Remove once game has proper exit feature, this is just for testing
@@ -182,6 +198,7 @@ public class GameScreen implements Screen {
         mapRenderer.dispose();
         lighting.dispose();
         pauseMenu.dispose();
+        tomeMenu.dispose();
         hudFont.dispose();
     }
 
