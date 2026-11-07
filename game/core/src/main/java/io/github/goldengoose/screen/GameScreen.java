@@ -24,6 +24,7 @@ import io.github.goldengoose.world.*;
 import io.github.goldengoose.spells.PentagramTrapSpell;
 import io.github.goldengoose.spells.SpellTome;
 import io.github.goldengoose.spells.ElderSignSpell;
+import com.badlogic.gdx.math.Rectangle;
 
 public class GameScreen implements Screen {
     private final Cog game;
@@ -44,6 +45,8 @@ public class GameScreen implements Screen {
     private final TiledMap tiledMap;
     private final OrthogonalTiledMapRenderer mapRenderer;
     private final GameLighting lighting;
+    private final DepthRenderer depthRenderer;
+    private final Rectangle viewRect = new Rectangle();
 
     private boolean paused = true;
     private boolean tomeOpen = false;
@@ -60,9 +63,10 @@ public class GameScreen implements Screen {
         spellTome.addSpell(pentagramTrapSpell);
         spellTome.addSpell(elderSignSpell);
 
-        tiledMap = new TmxMapLoader().load("maps/Outside_campus_cthulhu.tmx");
+        tiledMap = new TmxMapLoader().load("maps/Outside_campus_cthulhu_props.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         lighting = new GameLighting(tiledMap, worldViewport);
+        depthRenderer = new DepthRenderer(tiledMap);
 
         pauseMenu = new PauseMenu(game);
         tomeMenu = new TomeMenu(game, game.assets.getTexture(Assets.SPELL_TOME_EMPTY), spellTome);
@@ -104,13 +108,19 @@ public class GameScreen implements Screen {
         worldViewport.apply();
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        OrthographicCamera camera = (OrthographicCamera) worldViewport.getCamera();
 
         // World
         mapRenderer.setView((OrthographicCamera) worldViewport.getCamera());
-        mapRenderer.render();
+        mapRenderer.render(depthRenderer.getFlatLayers());
+
+        viewRect.set(camera.position.x - camera.viewportWidth / 2, camera.position.y - camera.viewportHeight / 2,
+            camera.viewportWidth, camera.viewportHeight);
+
         game.batch.setProjectionMatrix(worldViewport.getCamera().combined);
         game.batch.begin();
-        world.render(game.batch);
+        world.renderGround(game.batch);
+        depthRenderer.render(game.batch, world.getDepthEntities(), viewRect);
         game.batch.end();
 
         world.emitLights(lighting);
