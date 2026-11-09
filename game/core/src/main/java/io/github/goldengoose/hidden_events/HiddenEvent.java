@@ -1,12 +1,14 @@
 package io.github.goldengoose.hidden_events;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.player.Player;
 import io.github.goldengoose.world.Entity;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.Set;
 
 
@@ -39,10 +41,14 @@ public abstract class HiddenEvent extends Entity {
     private final float height;
     private final float cooldownSeconds;  // minimum time between triggers; 0 = no limit
 
-    // Identity sets: two different entities are never "equal", whatever equals() says.
-    private final Set<Entity> inside = Collections.newSetFromMap(new HashMap<>());
-    private final Set<Entity> seenThisFrame = Collections.newSetFromMap(new HashMap<>());
-    private final Vector2 otherCentre = new Vector2(); // scratch vector, avoids a new Vector2 per check
+    // Apparently HashSet equals() is a poor comparitor of whether an entity occupies the exact same space in memory
+    // So Using IdentityHashMaps instead.
+    // The two sets are needed because the event can't know whether an entity has left without an entire frame passing.
+    // Interact() only reports who is present, not who isn't. So a comparison of the two sets needs to be done every frame to figure out whether someone has left.
+    private final Set<Entity> inside = Collections.newSetFromMap(new IdentityHashMap<>());
+    private final Set<Entity> seenThisFrame = Collections.newSetFromMap(new IdentityHashMap<>());
+
+    private final Vector2 otherCentre = new Vector2();
 
     private Listener listener;
     private float cooldownRemaining = 0f;
@@ -75,4 +81,111 @@ public abstract class HiddenEvent extends Entity {
     protected void onUpdate(float deltaTime) {
     }
 
+    protected final boolean trigger() {
+        if (cooldownRemaining > 0f) {
+            return false;
+        }
+        timesTriggered++;
+        revealed = true;
+        cooldownRemaining = cooldownSeconds;
+        if (listener != null) {
+            listener.onTriggered(this);
+        }
+        return true;
+    }
+
+
+    @Override
+    public final void update(float deltaTime) {
+        Iterator<Entity> it = inside.iterator();
+        while (it.hasNext()) {
+            Entity entity = it.next();
+            if (!seenThisFrame.contains(entity)) {
+                it.remove();
+                onExit(entity);
+            }
+        }
+        seenThisFrame.clear();
+
+        if (cooldownRemaining > 0f) {
+            cooldownRemaining -= deltaTime;
+        }
+
+        for (Entity entity : inside) {
+            onStay(entity, deltaTime);
+        }
+        onUpdate(deltaTime);
+    }
+
+
+    @Override
+    public final void interact(Entity other) {
+        if (other == this || !affects(other) || !contains(other)) {
+            return;
+        }
+        seenThisFrame.add(other);
+        if (inside.add(other)) { // add() is true only the first frame it is inside
+            onEnter(other);
+        }
+    }
+
+    // True if the entity's CENTRE is within the rectangle
+    public boolean contains(Entity other) {
+        other.getCentre(otherCentre);
+        return otherCentre.x >= position.x && otherCentre.x <= position.x + width
+            && otherCentre.y >= position.y && otherCentre.y <= position.y + height;
+    }
+
+
+    @Override
+    public void render(SpriteBatch batch) { }
+
+    // outline of the trigger zone
+    public void renderDebug(ShapeRenderer shapes) {
+        if (timesTriggered > 0) {
+            shapes.setColor(0.2f, 1f, 0.2f, 1f);
+        } else {
+            shapes.setColor(1f, 0f, 1f, 1f);
+        }
+        shapes.rect(position.x, position.y, width, height);
+    }
+
+    @Override
+    public float getWidth() {
+        return width;
+    }
+
+    @Override
+    public float getHeight() {
+        return height;
+    }
+
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getFeedbackMessage() {
+        return feedbackMessage;
+    }
+
+    public int getTimesTriggered() {
+        return timesTriggered;
+    }
+
+    public boolean isRevealed() {
+        return revealed;
+    }
+
+    public boolean canTrigger() {
+        return cooldownRemaining <= 0f;
+    }
+
+    public boolean isInside(Entity entity) {
+        return inside.contains(entity);
+    }
 }
