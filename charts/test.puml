@@ -60,7 +60,7 @@ endlegend
 
 ** 1. Player
 *** Player movement <<milan>><<prog>><<done>>
-*** Player collision\n and environmental interaction
+*** Player collision\n and environmental interaction <<charlie>>
 *** Player state management
 *** Player animation
 
@@ -76,6 +76,7 @@ endlegend
 **** Student goose
 **** Security goose
 *** Goose animation <<milan>><<prog>>
+*** Goose spawning
 *** Goose audio
 
 ** 3. Map and\n Environment
@@ -107,7 +108,7 @@ endlegend
 ** 5. Timer
 *** Timer logic <<charlie>><<done>>
 *** Timer integration\n with game states
-*** Timer UI
+*** Timer UI <<charlie>><<done>>
 *** Timer expiry\n and defeat handling
 
 ** 6. Spell System \n To be decided\n which spells <<milan>><<prog>>
@@ -135,8 +136,8 @@ endlegend
 ** 9. User Interface
 *** Start screen <<milan>><<prog>>
 *** Gameplay HUD
-**** Timer
-**** Patience bar
+**** Timer <<charlie>><<done>>
+**** Patience bar <<charlie>><<done>>
 **** Spell-tome\n interface <<milan>><<done>>
 *** Victory screen
 *** Defeat screen
