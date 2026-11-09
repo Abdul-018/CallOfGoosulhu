@@ -25,6 +25,8 @@ import io.github.goldengoose.spells.PentagramTrapSpell;
 import io.github.goldengoose.spells.SpellTome;
 import io.github.goldengoose.spells.ElderSignSpell;
 import com.badlogic.gdx.math.Rectangle;
+import io.github.goldengoose.hidden_events.HiddenEventsHandler;
+import io.github.goldengoose.hidden_events.TestHiddenEvent;
 
 public class GameScreen implements Screen {
     private final Cog game;
@@ -36,6 +38,7 @@ public class GameScreen implements Screen {
     private final Vector2 mouseWorldPosition = new Vector2();
 
     private final GameWorld world;
+    private final HiddenEventsHandler eventManager;
     private final GameTimer timer = new GameTimer(5 * 60);
     private final PauseMenu pauseMenu;
     private final TomeMenu tomeMenu;
@@ -56,6 +59,10 @@ public class GameScreen implements Screen {
         this.game = game;
         world = new GameWorld(game.assets);
         world.getPlayer().setPosition(23 * 32, 2 * 32);
+
+        eventManager = new HiddenEventsHandler(world);
+        // TEST ONLY: test hidden event
+        eventManager.register(new TestHiddenEvent(23 * 32 + 48, 2 * 32, 64, 64));
 
         PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(world.getPlayer(), world, game.assets);
         ElderSignSpell elderSignSpell = new ElderSignSpell(world.getPlayer(),world, game.assets);
@@ -99,6 +106,7 @@ public class GameScreen implements Screen {
             world.update(delta);
             spellTome.update(delta);
             timer.update(delta);
+            eventManager.update(delta);
         }
 
         Vector2 playerPos = new Vector2();
@@ -139,6 +147,10 @@ public class GameScreen implements Screen {
         game.batch.begin();
         hudFont.draw(game.batch, String.format("%.1f", timer.getSecondsRemaining()),
             20, hudViewport.getWorldHeight() - 20);
+        hudFont.draw(game.batch, "Events: " + eventManager.getEventsTriggered(),
+            20, hudViewport.getWorldHeight() - 50);
+        hudFont.draw(game.batch, eventManager.getMessage(),
+            20, hudViewport.getWorldHeight() - 80);
         spellTome.drawSprites(game.batch, hudViewport);
         game.batch.end();
 
