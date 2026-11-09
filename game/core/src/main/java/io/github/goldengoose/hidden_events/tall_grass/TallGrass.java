@@ -1,15 +1,16 @@
-package io.github.goldengoose.hidden_events;
+package io.github.goldengoose.hidden_events.tall_grass;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import io.github.goldengoose.hidden_events.HiddenEvent;
 import io.github.goldengoose.world.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * FR_HIDE: "Makes the avatar undetectable in tall grass or buildings for 3 seconds."
+ * Makes the player hide in tall grass (For how long?) - 3 seconds like req1 says?
  *
  * There is ONE tall grass event for the whole map, not one per patch. Instead of a
  * rectangular zone, "inside the event" means "the tile under the player's centre has
@@ -26,6 +27,7 @@ import java.util.List;
  * Decision still open for the team: does hiding last "while inside the grass" or for a
  * fixed window (FR_HIDE says 3 seconds)? The fields below are set up for the 3-second window.
  */
+
 public class TallGrass extends HiddenEvent {
 
     private static final String GRASS_LAYER_PROPERTY = "tall_grass"; // layer property that marks a tall grass layer in Tiled
@@ -39,9 +41,7 @@ public class TallGrass extends HiddenEvent {
     private boolean hiding = false;     // true while the player is undetectable
     private float hideTimer = 0f;       // seconds of hiding left
 
-    /**
-     * @param map the loaded Tiled map; the zone covers the whole map and contains() decides what counts as grass
-     */
+
     public TallGrass(TiledMap map) {
         super("Tall grass",
             "You are hidden in the tall grass!",
@@ -65,13 +65,8 @@ public class TallGrass extends HiddenEvent {
         //       the property GRASS_LAYER_PROPERTY set to true, add it to grassLayers.
     }
 
-    // ------------------------------------------------------------------
-    // Detection
-    // ------------------------------------------------------------------
 
-    /**
-     * Replaces the base class's rectangle test. True if the entity's centre is standing on grass.
-     */
+    // Replace hiddenevents trigger zone with one that copies the grass sprite
     @Override
     public boolean contains(Entity other) {
         // TODO: get the entity's centre (other.getCentre(...)) and ask isGrassAt(x, y).
@@ -86,11 +81,7 @@ public class TallGrass extends HiddenEvent {
         return false;
     }
 
-    // ------------------------------------------------------------------
-    // Hooks
-    // ------------------------------------------------------------------
 
-    /** The player's centre moved onto a grass tile. */
     @Override
     protected void onEnter(Entity entity) {
         // TODO: call trigger() (counts the event, shows the message, respects the cooldown).
@@ -98,37 +89,30 @@ public class TallGrass extends HiddenEvent {
         //       and mark the player as hidden (new method on Player, e.g. setHidden(true)).
     }
 
-    /** The player's centre moved off the grass. */
     @Override
     protected void onExit(Entity entity) {
         // TODO: only needed for the "hidden while inside" version. For the fixed 3-second window
         //       the timer ends hiding, so this can stay empty.
     }
 
-    /** Runs every frame. */
+
     @Override
     protected void onUpdate(float deltaTime) {
         // TODO: while hiding, count hideTimer down by deltaTime.
         // TODO: when it reaches 0: hiding = false and tell the player it is no longer hidden.
     }
 
-    // ------------------------------------------------------------------
-    // For other classes
-    // ------------------------------------------------------------------
-
     public boolean isHiding() {
         return hiding;
     }
 
-    /** How opaque DepthRenderer should draw the grass layers right now. */
+    // How transparent DepthRenderer should draw the grass layer right now
     public float getFadeAlpha() {
         return hiding ? FADED_ALPHA : 1f;
     }
 
-    /** The map-wide rectangle in the base class would outline the whole map, so draw the grass cells instead. */
     @Override
     public void renderDebug(ShapeRenderer shapes) {
-        // TODO: for each non-null cell in grassLayers that is near the camera/player, draw a
-        //       TILE_SIZE x TILE_SIZE outline with shapes.rect(...). Use a different colour while hiding.
+        // TODO: Draw trigger box for each grass tile
     }
 }

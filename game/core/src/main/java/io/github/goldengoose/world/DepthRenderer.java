@@ -16,12 +16,13 @@ import java.util.List;
 
 /** Draws the map's tall objects and the entities in depth order, so whatever is lower on screen is in front. */
 public class DepthRenderer {
-    private record YSortedTile(TiledMapTile tile, float x, float y, float scaleX, float scaleY, boolean flipX, boolean flipY, float sortY) {}
+    private record YSortedTile(TiledMapTile tile, float x, float y, float scaleX, float scaleY, boolean flipX, boolean flipY, float sortY, boolean grass) {}
 
     // Tiles that are not sorted based on Y
     private final int[] flatLayers;
     // Tiles that are sorted based on Y, duh
     private final List<YSortedTile> ySortedTiles = new ArrayList<>();
+    private float grassAlpha = 1f;
 
     public DepthRenderer(TiledMap map) {
         List<Integer> flat = new ArrayList<>();
@@ -30,6 +31,7 @@ public class DepthRenderer {
         for (int i = 0; i < layers.size(); i++) {
             MapLayer layer = layers.get(i);
             boolean ySort = layer.getProperties().get("ySort", false, Boolean.class);
+            boolean grassLayer = layer.getProperties().get("tall_grass", false, Boolean.class);
 
             if (layer instanceof TiledMapTileLayer tiles) {
                 if (ySort) addYSortedTiles(tiles);
