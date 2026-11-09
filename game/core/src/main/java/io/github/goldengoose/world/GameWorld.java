@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.goose.Goose;
+import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.player.Player;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class GameWorld {
     private final List<Entity> entities = new ArrayList<>();
+    private final List<Entity> depthEntities = new ArrayList<>();
     private final List<Entity> pendingEntities = new ArrayList<>();
     private final Player player;
 
@@ -57,6 +59,12 @@ public class GameWorld {
         }
     }
 
+    public void renderGround(SpriteBatch batch) {
+        for (Entity entity : entities) {
+            if (entity.getRenderLayer() == RenderLayer.GROUND) entity.render(batch);
+        }
+    }
+
     public void renderDebug(ShapeRenderer shapes) {
         for (Entity entity : entities) {
             if (entity instanceof Goose goose) {
@@ -65,7 +73,17 @@ public class GameWorld {
         }
     }
 
-    public void dispose() {
-        entities.clear();
+    public void emitLights(GameLighting lighting) {
+        for (Entity entity : entities) {
+            entity.emitLight(lighting);
+        }
+    }
+
+    public List<Entity> getDepthEntities() {
+        depthEntities.clear();
+        for (Entity entity : entities) {
+            if (entity.getRenderLayer() != RenderLayer.GROUND) depthEntities.add(entity);
+        }
+        return depthEntities;
     }
 }
