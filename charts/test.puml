@@ -61,7 +61,6 @@ endlegend
 ** 1. Player
 *** Player movement <<milan>><<prog>><<done>>
 *** Player collision\n and environmental interaction <<charlie>>
-*** Player state management
 *** Player animation
 
 ** 2. Enemy System
@@ -70,21 +69,18 @@ endlegend
 **** Auditory detection <<milan>><<done>>
 **** Pursuit and\n stopping distance <<milan_jack>><<prog>>
 **** Honking behaviour <<lisa>>
-**** Goose response to spells\n and environmental effects
 *** Goose types
 **** Normal goose
 **** Student goose
 **** Security goose
 *** Goose animation <<milan>><<prog>>
 *** Goose spawning
-*** Goose audio
 
 ** 3. Map and\n Environment
 *** Tileset <<charlie>><<prog>>
 *** Base map <<charlie_lisa>><<prog>>
 *** Buildings and\n environmental decoration
 **** Entering/leaving\n buildings
-**** Goose-building/environment\n behaviour
 *** Collision boundaries\n and obstacles
 *** Environmental hazards
 **** Mud puddles
@@ -119,8 +115,7 @@ endlegend
 **** Cooldowns/charges <<milan>><<done>>
 *** Initial spell availability <<milan>><<done>>
 *** Pentagram spell <<milan>><<done>>
-*** Elder sign spell <<milan>><<done>>
-*** Spell feedback and effects <<milan>><<prog>>
+*** Elder sign spell <<milan>><<prog>>
 
 ** 7. Patience System <<lisa>>
 *** Patience value\n and initial state <<lisa>>
@@ -149,8 +144,4 @@ endlegend
 *** Spell sound effects
 *** Event and transition sound effects
 *** Speech bubbles/subtitles
-
-** 11. Animation
-*** Player animation integration
-*** Goose animation integration <<milan>><<prog>>
 @endwbs
