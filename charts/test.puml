@@ -74,12 +74,12 @@ legend right
 endlegend
 * Development Work Breakdown Structure
 
-** 1. Player
+** 1. Player <<prog>>
 *** Player movement <<milan>><<prog>><<done>>
 *** Player collision\n and environmental interaction <<charlie>>
 *** Player animation <<jack>>
 
-** 2. Enemy System
+** 2. Enemy System <<prog>>
 *** Goose AI <<milan_jack>><<prog>>
 **** Visual detection <<milan>><<done>>
 **** Auditory detection <<milan>><<done>>
@@ -88,7 +88,7 @@ endlegend
 *** Goose animation <<milan>><<prog>>
 *** Goose spawning <<milan>>
 
-** 3. Map and\n Environment
+** 3. Map and\n Environment <<prog>>
 *** Tileset <<charlie>><<done>>
 *** Exterior map <<charlie>><<done>>
 *** Uncthulhu exterior map (small) <<charlie>>
@@ -109,7 +109,7 @@ endlegend
 **** Key assets\n and visibility (e.g. glowing)
 **** Key pickup\n and possession
 
-** 4. Core Game Flow
+** 4. Core Game Flow <<prog>>
 *** Game state\n management <<milan>><<prog>>
 **** Start screen state <<milan>><<prog>>
 **** Introduction/cutscene <<charlie>>
@@ -152,7 +152,7 @@ endlegend
 *** Bread dispenser <<jack>><<prog>>
 *** Tall grass <<jack>><<prog>>
 
-** 9. User Interface
+** 9. User Interface <<prog>>
 *** Start screen <<milan>><<prog>>
 *** Controls/tutorial screen <<gefen>>
 *** Gameplay HUD <<milan_charlie>><<done>>
