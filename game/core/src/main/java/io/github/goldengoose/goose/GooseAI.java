@@ -99,10 +99,11 @@ public class GooseAI {
         goose.getPlayer().getCentre(playerCentre);
         float playerDist2 = gooseCentre.dst2(playerCentre);
 
-        // TODO: Once we determine how player makes noise, replace true with variable:
+        // Geese can no longer hear/see the player when they are hiding in the tall grass (isHidden())
+        boolean playerHidden = goose.getPlayer().isHidden();
+        boolean detected = !playerHidden && (canSeePlayer() || canHearPlayer(true));
 
-        boolean detected = canSeePlayer()
-            || canHearPlayer(true);
+        // TODO: Once we determine how player makes noise, replace true with variable:
 
         if (state != GooseState.IDLE) {
             if (playerDist2 > FOLLOW_RANGE * FOLLOW_RANGE) {
@@ -118,6 +119,12 @@ public class GooseAI {
             state = GooseState.SWARMING;
         } else if (state == GooseState.SWARMING && playerDist2 > resumeRange * resumeRange) {
             state = GooseState.CHASING;
+        }
+
+        // Geese give up chasing the player when they're hiding
+        // Returning to their IDLE state
+        if (playerHidden) {
+            state = GooseState.IDLE;
         }
 
         velocity.setZero();
