@@ -27,6 +27,7 @@ import io.github.goldengoose.spells.ElderSignSpell;
 import com.badlogic.gdx.math.Rectangle;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
 import io.github.goldengoose.hidden_events.TestHiddenEvent;
+import io.github.goldengoose.hidden_events.tall_grass.TallGrass; // NEW
 
 public class GameScreen implements Screen {
     private final Cog game;
@@ -49,6 +50,7 @@ public class GameScreen implements Screen {
     private final OrthogonalTiledMapRenderer mapRenderer;
     private final GameLighting lighting;
     private final DepthRenderer depthRenderer;
+    private final TallGrass tallGrass;
     private final Rectangle viewRect = new Rectangle();
 
     private boolean paused = true;
@@ -61,8 +63,9 @@ public class GameScreen implements Screen {
         world.getPlayer().setPosition(23 * 32, 2 * 32);
 
         eventManager = new HiddenEventsHandler(world);
+
         // TEST ONLY: test hidden event
-        eventManager.register(new TestHiddenEvent(23 * 32 + 48, 2 * 32, 64, 64));
+        // eventManager.register(new TestHiddenEvent(23 * 32 + 48, 2 * 32, 64, 64));
 
         PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(world.getPlayer(), world, game.assets);
         ElderSignSpell elderSignSpell = new ElderSignSpell(world.getPlayer(),world, game.assets);
@@ -74,6 +77,9 @@ public class GameScreen implements Screen {
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         lighting = new GameLighting(tiledMap, worldViewport);
         depthRenderer = new DepthRenderer(tiledMap);
+
+        tallGrass = new TallGrass(tiledMap);
+        eventManager.register(tallGrass);
 
         pauseMenu = new PauseMenu(game);
         tomeMenu = new TomeMenu(game, game.assets.getTexture(Assets.SPELL_TOME_EMPTY), spellTome);
@@ -128,6 +134,8 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(worldViewport.getCamera().combined);
         game.batch.begin();
         world.renderGround(game.batch);
+        // Grass layer becomes transparent whilst player isHiding()
+        depthRenderer.setGrassAlpha(tallGrass.getFadeAlpha());
         depthRenderer.render(game.batch, world.getDepthEntities(), viewRect);
         game.batch.end();
 
