@@ -23,8 +23,8 @@ public class GameWorld {
         player = new Player(assets.getTexture(Assets.PLAYER));
         entities.add(player);
         entities.add(new Goose(player, new Vector2(200, 200), assets));
-    }
 
+    }
     public Player getPlayer() {
         return player;
     }
