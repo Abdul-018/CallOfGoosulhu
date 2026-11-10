@@ -1,11 +1,10 @@
-package io.github.goldengoose.hidden_events.bread_dispenser;
+package io.github.goldengoose.goose;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.world.Entity;
-import io.github.goldengoose.goose.Goose;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;

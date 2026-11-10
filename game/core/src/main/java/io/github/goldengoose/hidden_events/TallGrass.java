@@ -1,10 +1,9 @@
-package io.github.goldengoose.hidden_events.tall_grass;
+package io.github.goldengoose.hidden_events;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import io.github.goldengoose.hidden_events.HiddenEvent;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.player.Player;
 

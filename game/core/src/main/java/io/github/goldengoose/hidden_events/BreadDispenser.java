@@ -1,10 +1,9 @@
-package io.github.goldengoose.hidden_events.bread_dispenser;
+package io.github.goldengoose.hidden_events;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import io.github.goldengoose.hidden_events.HiddenEvent;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.world.GameWorld;
 

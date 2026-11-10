@@ -26,8 +26,7 @@ import io.github.goldengoose.spells.SpellTome;
 import io.github.goldengoose.spells.ElderSignSpell;
 import com.badlogic.gdx.math.Rectangle;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
-import io.github.goldengoose.hidden_events.TestHiddenEvent;
-import io.github.goldengoose.hidden_events.tall_grass.TallGrass; // NEW
+import io.github.goldengoose.hidden_events.TallGrass; // NEW
 
 public class GameScreen implements Screen {
     private final Cog game;
