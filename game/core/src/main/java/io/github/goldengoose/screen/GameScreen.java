@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.goldengoose.Cog;
 import io.github.goldengoose.assets.Assets;
+import io.github.goldengoose.ui.Hud;
 import io.github.goldengoose.ui.PauseMenu;
 import io.github.goldengoose.ui.TomeMenu;
 import io.github.goldengoose.util.InputManager;
@@ -31,6 +32,7 @@ public class GameScreen implements Screen {
     private final PauseMenu pauseMenu;
     private final TomeMenu tomeMenu;
     private final BitmapFont hudFont = new BitmapFont();
+    private final Hud hud;
 
     private final Rectangle viewRect = new Rectangle();
 
@@ -46,6 +48,7 @@ public class GameScreen implements Screen {
 
         pauseMenu = new PauseMenu(game);
         tomeMenu = new TomeMenu(game, game.assets.getTexture(Assets.SPELL_TOME_EMPTY), session.getSpellTome());
+        hud = new Hud(game.assets, 5 * 60);
 
         multiplexer.addProcessor(pauseMenu.getStage());
         multiplexer.addProcessor(session.getSpellTome().getInputProcessor());
@@ -75,6 +78,7 @@ public class GameScreen implements Screen {
         // Update
         if (!paused) {
             session.update(delta);
+            hud.update(delta, session.getTimer().getSecondsRemaining());
         }
 
         // Camera follows the player
@@ -95,6 +99,8 @@ public class GameScreen implements Screen {
 
         // HUD
         hudViewport.apply();
+        hud.draw(game.batch, hudViewport, hudFont);
+
         shapes.setProjectionMatrix(hudViewport.getCamera().combined);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         session.getSpellTome().drawShapes(shapes, hudViewport);
@@ -102,8 +108,6 @@ public class GameScreen implements Screen {
 
         game.batch.setProjectionMatrix(hudViewport.getCamera().combined);
         game.batch.begin();
-        hudFont.draw(game.batch, String.format("%.1f", session.getTimer().getSecondsRemaining()),
-            20, hudViewport.getWorldHeight() - 20);
         session.getSpellTome().drawSprites(game.batch, hudViewport);
         game.batch.end();
 
@@ -174,6 +178,7 @@ public class GameScreen implements Screen {
         pauseMenu.dispose();
         tomeMenu.dispose();
         hudFont.dispose();
+        hud.dispose();
     }
 
     // Unused overrides
