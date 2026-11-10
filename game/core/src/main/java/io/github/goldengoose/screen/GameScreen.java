@@ -5,26 +5,18 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.goldengoose.Cog;
-import io.github.goldengoose.GameTimer;
 import io.github.goldengoose.assets.Assets;
-import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.ui.Hud;
 import io.github.goldengoose.ui.PauseMenu;
 import io.github.goldengoose.ui.TomeMenu;
 import io.github.goldengoose.util.InputManager;
 import io.github.goldengoose.world.*;
-import io.github.goldengoose.spells.PentagramTrapSpell;
-import io.github.goldengoose.spells.SpellTome;
-import io.github.goldengoose.spells.ElderSignSpell;
 import com.badlogic.gdx.math.Rectangle;
 
 public class GameScreen implements Screen {
@@ -35,20 +27,16 @@ public class GameScreen implements Screen {
     private final InputMultiplexer multiplexer = new InputMultiplexer();
 
     private final Vector2 mouseWorldPosition = new Vector2();
+    private final Vector2 playerPos = new Vector2();
 
-    private final GameWorld world;
-    private final GameTimer timer = new GameTimer(5 * 60);
     private final PauseMenu pauseMenu;
     private final TomeMenu tomeMenu;
-    private final SpellTome spellTome;
     private final BitmapFont hudFont = new BitmapFont();
     private final Hud hud;
 
-    private final TiledMap tiledMap;
-    private final OrthogonalTiledMapRenderer mapRenderer;
-    private final GameLighting lighting;
-    private final DepthRenderer depthRenderer;
     private final Rectangle viewRect = new Rectangle();
+
+    private final GameSession session;
 
     private boolean paused = true;
     private boolean tomeOpen = false;
@@ -56,26 +44,14 @@ public class GameScreen implements Screen {
 
     public GameScreen(final Cog game) {
         this.game = game;
-        world = new GameWorld(game.assets);
-        world.getPlayer().setPosition(23 * 32, 2 * 32);
-
-        PentagramTrapSpell pentagramTrapSpell = new PentagramTrapSpell(world.getPlayer(), world, game.assets);
-        ElderSignSpell elderSignSpell = new ElderSignSpell(world.getPlayer(),world, game.assets);
-        spellTome = new SpellTome(game.assets.getTexture(Assets.SPELL_TOME));
-        spellTome.addSpell(pentagramTrapSpell);
-        spellTome.addSpell(elderSignSpell);
-
-        tiledMap = new TmxMapLoader().load("maps/Outside_campus_cthulhu_props.tmx");
-        mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-        lighting = new GameLighting(tiledMap, worldViewport);
-        depthRenderer = new DepthRenderer(tiledMap);
+        session = new GameSession(game.assets, worldViewport, "Outside_campus_cthulhu_props", "start");
 
         pauseMenu = new PauseMenu(game);
-        tomeMenu = new TomeMenu(game, game.assets.getTexture(Assets.SPELL_TOME_EMPTY), spellTome);
+        tomeMenu = new TomeMenu(game, game.assets.getTexture(Assets.SPELL_TOME_EMPTY), session.getSpellTome());
         hud = new Hud(game.assets, 5 * 60);
 
         multiplexer.addProcessor(pauseMenu.getStage());
-        multiplexer.addProcessor(spellTome.getInputProcessor());
+        multiplexer.addProcessor(session.getSpellTome().getInputProcessor());
         multiplexer.addProcessor(gameInput);
     }
 
@@ -86,6 +62,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // Input
         if (!tomeOpen && InputManager.pause()) {
             paused = !paused;
             pauseMenu.setVisible(paused);
@@ -93,42 +70,30 @@ public class GameScreen implements Screen {
         if ((paused == tomeOpen) && InputManager.tome()) {
             tomeOpen = !tomeOpen;
             paused = tomeOpen;
-            spellTome.setVisible(!tomeOpen);
+            session.getSpellTome().setVisible(!tomeOpen);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) debug = !debug;
 
+        // Update
         if (!paused) {
-            world.update(delta);
-            spellTome.update(delta);
-            timer.update(delta);
-            hud.update(delta, timer.getSecondsRemaining());
+            session.update(delta);
+            hud.update(delta, session.getTimer().getSecondsRemaining());
         }
 
-        Vector2 playerPos = new Vector2();
-        world.getPlayer().getCentre(playerPos);
-
-        worldViewport.getCamera().position.set(playerPos.x, playerPos.y, 0f);
-        worldViewport.apply();
-
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        // Camera follows the player
+        session.getPlayer().getCentre(playerPos);
         OrthographicCamera camera = (OrthographicCamera) worldViewport.getCamera();
-
-        // World
-        mapRenderer.setView((OrthographicCamera) worldViewport.getCamera());
-        mapRenderer.render(depthRenderer.getFlatLayers());
+        camera.position.set(playerPos.x, playerPos.y, 0f);
+        worldViewport.apply();
 
         viewRect.set(camera.position.x - camera.viewportWidth / 2, camera.position.y - camera.viewportHeight / 2,
             camera.viewportWidth, camera.viewportHeight);
 
-        game.batch.setProjectionMatrix(worldViewport.getCamera().combined);
-        game.batch.begin();
-        world.renderGround(game.batch);
-        depthRenderer.render(game.batch, world.getDepthEntities(), viewRect);
-        game.batch.end();
+        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
-        world.emitLights(lighting);
-        lighting.render();
+        // World
+        session.getArea().render(game.batch, camera, viewRect);
 
         if (debug) renderDebug();
 
@@ -138,14 +103,15 @@ public class GameScreen implements Screen {
 
         shapes.setProjectionMatrix(hudViewport.getCamera().combined);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        spellTome.drawShapes(shapes, hudViewport);
+        session.getSpellTome().drawShapes(shapes, hudViewport);
         shapes.end();
 
         game.batch.setProjectionMatrix(hudViewport.getCamera().combined);
         game.batch.begin();
-        spellTome.drawSprites(game.batch, hudViewport);
+        session.getSpellTome().drawSprites(game.batch, hudViewport);
         game.batch.end();
 
+        // Menus
         if (paused) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             shapes.setProjectionMatrix(hudViewport.getCamera().combined);
@@ -158,6 +124,7 @@ public class GameScreen implements Screen {
             pauseMenu.draw();
         }
         if (tomeOpen) {
+            game.batch.setProjectionMatrix(hudViewport.getCamera().combined);
             game.batch.begin();
             tomeMenu.draw(game.batch, hudViewport);
             game.batch.end();
@@ -181,7 +148,7 @@ public class GameScreen implements Screen {
                     mouseWorldPosition.set(screenX, screenY)
                 );
 
-                spellTome.activateSelectedSpell(mouseWorldPosition);
+                session.getSpellTome().activateSelectedSpell(mouseWorldPosition);
 
                 return true;
             }
@@ -193,7 +160,7 @@ public class GameScreen implements Screen {
     private void renderDebug() {
         shapes.setProjectionMatrix(worldViewport.getCamera().combined);
         shapes.begin(ShapeRenderer.ShapeType.Line);
-        world.renderDebug(shapes);
+        session.getWorld().renderDebug(shapes);
         shapes.end();
     }
 
@@ -208,9 +175,6 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         shapes.dispose();
-        tiledMap.dispose();
-        mapRenderer.dispose();
-        lighting.dispose();
         pauseMenu.dispose();
         tomeMenu.dispose();
         hudFont.dispose();

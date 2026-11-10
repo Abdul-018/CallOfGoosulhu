@@ -13,6 +13,9 @@
 .lisa {
   BackgroundColor #f7fc51;
 }
+.gefen {
+  BackgroundColor #88dd99;
+}
 
 ' Shared ownership colours
 .milan_charlie {
@@ -33,6 +36,18 @@
 .jack_lisa {
   BackgroundColor #aa88bb/#f7fc51;
 }
+.milan_gefen {
+  BackgroundColor #ffaa77/#88dd99;
+}
+.charlie_gefen {
+  BackgroundColor #bbeeff/#88dd99;
+}
+.jack_gefen {
+  BackgroundColor #aa88bb/#88dd99;
+}
+.lisa_gefen {
+  BackgroundColor #f7fc51/#88dd99;
+}
 
 ' Progress indicators
 .prog {
@@ -50,6 +65,7 @@ legend right
   |<#bbeeff> Charlie |
   |<#aa88bb> Jack |
   |<#f7fc51> Lisa |
+  |<#88dd99> Gefen |
 
   |= Progress |
   |<#0000000> Unstarted |
@@ -60,9 +76,8 @@ endlegend
 
 ** 1. Player
 *** Player movement <<milan>><<prog>><<done>>
-*** Player collision\n and environmental interaction
-*** Player state management
-*** Player animation
+*** Player collision\n and environmental interaction <<charlie>>
+*** Player animation <<jack>>
 
 ** 2. Enemy System
 *** Goose AI <<milan_jack>><<prog>>
@@ -70,25 +85,30 @@ endlegend
 **** Auditory detection <<milan>><<done>>
 **** Pursuit and\n stopping distance <<milan_jack>><<prog>>
 **** Honking behaviour <<lisa>>
-**** Goose response to spells\n and environmental effects
 *** Goose types
 **** Normal goose
 **** Student goose
 **** Security goose
 *** Goose animation <<milan>><<prog>>
-*** Goose audio
+*** Goose spawning
 
 ** 3. Map and\n Environment
 *** Tileset <<charlie>><<prog>>
 *** Base map <<charlie_lisa>><<prog>>
 *** Buildings and\n environmental decoration
 **** Entering/leaving\n buildings
-**** Goose-building/environment\n behaviour
+***** Saving map state\n (reset goose positions)
+**** Ian Wand building
+***** More geese
+***** Escape feature
 *** Collision boundaries\n and obstacles
 *** Environmental hazards
 **** Mud puddles
 **** Tall grass\n concealment
 *** Escape destination\n and objective location
+*** Keys
+**** Key assets\n and visibility (e.g. glowing)
+**** Key pickup\n and possession
 
 ** 4. Core Game Flow
 *** Game state\n management <<milan>><<prog>>
@@ -98,16 +118,20 @@ endlegend
 **** Active gameplay <<milan>><<prog>>
 **** Victory state
 **** Defeat state
+**** Defeat/game over cutscene
 *** Win/lose\n conditions
 **** Escape destination detection
 **** Five-minute time limit
 **** End-of-game transition
+*** Objective system
+**** Objective tracking
+**** Objective display
 *** Game restart
 
 ** 5. Timer
 *** Timer logic <<charlie>><<done>>
 *** Timer integration\n with game states
-*** Timer UI
+*** Timer UI <<charlie>><<done>>
 *** Timer expiry\n and defeat handling
 
 ** 6. Spell System \n To be decided\n which spells <<milan>><<prog>>
@@ -118,8 +142,7 @@ endlegend
 **** Cooldowns/charges <<milan>><<done>>
 *** Initial spell availability <<milan>><<done>>
 *** Pentagram spell <<milan>><<done>>
-*** Elder sign spell <<milan>><<done>>
-*** Spell feedback and effects <<milan>><<prog>>
+*** Elder sign spell <<milan>><<prog>>
 
 ** 7. Patience System <<lisa>>
 *** Patience value\n and initial state <<lisa>>
@@ -129,14 +152,15 @@ endlegend
 
 ** 8. Events\n and Interactions <<jack>>
 *** Event triggers and effects <<jack>>
-*** Event 1 <<jack>>
+*** Bread dispenser <<jack>>
 *** Event 2 <<jack>>
 
 ** 9. User Interface
 *** Start screen <<milan>><<prog>>
+*** Controls/tutorial screen
 *** Gameplay HUD
-**** Timer
-**** Patience bar
+**** Timer <<charlie>><<done>>
+**** Patience bar <<charlie>><<done>>
 **** Spell-tome\n interface <<milan>><<done>>
 *** Victory screen
 *** Defeat screen
@@ -148,8 +172,4 @@ endlegend
 *** Spell sound effects
 *** Event and transition sound effects
 *** Speech bubbles/subtitles
-
-** 11. Animation
-*** Player animation integration
-*** Goose animation integration <<milan>><<prog>>
 @endwbs
