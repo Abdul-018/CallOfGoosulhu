@@ -42,6 +42,11 @@ public class BreadDispenser extends HiddenEvent {
     private static final float RING_CENTRE_Y = 16f;
     private static final double RING_START_ANGLE = -Math.PI / 2;
 
+    // Where the pieces of bread launch from - it's slot; height above dispenser base
+    private static final float LAUNCH_Y = 20f;
+    // Seconds between each piece of bread launching from the dispenser
+    private static final float LAUNCH_STAGGER = 0.12f;
+
     // Shaking animation
     private static final float SHAKE_SECONDS = 0.5f;
     private static final float SHAKE_AMPLITUDE = 2.5f;
@@ -125,7 +130,10 @@ public class BreadDispenser extends HiddenEvent {
             double angle = RING_START_ANGLE + 2.0 * Math.PI * i / BREAD_COUNT;
             float breadX = ringX + (float) Math.cos(angle) * RING_RADIUS_X;
             float breadY = ringY + (float) Math.sin(angle) * RING_RADIUS_Y;
-            world.addEntity(new Bread(new Vector2(breadX, breadY)));
+
+            // Each piece starts at the machine's slot and flies to it's spot, one after another.
+            Vector2 from = new Vector2(ringX, zoneY + LAUNCH_Y);
+            world.addEntity(new Bread(from, new Vector2(breadX, breadY), i * LAUNCH_STAGGER));
         }
     }
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Color;
 import io.github.goldengoose.world.Entity;
+import com.badlogic.gdx.graphics.g2d.Animation;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -30,6 +31,11 @@ public class Bread extends Entity {
     private static final int MAX_EATERS = 2;
     private static final float SIZE = 25;
 
+    // Bread's flight from dispenser slot to final position
+    private static final float FLIGHT_SECONDS = 0.6f;
+    private static final float ARC_HEIGHT = 40f;
+    private static final float SHADOW_ALPHA = 0.3f;
+
     private static TextureRegion sprite;
 
     // Identity set
@@ -38,24 +44,60 @@ public class Bread extends Entity {
     private final Vector2 centre = new Vector2();
     private float age = 0f;
 
+    // Bread flight. A piece of bread that is flying does not age and is not lure-able
+    private boolean flying = false;
+    private float flightClock = 0f;
+    private float launchDelay = 0f;
+    private float arcHeight = 0f;
+    private final Vector2 launchFrom = new Vector2();
+    private final Vector2 landingAt = new Vector2();
+
     // Where the bread lies on the map
     public Bread(Vector2 centre) {
         position.set(centre.x - SIZE / 2f, centre.y - SIZE / 2f);
     }
 
+    public Bread(Vector2 from, Vector2 to, float delay) {
+        launchFrom.set(from);
+        landingAt.set(to);
+        launchDelay = delay;
+        flying = true;
+        position.set(from.x - SIZE / 2f, from.y - SIZE / 2f);
+    }
     public static void setSprite(TextureRegion region) {
         sprite = region;
     }
 
     @Override
     public void update(float deltaTime) {
+        // Bread doesn't age until it has landed
+        if (flying) {
+            updateFlight(deltaTime);
+            return;
+        }
         age += deltaTime;
     }
 
+    private void updateFlight(float deltaTime) {
+        flightClock += deltaTime;
+        float t = (flightClock - launchDelay) / FLIGHT_SECONDS;
+        if (t < 0f) {
+            return;
+        }
+        if (t >= 1f) {
+            flying = false;
+            arcHeight = 0f;
+            position.set(landingAt.x - SIZE / 2f, landingAt.y - SIZE / 2f);
+            return;
+        }
+
+        position.set(launchFrom.x + (landingAt.x - launchFrom.x) * t - SIZE / 2f, launchFrom.y + (landingAt.y - launchFrom.y) * t - SIZE / 2f);
+        arcHeight = 4f * ARC_HEIGHT * t * (1f - t);
+    }
 
     @Override
     public void interact(Entity other) {
-        if (isExpired() || !(other instanceof Goose goose)) {
+        if (flying|| isExpired() || !(other instanceof Goose goose)) {
             return;
         }
         getCentre(centre);
@@ -67,7 +109,7 @@ public class Bread extends Entity {
 
 
     public boolean tryClaim(Goose goose) {
-        if (isExpired()) {
+        if (isExpired() || flying) {
             return false;
         }
         if (eaters.contains(goose)) {
@@ -94,15 +136,32 @@ public class Bread extends Entity {
         if (sprite == null) {
             return;
         }
+
+        if (flying) {
+            if (flightClock < launchDelay) {
+                return;
+            }
+
+            batch.setColor(0f, 0f, 0f, SHADOW_ALPHA);
+            batch.draw(sprite, position.x, position.y, SIZE, SIZE / 2f);
+            batch.setColor(1f, 1f, 1f, 1f);
+            batch.draw(sprite, position.x, position.y + arcHeight, SIZE, SIZE);
+            return;
+        }
         batch.draw(sprite, position.x, position.y, SIZE, SIZE);
     }
 
     public void renderDebug(ShapeRenderer shapes) {
+        if (isExpired()) {
+            return;
+        }
         getCentre(centre);
-        shapes.setColor(1f, 0.9f, 0.2f, 1f);
-        shapes.circle(centre.x, centre.y, SIZE / 2f, 12);
-        shapes.setColor(0.6f, 0.55f, 0.1f, 1f);
-        shapes.circle(centre.x, centre.y, LURE_RADIUS, 48);
+        shapes.setColor(Color.ORANGE);
+        shapes.circle(centre.x, centre.y, 4f);
+        if (!flying) {
+            shapes.setColor(Color.YELLOW);
+            shapes.circle(centre.x, centre.y, LURE_RADIUS);
+        }
     }
 
     @Override
