@@ -51,12 +51,17 @@ public class BreadDispenser extends HiddenEvent {
     private static final float SHAKE_SECONDS = 0.5f;
     private static final float SHAKE_AMPLITUDE = 2.5f;
     private static final float SHAKE_FREQUENCY = 45f;
-    private static final float PULSE_SPEED = 5f;
+
+    // Prompt animation
+    private static final float PROMPT_GAP = -20f;
+    private static final float PROMPT_BOB = 2f;
+    private static final float PROMPT_BOB_SPEED = 3f;
 
     private final GameWorld world;
 
     private final Animation<TextureRegion> rise;
     private final Animation<TextureRegion> idle;
+    private final Animation<TextureRegion> prompt;
     private final float zoneX, zoneY, zoneWidth;
 
     private State state = State.HIDDEN;
@@ -66,11 +71,12 @@ public class BreadDispenser extends HiddenEvent {
     private boolean playerInside = false;
 
 
-    public BreadDispenser(GameWorld world, TextureAtlas atlas, float x, float y, float width, float height) {
+    public BreadDispenser(GameWorld world, TextureAtlas atlas, Animation<TextureRegion> prompt,float x, float y, float width, float height) {
         super("Bread dispenser", "Bread dispenser found", x, y, width, height, 0f);
 
         this.world = world;
         this.zoneX = x;
+        this.prompt = prompt;
         this.zoneY = y;
         this.zoneWidth = width;
 
@@ -157,12 +163,19 @@ public class BreadDispenser extends HiddenEvent {
             drawX += (float) Math.sin(stateTime * SHAKE_FREQUENCY) * SHAKE_AMPLITUDE * fade;
         }
 
-        //placeholder interact
-        boolean showPrompt = state == State.READY && playerInside;
         batch.draw(frame, drawX, zoneY, w, h);
 
+        boolean showPrompt = state == State.READY && playerInside;
         if (showPrompt) {
             batch.setColor(1f, 1f, 1f, 1f);
+        }
+
+        if (showPrompt && prompt != null) {
+            TextureRegion icon = prompt.getKeyFrame(pulseTime, true);
+            float iw = icon.getRegionWidth();
+            float ih = icon.getRegionHeight();
+            float bob = (float) Math.sin(pulseTime * PROMPT_BOB_SPEED) * PROMPT_BOB;
+            batch.draw(icon, zoneX + zoneWidth / 2f - iw / 2f, zoneY + h + PROMPT_GAP + bob, iw, ih);
         }
     }
 

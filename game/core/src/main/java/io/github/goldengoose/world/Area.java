@@ -55,7 +55,10 @@ public class Area implements Disposable {
         Bread.setSpinAnimation(new Animation<TextureRegion>(0.05f, assets.getAtlas(Assets.BREAD_SPIN).findRegions("bread_spin"), Animation.PlayMode.LOOP));
 
         if (name.equals("Outside_campus_cthulhu_props")) {
-            eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), 500, 150, 64, 64));
+            TextureRegion[] keyFrames = TextureRegion.split(assets.getTexture(Assets.INTERACT_KEY), 16, 16)[0];
+            Animation<TextureRegion> prompt = new Animation<TextureRegion>(0.5f, keyFrames);
+            prompt.setPlayMode(Animation.PlayMode.LOOP);
+            eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, 500, 150, 64, 64));
         }
         loadDoors();
     }
