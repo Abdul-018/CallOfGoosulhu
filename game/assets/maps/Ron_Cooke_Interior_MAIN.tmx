@@ -707,7 +707,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="11" name="Spawns">
+ <objectgroup id="11" name="Spawns" visible="0">
   <object id="223" name="from_campus" type="player_spawn" x="512" y="976">
    <point/>
   </object>
@@ -715,8 +715,8 @@
  <objectgroup id="15" name="Doors">
   <object id="224" name="to_campus" type="door" x="448" y="1012" width="128" height="12">
    <properties>
-    <property name="target_map" value="campus.tmx"/>
-    <property name="target_spawn" value="ron_cooke_main"/>
+    <property name="target_map" value="Outside_campus_cthulhu_props.tmx"/>
+    <property name="target_spawn" value="ron_cooke_exit"/>
    </properties>
   </object>
  </objectgroup>
