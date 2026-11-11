@@ -10,13 +10,19 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.world.GameWorld;
 import io.github.goldengoose.goose.Bread;
+import io.github.goldengoose.util.InputManager;
 
 /**
  * FR_BREAD_DISPENSER: "Dispense bread that distracts nearby geese."
  *
  * A one-time hidden event. The dispenser sits in one spot, mostly hidden until
- * the player walks into it's trigger zone. It will then pop up out of the ground (animation)
- * and then drop a few pieces of bread around itself. It cannot be triggered again.
+ * the player walks into it's trigger zone. The dispenser has 5 different states:
+ *
+ *      HIDDEN: Dispenser invisible --> player enters zone -->
+ *      RISING: Plays rising animation --> animation ends -->
+ *      READY: Player presses interact (while in the zone)-->
+ *      SHAKING: Plays shaking animation --> shake ends --> bread is placed on a ring around the machine -->
+ *      EMPTY: Plays IDLE animation and cannot dispense anymore bread.
  *
  * What the bread does to the geese is NOT decided here. Bread is it's own entity and gooseAi decides
  * how strongly to be pulled towards it. But each bread entity will outweigh the player.
@@ -24,12 +30,23 @@ import io.github.goldengoose.goose.Bread;
 
 public class BreadDispenser extends HiddenEvent {
 
-    private enum State { HIDDEN, RISING, DISPENSED }
+    private enum State { HIDDEN, RISING, READY, SHAKING, EMPTY }
 
     private static final int BREAD_COUNT = 3;
-    private static final float BREAD_SCATTER_RADIUS = 15;
     private static final float RISE_FRAME_SECONDS = 0.1f;
     private static final float IDLE_FRAME_SECONDS = 0.4f;
+
+    // Where the bread lands in an ellipse around the dispenser
+    private static final float RING_RADIUS_X = 56f;
+    private static final float RING_RADIUS_Y = 36f;
+    private static final float RING_CENTRE_Y = 16f;
+    private static final double RING_START_ANGLE = -Math.PI / 2;
+
+    // Shaking animation
+    private static final float SHAKE_SECONDS = 0.5f;
+    private static final float SHAKE_AMPLITUDE = 2.5f;
+    private static final float SHAKE_FREQUENCY = 45f;
+    private static final float PULSE_SPEED = 5f;
 
     private final GameWorld world;
 
@@ -39,7 +56,9 @@ public class BreadDispenser extends HiddenEvent {
 
     private State state = State.HIDDEN;
     private float stateTime = 0f;
-    private final Vector2 centre = new Vector2();
+    private float pulseTime = 0f;
+    // used to show interact prompt
+    private boolean playerInside = false;
 
 
     public BreadDispenser(GameWorld world, TextureAtlas atlas, float x, float y, float width, float height) {
@@ -57,12 +76,22 @@ public class BreadDispenser extends HiddenEvent {
     // Player steps into zone
     @Override
     protected void onEnter(Entity entity) {
-        if (state != State.HIDDEN) {
-            return;
-        }
-
-        if (trigger()) {
+        playerInside = true; // NEW
+        if (state == State.HIDDEN) {
             state = State.RISING;
+            stateTime = 0f;
+        }
+    }
+
+    @Override
+    protected void onExit(Entity entity){
+        playerInside = false;
+    }
+
+    @Override
+    protected void onStay(Entity entity, float deltaTime) {
+        if (state == State.READY && InputManager.interact() && trigger()) {
+            state = State.SHAKING;
             stateTime = 0f;
         }
     }
@@ -74,21 +103,28 @@ public class BreadDispenser extends HiddenEvent {
         }
 
         stateTime += deltaTime;
+        pulseTime += deltaTime;
+
         if (state == State.RISING && stateTime >= rise.getAnimationDuration()) {
-            state = State.DISPENSED;
+            // Waits fo player to interact
+            state = State.READY;
             stateTime = 0f;
+
+        } else if (state == State.SHAKING && stateTime >= SHAKE_SECONDS) {
             dispenseBread();
+            state = State.EMPTY;
+            stateTime = 0f;
         }
     }
 
+    // Bread lands in an ellipse around the dispenser
     private void dispenseBread() {
-        float baseX = zoneX + zoneWidth / 2f;
-        float baseY = zoneY;
+        float ringX = zoneX + zoneWidth / 2f;
+        float ringY = zoneY + RING_CENTRE_Y;
         for (int i = 0; i < BREAD_COUNT; i++) {
-            // Bread dispersion on a semicircle
-            double angle = Math.PI + Math.PI * (i + 1) / (BREAD_COUNT + 1);
-            float breadX = baseX + (float) Math.cos(angle) * BREAD_SCATTER_RADIUS;
-            float breadY = baseY + (float) Math.sin(angle) * BREAD_SCATTER_RADIUS;
+            double angle = RING_START_ANGLE + 2.0 * Math.PI * i / BREAD_COUNT;
+            float breadX = ringX + (float) Math.cos(angle) * RING_RADIUS_X;
+            float breadY = ringY + (float) Math.sin(angle) * RING_RADIUS_Y;
             world.addEntity(new Bread(new Vector2(breadX, breadY)));
         }
     }
@@ -105,14 +141,32 @@ public class BreadDispenser extends HiddenEvent {
 
         float w = frame.getRegionWidth();
         float h = frame.getRegionHeight();
-        batch.draw(frame, zoneX + zoneWidth / 2f - w / 2f, zoneY, w, h);
+        float drawX = zoneX + zoneWidth / 2f - w / 2f;
+
+        // Shake animation by offsetting sprite with sin wave
+        if (state == State.SHAKING) {
+            float fade = 1f - stateTime / SHAKE_SECONDS;
+            drawX += (float) Math.sin(stateTime * SHAKE_FREQUENCY) * SHAKE_AMPLITUDE * fade;
+        }
+
+        //placeholder interact
+        boolean showPrompt = state == State.READY && playerInside;
+        batch.draw(frame, drawX, zoneY, w, h);
+
+        if (showPrompt) {
+            batch.setColor(1f, 1f, 1f, 1f);
+        }
     }
 
     public boolean isDispensed() {
-        return state == State.DISPENSED;
+        return state == State.EMPTY;
     }
 
     public boolean isPoppingUp() {
         return state == State.RISING;
+    }
+
+    public boolean isReady() {
+        return state == State.READY;
     }
 }
