@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="20" nextobjectid="990">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="21" nextobjectid="1013">
  <properties>
   <property name="based_on" value="Outside_campus_MAIN.tmx"/>
   <property name="theme" value="cthulhu"/>
@@ -781,6 +781,71 @@
    <point/>
   </object>
   <object id="989" name="ian_wand_front" x="385.131" y="1422.63">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="20" name="GooseSpawns">
+  <object id="990" x="96.5447" y="1471.67">
+   <point/>
+  </object>
+  <object id="991" x="33.0285" y="508.765">
+   <point/>
+  </object>
+  <object id="992" x="129.573" y="347.434">
+   <point/>
+  </object>
+  <object id="993" x="351.88" y="449.06">
+   <point/>
+  </object>
+  <object id="994" x="607.851" y="539.888">
+   <point/>
+  </object>
+  <object id="995" x="672.637" y="412.856">
+   <point/>
+  </object>
+  <object id="996" x="799.67" y="257.241">
+   <point/>
+  </object>
+  <object id="997" x="896.214" y="158.791">
+   <point/>
+  </object>
+  <object id="998" x="994.029" y="221.672">
+   <point/>
+  </object>
+  <object id="999" x="927.973" y="384.909">
+   <point/>
+  </object>
+  <object id="1000" x="864.456" y="540.523">
+   <point/>
+  </object>
+  <object id="1001" x="1280.49" y="381.733">
+   <point/>
+  </object>
+  <object id="1002" x="1409.43" y="191.184">
+   <point/>
+  </object>
+  <object id="1003" x="1471.67" y="353.15">
+   <point/>
+  </object>
+  <object id="1004" x="1568.22" y="542.429">
+   <point/>
+  </object>
+  <object id="1005" x="1567.58" y="797.764">
+   <point/>
+  </object>
+  <object id="1006" x="1471.67" y="990.854">
+   <point/>
+  </object>
+  <object id="1007" x="1344.64" y="1053.73">
+   <point/>
+  </object>
+  <object id="1008" x="1055.64" y="1214.43">
+   <point/>
+  </object>
+  <object id="1009" x="766.641" y="1086.76">
+   <point/>
+  </object>
+  <object id="1010" x="832.698" y="733.613">
    <point/>
   </object>
  </objectgroup>
