@@ -2,6 +2,7 @@ package io.github.goldengoose.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 public class Assets {
     public static final String GOOSE_WALK = "cthulhu_goose_walking.png";
@@ -13,6 +14,7 @@ public class Assets {
     public static final String ELDER_SIGN_SPELL = "elder_sign_spell.png";
     public static final String SPELL_TOME = "spell_tome_w_writing.png";
     public static final String SPELL_TOME_EMPTY = "spell_tome.png";
+    public static final String BREAD_DISPENSER = "events/bread_dispenser.atlas";
 
     private final AssetManager manager = new AssetManager();
 
@@ -26,11 +28,16 @@ public class Assets {
         manager.load(ELDER_SIGN_SPELL, Texture.class);
         manager.load(SPELL_TOME, Texture.class);
         manager.load(SPELL_TOME_EMPTY, Texture.class);
+        manager.load(BREAD_DISPENSER, TextureAtlas.class);
         manager.finishLoading();
     }
 
     public Texture getTexture(String path) {
         return manager.get(path, Texture.class);
+    }
+
+    public TextureAtlas getAtlas(String path){
+        return manager.get(path, TextureAtlas.class);
     }
 
     public void dispose() {

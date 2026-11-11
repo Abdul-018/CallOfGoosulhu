@@ -2,7 +2,10 @@ package io.github.goldengoose.hidden_events;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.world.GameWorld;
@@ -20,41 +23,61 @@ import io.github.goldengoose.world.GameWorld;
 
 public class BreadDispenser extends HiddenEvent {
 
-    private enum State { HIDDEN, POPPING_UP, DISPENSED }
+    private enum State { HIDDEN, RISING, DISPENSED }
 
     private static final int BREAD_COUNT = 3;
     private static final float BREAD_SCATTER_RADIUS = 28f;
-    private static final float FALLBACK_POP_UP_SECONDS = 1f;
+    private static final float RISE_FRAME_SECONDS = 0.1f;
+    private static final float IDLE_FRAME_SECONDS = 0.4f;
 
     private final GameWorld world;
-    private final Animation<TextureRegion> popUpAnimation;
-    private final float popUpDuration;
+
+    private final Animation<TextureRegion> rise;
+    private final Animation<TextureRegion> idle;
+    private final float zoneX, zoneY, zoneWidth;
 
     private State state = State.HIDDEN;
     private float stateTime = 0f;
     private final Vector2 centre = new Vector2();
 
-    public BreadDispenser(GameWorld world, Animation<TextureRegion> popUpAnimation,
-                               float x, float y, float width, float height) {
+
+    public BreadDispenser(GameWorld world, TextureAtlas atlas, float x, float y, float width, float height) {
         super("Bread dispenser", "Bread dispenser found", x, y, width, height, 0f);
 
         this.world = world;
-        this.popUpAnimation = popUpAnimation;
-        this.popUpDuration = popUpAnimation != null
-            ? popUpAnimation.getAnimationDuration()
-            : FALLBACK_POP_UP_SECONDS;
+        this.zoneX = x;
+        this.zoneY = y;
+        this.zoneWidth = width;
+
+        rise = new Animation<TextureRegion>(RISE_FRAME_SECONDS, atlas.findRegions("dispenser_rise"), Animation.PlayMode.NORMAL);
+        idle = new Animation<TextureRegion>(IDLE_FRAME_SECONDS, atlas.findRegions("dispenser_idle"), Animation.PlayMode.LOOP);
     }
 
     // Player steps into zone
     @Override
     protected void onEnter(Entity entity) {
-        // TODO: if the dispenser has already been used, then do nothing.
-        // TODO: otherwise call trigger
+        if (state != State.HIDDEN) {
+            return;
+        }
+
+        if (trigger()) {
+            state = State.RISING;
+            stateTime = 0f;
+        }
     }
 
     @Override
     protected void onUpdate(float deltaTime) {
-        // TODO: only act while has popped up.
+        if (state == State.HIDDEN) {
+            return;
+        }
+
+        stateTime += deltaTime;
+        if (state == State.RISING && stateTime >= rise.getAnimationDuration()) {
+            state = State.DISPENSED;
+            stateTime = 0f;
+            dispenseBread();
+        }
     }
 
     private void dispenseBread() {
@@ -64,8 +87,17 @@ public class BreadDispenser extends HiddenEvent {
 
     @Override
     public void render(SpriteBatch batch) {
-        // TODO: draw nothing while HIDDEN or if popUpAnimation is null.
-        // TODO: otherwise draw popUpAnimation.getKeyFrame(stateTime)
+        if (state == State.HIDDEN) {
+            return;
+        }
+
+        TextureRegion frame = (state == State.RISING)
+            ? rise.getKeyFrame(stateTime, false)
+            : idle.getKeyFrame(stateTime, true);
+
+        float w = frame.getRegionWidth();
+        float h = frame.getRegionHeight();
+        batch.draw(frame, zoneX + zoneWidth / 2f - w / 2f, zoneY, w, h);
     }
 
     public boolean isDispensed() {
@@ -73,6 +105,6 @@ public class BreadDispenser extends HiddenEvent {
     }
 
     public boolean isPoppingUp() {
-        return state == State.POPPING_UP;
+        return state == State.RISING;
     }
 }

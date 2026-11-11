@@ -13,6 +13,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 import io.github.goldengoose.Cog;
 import io.github.goldengoose.GameTimer;
 import io.github.goldengoose.assets.Assets;
@@ -24,9 +27,10 @@ import io.github.goldengoose.world.*;
 import io.github.goldengoose.spells.PentagramTrapSpell;
 import io.github.goldengoose.spells.SpellTome;
 import io.github.goldengoose.spells.ElderSignSpell;
-import com.badlogic.gdx.math.Rectangle;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
-import io.github.goldengoose.hidden_events.TallGrass; // NEW
+import io.github.goldengoose.hidden_events.TallGrass;
+import io.github.goldengoose.hidden_events.BreadDispenser;
+import io.github.goldengoose.goose.Bread;
 
 public class GameScreen implements Screen {
     private final Cog game;
@@ -51,6 +55,7 @@ public class GameScreen implements Screen {
     private final DepthRenderer depthRenderer;
     private final TallGrass tallGrass;
     private final Rectangle viewRect = new Rectangle();
+    private final Texture breadTexture;
 
     private boolean paused = true;
     private boolean tomeOpen = false;
@@ -79,6 +84,11 @@ public class GameScreen implements Screen {
 
         tallGrass = new TallGrass(tiledMap);
         eventManager.register(tallGrass);
+
+        eventManager.register(new BreadDispenser(world, game.assets.getAtlas(Assets.BREAD_DISPENSER), 23 * 32 + 200, 2 * 32, 64, 64));
+
+        breadTexture = new Texture(Gdx.files.internal("events/bread_12.png"));
+        Bread.setSprite(new TextureRegion(breadTexture));
 
         pauseMenu = new PauseMenu(game);
         tomeMenu = new TomeMenu(game, game.assets.getTexture(Assets.SPELL_TOME_EMPTY), spellTome);
@@ -229,6 +239,7 @@ public class GameScreen implements Screen {
         pauseMenu.dispose();
         tomeMenu.dispose();
         hudFont.dispose();
+        breadTexture.dispose();
     }
 
     // Unused overrides
