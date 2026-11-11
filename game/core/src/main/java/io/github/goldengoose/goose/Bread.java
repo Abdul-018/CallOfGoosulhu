@@ -27,9 +27,8 @@ public class Bread extends Entity {
     private static final float LIFETIME_SECONDS = 8f;
     private static final float LURE_RADIUS = 120f;
     private static final int MAX_EATERS = 2;
-    private static final float SIZE = 12f;
+    private static final float SIZE = 25;
 
-    // future art functionality
     private static TextureRegion sprite;
 
     // Identity set
@@ -40,7 +39,7 @@ public class Bread extends Entity {
 
     // Where the bread lies on the map
     public Bread(Vector2 centre) {
-        position.set(centre.x - SIZE / 2f, centre.y - SIZE / 2f); // Entity positions are bottom-left corners
+        position.set(centre.x - SIZE / 2f, centre.y - SIZE / 2f);
     }
 
     public static void setSprite(TextureRegion region) {
@@ -55,13 +54,29 @@ public class Bread extends Entity {
 
     @Override
     public void interact(Entity other) {
-        // TODO: ignore this bread if it has expired
-        // TODO: if the goose's centre is within LURE_RADIUS of this bread's centre then distract.
+        if (isExpired() || !(other instanceof Goose goose)) {
+            return;
+        }
+        getCentre(centre);
+        other.getCentre(otherCentre);
+        if (centre.dst2(otherCentre) <= LURE_RADIUS * LURE_RADIUS) {
+            goose.distractBy(this);
+        }
     }
 
 
     public boolean tryClaim(Goose goose) {
-        return false;
+        if (isExpired()) {
+            return false;
+        }
+        if (eaters.contains(goose)) {
+            return true;
+        }
+        if (eaters.size() >= MAX_EATERS) {
+            return false;
+        }
+        eaters.add(goose);
+        return true;
     }
 
     public int getEaterCount() {
@@ -75,7 +90,6 @@ public class Bread extends Entity {
 
     @Override
     public void render(SpriteBatch batch) {
-        // No art yet ):
         if (sprite == null) {
             return;
         }

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.world.GameWorld;
+import io.github.goldengoose.goose.Bread;
 
 /**
  * FR_BREAD_DISPENSER: "Dispense bread that distracts nearby geese."
@@ -26,7 +27,7 @@ public class BreadDispenser extends HiddenEvent {
     private enum State { HIDDEN, RISING, DISPENSED }
 
     private static final int BREAD_COUNT = 3;
-    private static final float BREAD_SCATTER_RADIUS = 28f;
+    private static final float BREAD_SCATTER_RADIUS = 15;
     private static final float RISE_FRAME_SECONDS = 0.1f;
     private static final float IDLE_FRAME_SECONDS = 0.4f;
 
@@ -81,8 +82,15 @@ public class BreadDispenser extends HiddenEvent {
     }
 
     private void dispenseBread() {
-        // TODO: for each of BREAD_COUNT pieces, work out a point on a circle around the bread dispenser's center.
-        //  Bread should be evenly spaced, and add a new Bread to world Entity
+        float baseX = zoneX + zoneWidth / 2f;
+        float baseY = zoneY;
+        for (int i = 0; i < BREAD_COUNT; i++) {
+            // Bread dispersion on a semicircle
+            double angle = Math.PI + Math.PI * (i + 1) / (BREAD_COUNT + 1);
+            float breadX = baseX + (float) Math.cos(angle) * BREAD_SCATTER_RADIUS;
+            float breadY = baseY + (float) Math.sin(angle) * BREAD_SCATTER_RADIUS;
+            world.addEntity(new Bread(new Vector2(breadX, breadY)));
+        }
     }
 
     @Override

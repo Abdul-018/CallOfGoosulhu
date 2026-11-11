@@ -50,7 +50,7 @@ public class Area implements Disposable {
         eventManager = new HiddenEventsHandler(world);
         tallGrass = new TallGrass(map);
         eventManager.register(tallGrass);
-        // Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
+        Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
 
         if (name.equals("Outside_campus_cthulhu_props")) {
             eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), 500, 150, 64, 64));

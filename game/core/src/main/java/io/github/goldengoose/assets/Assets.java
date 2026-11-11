@@ -15,6 +15,7 @@ public class Assets {
     public static final String SPELL_TOME = "spell_tome_w_writing.png";
     public static final String SPELL_TOME_EMPTY = "spell_tome.png";
     public static final String BREAD_DISPENSER = "events/bread_dispenser.atlas";
+    public static final String BREAD = "events/bread_12.png";
     public static final String HOURGLASS_GLASS = "ui/hourglass_glass.png";
     public static final String HOURGLASS_FRAME = "ui/hourglass_frame.png";
     public static final String PATIENCE_FRAME = "ui/patience_frame.png";
@@ -36,6 +37,7 @@ public class Assets {
         manager.load(SPELL_TOME, Texture.class);
         manager.load(SPELL_TOME_EMPTY, Texture.class);
         manager.load(BREAD_DISPENSER, TextureAtlas.class);
+        manager.load(BREAD, Texture.class);
         manager.load(HOURGLASS_GLASS, Texture.class);
         manager.load(HOURGLASS_FRAME, Texture.class);
         manager.load(PATIENCE_FRAME, Texture.class);
