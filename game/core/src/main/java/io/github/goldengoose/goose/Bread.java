@@ -26,10 +26,13 @@ import java.util.Set;
  */
 
 public class Bread extends Entity {
-    private static final float LIFETIME_SECONDS = 5f;
+    private static final float LIFETIME_SECONDS = 30f;
     private static final float LURE_RADIUS = 120f;
     private static final int MAX_EATERS = 2;
     private static final float SIZE = 32f;
+    private static final float EAT_SECONDS = 4f;
+    private static final float EAT_RANGE = 14f;
+    private static final float MIN_SCALE = 0.4f;
 
     // Bread's flight from dispenser slot to final position
     private static final float FLIGHT_SECONDS = 0.6f;
@@ -44,6 +47,8 @@ public class Bread extends Entity {
     private final Vector2 otherCentre = new Vector2();
     private final Vector2 centre = new Vector2();
     private float age = 0f;
+    private float foodLeft = EAT_SECONDS;
+    private float frameDelta = 0f;
 
     // Bread flight. A piece of bread that is flying does not age and is not lure-able
     private boolean flying = false;
@@ -75,6 +80,7 @@ public class Bread extends Entity {
 
     @Override
     public void update(float deltaTime) {
+        frameDelta = deltaTime;
         // Bread doesn't age until it has landed
         if (flying) {
             updateFlight(deltaTime);
@@ -107,8 +113,13 @@ public class Bread extends Entity {
         }
         getCentre(centre);
         other.getCentre(otherCentre);
+        float dist2 = centre.dst2(otherCentre);
         if (centre.dst2(otherCentre) <= LURE_RADIUS * LURE_RADIUS) {
             goose.distractBy(this);
+        }
+        // Two geese eat twice as much food
+        if (eaters.contains(goose) && dist2 <= EAT_RANGE * EAT_RANGE) {
+            foodLeft -= frameDelta;
         }
     }
 
@@ -132,8 +143,9 @@ public class Bread extends Entity {
     }
 
     @Override
+    // Bread vanishes if it's either eaten by geese or reaches it expires
     public boolean isExpired() {
-        return age >= LIFETIME_SECONDS;
+        return age >= LIFETIME_SECONDS || foodLeft <= 0f;
     }
 
     @Override
@@ -159,7 +171,8 @@ public class Bread extends Entity {
             batch.draw(frame, position.x, position.y + arcHeight, SIZE, SIZE);
             return;
         }
-        batch.draw(sprite, position.x, position.y, SIZE, SIZE);
+        float size = SIZE * (MIN_SCALE + (1f - MIN_SCALE) * Math.max(foodLeft, 0f) / EAT_SECONDS);
+        batch.draw(frame, position.x + (SIZE - size) / 2f, position.y + (SIZE - size) / 2f, size, size);
     }
 
     public void renderDebug(ShapeRenderer shapes) {
