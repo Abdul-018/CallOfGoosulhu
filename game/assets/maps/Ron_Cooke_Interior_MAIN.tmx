@@ -720,7 +720,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="16" name="Interactables" visible="0">
+ <objectgroup id="16" name="Interactables">
   <object id="222" name="keycard_magnetiser" type="interactable" x="153.333" y="214" width="56.6667" height="49.3333">
    <properties>
     <property name="event" value="magnetise_keycard"/>
