@@ -15,6 +15,13 @@ public class Assets {
     public static final String SPELL_TOME = "spell_tome_w_writing.png";
     public static final String SPELL_TOME_EMPTY = "spell_tome.png";
     public static final String BREAD_DISPENSER = "events/bread_dispenser.atlas";
+    public static final String HOURGLASS_GLASS = "ui/hourglass_glass.png";
+    public static final String HOURGLASS_FRAME = "ui/hourglass_frame.png";
+    public static final String PATIENCE_FRAME = "ui/patience_frame.png";
+    public static final String PATIENCE_EYES = "ui/patience_eye_sheet.png";
+    public static final String VIGNETTE_0 = "ui/vignette_0.png";
+    public static final String VIGNETTE_1 = "ui/vignette_1.png";
+    public static final String VIGNETTE_2 = "ui/vignette_2.png";
 
     private final AssetManager manager = new AssetManager();
 
@@ -29,6 +36,13 @@ public class Assets {
         manager.load(SPELL_TOME, Texture.class);
         manager.load(SPELL_TOME_EMPTY, Texture.class);
         manager.load(BREAD_DISPENSER, TextureAtlas.class);
+        manager.load(HOURGLASS_GLASS, Texture.class);
+        manager.load(HOURGLASS_FRAME, Texture.class);
+        manager.load(PATIENCE_FRAME, Texture.class);
+        manager.load(PATIENCE_EYES, Texture.class);
+        manager.load(VIGNETTE_0, Texture.class);
+        manager.load(VIGNETTE_1, Texture.class);
+        manager.load(VIGNETTE_2, Texture.class);
         manager.finishLoading();
     }
 
