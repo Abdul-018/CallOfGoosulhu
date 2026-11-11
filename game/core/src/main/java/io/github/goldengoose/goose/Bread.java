@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.Color;
 import io.github.goldengoose.world.Entity;
 
 import java.util.Collections;
@@ -24,7 +25,7 @@ import java.util.Set;
  */
 
 public class Bread extends Entity {
-    private static final float LIFETIME_SECONDS = 8f;
+    private static final float LIFETIME_SECONDS = 5f;
     private static final float LURE_RADIUS = 120f;
     private static final int MAX_EATERS = 2;
     private static final float SIZE = 25;
@@ -97,7 +98,11 @@ public class Bread extends Entity {
     }
 
     public void renderDebug(ShapeRenderer shapes) {
-        // TODO: draw a small circle for the bread and a larger ring showing the lure radius
+        getCentre(centre);
+        shapes.setColor(1f, 0.9f, 0.2f, 1f);
+        shapes.circle(centre.x, centre.y, SIZE / 2f, 12);
+        shapes.setColor(0.6f, 0.55f, 0.1f, 1f);
+        shapes.circle(centre.x, centre.y, LURE_RADIUS, 48);
     }
 
     @Override
