@@ -10,6 +10,7 @@ import io.github.goldengoose.player.Player;
 import io.github.goldengoose.spells.ElderSignSpell;
 import io.github.goldengoose.spells.PentagramTrapSpell;
 import io.github.goldengoose.spells.SpellTome;
+import io.github.goldengoose.hidden_events.HiddenEventsHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class GameSession implements Disposable {
             pendingDoor = null;
         }
         currentArea.getWorld().update(delta);
+        currentArea.update(delta);
         spellTome.update(delta);
         timer.update(delta);
         checkDoors();
@@ -77,6 +79,7 @@ public class GameSession implements Disposable {
 
     public Area getArea()         { return currentArea; }
     public GameWorld getWorld()   { return currentArea.getWorld(); }
+    public HiddenEventsHandler getEventManager() { return currentArea.getEventManager(); }
     public Player getPlayer()     { return player; }
     public GameTimer getTimer()   { return timer; }
     public SpellTome getSpellTome() { return spellTome; }
