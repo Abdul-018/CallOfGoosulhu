@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.player.Player;
@@ -51,6 +52,7 @@ public class Area implements Disposable {
         tallGrass = new TallGrass(map);
         eventManager.register(tallGrass);
         Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
+        Bread.setSpinAnimation(new Animation<TextureRegion>(0.05f, assets.getAtlas(Assets.BREAD_SPIN).findRegions("bread_spin"), Animation.PlayMode.LOOP));
 
         if (name.equals("Outside_campus_cthulhu_props")) {
             eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), 500, 150, 64, 64));

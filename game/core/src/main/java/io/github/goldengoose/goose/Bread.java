@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Color;
-import io.github.goldengoose.world.Entity;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import io.github.goldengoose.world.Entity;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -29,7 +29,7 @@ public class Bread extends Entity {
     private static final float LIFETIME_SECONDS = 5f;
     private static final float LURE_RADIUS = 120f;
     private static final int MAX_EATERS = 2;
-    private static final float SIZE = 25;
+    private static final float SIZE = 32f;
 
     // Bread's flight from dispenser slot to final position
     private static final float FLIGHT_SECONDS = 0.6f;
@@ -37,6 +37,7 @@ public class Bread extends Entity {
     private static final float SHADOW_ALPHA = 0.3f;
 
     private static TextureRegion sprite;
+    private static Animation<TextureRegion> spin;
 
     // Identity set
     private final Set<Goose> eaters = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -66,6 +67,10 @@ public class Bread extends Entity {
     }
     public static void setSprite(TextureRegion region) {
         sprite = region;
+    }
+
+    public static void setSpinAnimation(Animation<TextureRegion> animation) {
+        spin = animation;
     }
 
     @Override
@@ -133,19 +138,25 @@ public class Bread extends Entity {
 
     @Override
     public void render(SpriteBatch batch) {
-        if (sprite == null) {
+        if (flying && flightClock < launchDelay) {
+            return;
+        }
+
+        TextureRegion frame = sprite;
+        // Flying == spinning, landed = resting on the first frame
+        if (spin != null) {
+            frame = flying ? spin.getKeyFrame(flightClock - launchDelay, true) : spin.getKeyFrame(0f, false);
+        }
+
+        if (frame == null) {
             return;
         }
 
         if (flying) {
-            if (flightClock < launchDelay) {
-                return;
-            }
-
             batch.setColor(0f, 0f, 0f, SHADOW_ALPHA);
-            batch.draw(sprite, position.x, position.y, SIZE, SIZE / 2f);
+            batch.draw(frame, position.x, position.y, SIZE, SIZE / 2f);
             batch.setColor(1f, 1f, 1f, 1f);
-            batch.draw(sprite, position.x, position.y + arcHeight, SIZE, SIZE);
+            batch.draw(frame, position.x, position.y + arcHeight, SIZE, SIZE);
             return;
         }
         batch.draw(sprite, position.x, position.y, SIZE, SIZE);
@@ -158,6 +169,7 @@ public class Bread extends Entity {
         getCentre(centre);
         shapes.setColor(Color.ORANGE);
         shapes.circle(centre.x, centre.y, 4f);
+
         if (!flying) {
             shapes.setColor(Color.YELLOW);
             shapes.circle(centre.x, centre.y, LURE_RADIUS);
