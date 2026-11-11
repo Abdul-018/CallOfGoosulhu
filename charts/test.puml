@@ -83,10 +83,10 @@ endlegend
 *** Goose AI <<milan_jack>><<prog>>
 **** Visual detection <<milan>><<done>>
 **** Auditory detection <<milan>><<done>>
-**** Pursuit and\n stopping distance <<milan_jack>><<prog>>
+**** Pursuit and\n stopping distance <<milan_jack>><<done>>
 **** Honking behaviour <<lisa>>
-*** Goose animation <<milan>><<prog>>
-*** Goose spawning <<milan>>
+*** Goose animation <<milan>><<done>>
+*** Goose spawning <<milan>><<done>>
 
 ** 3. Map and\n Environment <<prog>>
 *** Tileset <<charlie>><<done>>
