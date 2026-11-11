@@ -689,7 +689,6 @@
   <object id="953" name="bench" gid="23195" x="992" y="1152" width="64" height="64"/>
   <object id="954" name="bench" gid="23195" x="1152" y="1152" width="64" height="64"/>
   <object id="955" name="tree_round_small_2" gid="23242" x="32" y="1184" width="64" height="96"/>
-  <object id="956" name="pothole" gid="23219" x="1088" y="1216" width="64" height="64"/>
   <object id="957" name="gravestone_2" gid="23212" x="1216" y="1216" width="32" height="64"/>
   <object id="958" name="weeds_2" gid="23245" x="0" y="1248" width="32" height="64"/>
   <object id="959" name="bench_side" gid="23196" x="704" y="1248" width="32" height="96"/>
