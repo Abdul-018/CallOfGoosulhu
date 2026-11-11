@@ -13,9 +13,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.player.Player;
+import io.github.goldengoose.goose.Bread;
+import io.github.goldengoose.hidden_events.BreadDispenser;
+import io.github.goldengoose.hidden_events.HiddenEventsHandler;
+import io.github.goldengoose.hidden_events.TallGrass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +33,8 @@ public class Area implements Disposable {
     private final DepthRenderer depthRenderer;
     private final GameLighting lighting;
     private final GameWorld world;
+    private final HiddenEventsHandler eventManager;
+    private final TallGrass tallGrass;
     private final List<Door> doors = new ArrayList<>();
     private Door ignoredDoor;
 
@@ -38,7 +45,21 @@ public class Area implements Disposable {
         depthRenderer = new DepthRenderer(map);
         lighting = new GameLighting(map, viewport);
         world = new GameWorld(player, map, assets);
+
+        // Hidden events for this area
+        eventManager = new HiddenEventsHandler(world);
+        tallGrass = new TallGrass(map);
+        eventManager.register(tallGrass);
+        // Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
+
+        if (name.equals("Outside_campus_cthulhu_props")) {
+            eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), 500, 150, 64, 64));
+        }
         loadDoors();
+    }
+
+    public void update(float delta) {
+        eventManager.update(delta);
     }
 
     public void render(SpriteBatch batch, OrthographicCamera camera, Rectangle view) {
@@ -48,6 +69,7 @@ public class Area implements Disposable {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         world.renderGround(batch);
+        depthRenderer.setGrassAlpha(tallGrass.getFadeAlpha());
         depthRenderer.render(batch, world.getDepthEntities(), view);
         batch.end();
 
@@ -85,6 +107,10 @@ public class Area implements Disposable {
 
     public GameWorld getWorld() {
         return world;
+    }
+
+    public HiddenEventsHandler getEventManager() {
+        return eventManager;
     }
 
     public List<Door> getDoors() {
