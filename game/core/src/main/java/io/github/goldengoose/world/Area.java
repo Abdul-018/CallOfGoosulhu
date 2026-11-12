@@ -65,6 +65,22 @@ public class Area implements Disposable {
 
     public void update(float delta) {
         eventManager.update(delta);
+        checkMudPuddles();
+    }
+
+    private void checkMudPuddles() {
+        com.badlogic.gdx.maps.tiled.TiledMapTileLayer mudLayer =
+            (com.badlogic.gdx.maps.tiled.TiledMapTileLayer) map.getLayers().get("Mud Puddles");
+        if (mudLayer == null) return;
+
+        float px = world.getPlayer().position.x + world.getPlayer().getWidth() / 2;
+        float py = world.getPlayer().position.y + world.getPlayer().getHeight() / 2;
+
+        int tileX = (int) (px / 32);
+        int tileY = (int) (py / 32);
+
+        boolean inMud = mudLayer.getCell(tileX, tileY) != null;
+        world.getPlayer().setInMud(inMud);
     }
 
     public void render(SpriteBatch batch, OrthographicCamera camera, Rectangle view) {

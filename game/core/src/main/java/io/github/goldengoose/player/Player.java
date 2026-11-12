@@ -9,11 +9,13 @@ import io.github.goldengoose.util.InputManager;
 
 public class Player extends Entity {
     private static final float SPEED = 120f;
+    private static final float MUD_SPEED = 40f;
 
     private final Vector2 velocity = new Vector2();
     private TextureRegion sprite;
     private int hidingCount = 0;
     private boolean transformed = false;
+    private boolean inMud = false;
 
     public Player(Texture texture) {
         this.texture = texture;
@@ -31,10 +33,15 @@ public class Player extends Entity {
         return transformed;
     }
 
+    public void setInMud(boolean inMud) {
+        this.inMud = inMud;
+    }
+
     @Override
     public void update(float deltaTime) {
+        float speed = inMud ? MUD_SPEED : SPEED;
         velocity.set(InputManager.getHorizontal(), InputManager.getVertical()).nor();
-        position.mulAdd(velocity, SPEED * deltaTime);
+        position.mulAdd(velocity, speed * deltaTime);
     }
 
     @Override
