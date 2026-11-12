@@ -11,14 +11,24 @@ public class Player extends Entity {
     private static final float SPEED = 120f;
 
     private final Vector2 velocity = new Vector2();
+    private TextureRegion sprite;
+    private int hidingCount = 0;
+    private boolean transformed = false;
 
-    /** The student facing forwards, from the 32x32 character sheet. (UR_AVATAR) */
-    private final TextureRegion sprite;
-    private  int hidingCount = 0;
     public Player(Texture texture) {
         this.texture = texture;
-        // The sheet has 4 poses (right, up, left, down), each 32 wide and 64 tall. We use "down".
         sprite = new TextureRegion(texture, 96, 0, 32, 64);
+    }
+
+    public void transformIntoGoose(Texture gooseTexture) {
+        if (!transformed) {
+            transformed = true;
+            sprite = new TextureRegion(gooseTexture, 0, 0, 32, 32);
+        }
+    }
+
+    public boolean isTransformed() {
+        return transformed;
     }
 
     @Override
@@ -32,24 +42,20 @@ public class Player extends Entity {
         batch.draw(sprite, position.x, position.y);
     }
 
-    public void beginHiding(){
+    public void beginHiding() {
         hidingCount++;
     }
 
-    public void endHiding(){
-        if (hidingCount > 0){
+    public void endHiding() {
+        if (hidingCount > 0) {
             hidingCount--;
         }
     }
 
-    public boolean isHidden(){
-        if (hidingCount > 0) {
-            return true;
-
-        } else {
-            return false;
-        }
+    public boolean isHidden() {
+        return hidingCount > 0;
     }
+
     @Override
     public float getWidth() {
         return sprite.getRegionWidth();
