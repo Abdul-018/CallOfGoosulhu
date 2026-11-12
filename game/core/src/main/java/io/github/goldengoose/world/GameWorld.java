@@ -40,6 +40,16 @@ public class GameWorld {
         return player;
     }
 
+    public List<Goose> getGeese() {
+        List<Goose> geese = new ArrayList<>();
+        for (Entity entity : entities) {
+            if (entity instanceof Goose goose) {
+                geese.add(goose);
+            }
+        }
+        return geese;
+    }
+
     public void removePlayer() {
         entities.remove(player);
     }

@@ -15,9 +15,6 @@ import io.github.goldengoose.hidden_events.HiddenEventsHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Stores persistent data for each game "session" (the 5 minutes time)
- */
 public class GameSession implements Disposable {
     private final Assets assets;
     private final Viewport worldViewport;
@@ -25,6 +22,7 @@ public class GameSession implements Disposable {
     private final Player player;
     private final GameTimer timer = new GameTimer(5 * 60);
     private final SpellTome spellTome;
+    private final PatienceSystem patienceSystem = new PatienceSystem();
     private KeyState keyState = KeyState.NONE;
 
     private final Map<String, Area> areas = new HashMap<>();
@@ -54,10 +52,10 @@ public class GameSession implements Disposable {
         spellTome.update(delta);
         timer.update(delta);
         checkDoors();
+        patienceSystem.update(delta, currentArea.getWorld().getGeese());
     }
 
     private void checkDoors() {
-        // TODO: Once we have player collision, use the bounding box
         Rectangle feet = new Rectangle(player.position.x, player.position.y, player.getWidth(), player.getHeight());
         for (Door door : currentArea.getDoors()) {
             if (door.bounds().overlaps(feet)) {
@@ -83,6 +81,7 @@ public class GameSession implements Disposable {
     public Player getPlayer()     { return player; }
     public GameTimer getTimer()   { return timer; }
     public SpellTome getSpellTome() { return spellTome; }
+    public PatienceSystem getPatienceSystem() { return patienceSystem; }
     public KeyState getKeyState() { return keyState; }
     public void setKeyState(KeyState state) { keyState = state; }
 

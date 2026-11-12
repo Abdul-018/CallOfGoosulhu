@@ -31,7 +31,19 @@ public class GameScreen implements Screen {
 
     private final PauseMenu pauseMenu;
     private final TomeMenu tomeMenu;
-    private final BitmapFont hudFont = new BitmapFont();
+    private final BitmapFont hudFont = createFont();
+
+    private static BitmapFont createFont() {
+        com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator generator =
+            new com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator(
+                com.badlogic.gdx.Gdx.files.internal("fonts/Cristoforo.ttf"));
+        com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+            new com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 24;
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+        return font;
+    }
     private final Hud hud;
 
     private final Rectangle viewRect = new Rectangle();
@@ -79,6 +91,7 @@ public class GameScreen implements Screen {
         if (!paused) {
             session.update(delta);
             hud.update(delta, session.getTimer().getSecondsRemaining());
+            hud.updatePatience(session.getPatienceSystem().getPatience());
         }
 
         // Camera follows the player
