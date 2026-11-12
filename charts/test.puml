@@ -148,11 +148,24 @@ endlegend
 *** patience ring UI\n integration <<charlie>><<done>>
 *** Patience thresholds\n and effects <<charlie>><<prog>>
 
-** 8. Events\n and Interactions <<jack>><<done>>
+** 8. Events\n and Interactions <<jack>><<prog>>
 *** Bread dispenser <<jack>><<done>>
 **** Visuals <<jack>><<done>>
+***** Dispenser animations: \n RISE, IDLE, SHAKE<<jack>><<done>>
+***** Bread animations: \n FLOAT, SPIN <<jack>><<done>>
 **** Functionality <<jack>><<done>>
-*** Tall grass <<jack>><<done>>
+***** Trigger zone <<jack>><<done>>
+***** Interact button <<jack>><<done>>
+***** Dispenses bread <<jack>><<done>>
+***** Bread distracts geese <<jack>><<done>>
+*** Tall grass <<jack>><<prog>>
+**** Visuals <<jack>><<prog>>
+***** Becomes transparent when player \nwalks through it <<jack>><<done>>
+***** Grass sways when player \nwalks through it <<jack>><<prog>>
+***** Chasing geese are confused\n when player hides <<jack>><<prog>>
+**** Functionality <<jack>><<done>>
+***** Geese cannot detect player <<jack>><<done>>
+
 
 ** 9. User Interface <<prog>>
 *** Start screen <<milan>><<prog>>
@@ -167,10 +180,11 @@ endlegend
 *** Defeat screen <<lisa>><<done>>
 
 ** 10. Audio and\n Dialogue
-*** Background music
-*** Goose honking
-*** Environmental sound effects
-*** Spell sound effects
-*** Event and transition sound effects
-*** Speech bubbles/subtitles
+*** Audio handler <<jack>><<prog>>
+**** Background music
+**** Goose honking <<jack>><<prog>>
+**** Environmental sound effects <<jack>><<prog>>
+**** Spell sound effects
+**** Event and transition sound effects
+**** Speech bubbles/subtitles
 @endwbs
