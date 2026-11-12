@@ -13,6 +13,7 @@ public class Assets {
     public static final String ELDER_SIGN_SPELL = "elder_sign_spell.png";
     public static final String SPELL_TOME = "spell_tome_w_writing.png";
     public static final String SPELL_TOME_EMPTY = "spell_tome.png";
+    public static final String TUT_BUTTON = "tutorial-button.png";
 
     private final AssetManager manager = new AssetManager();
 

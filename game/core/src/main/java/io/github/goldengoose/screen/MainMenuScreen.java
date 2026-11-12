@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -13,16 +15,28 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.goldengoose.Cog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.ui.UiStyles;
 import io.github.goldengoose.util.Utilities;
 import io.github.goldengoose.assets.CogFonts;
-
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import static io.github.goldengoose.assets.Assets.TUT_BUTTON;
+import io.github.goldengoose.ui.TutMenu;
+import com.badlogic.gdx.graphics.g2d.Batch;
 public class MainMenuScreen implements Screen {
 
     final Cog game;
 
     private Stage stage;
     private BitmapFont menuFont;
+    private TutMenu tutMenu;
+    private boolean tutorialOpen = false;
+    private Actor tutorialActor;
+    private Table tutorialControls;
+    private Table mainTable;
+    private ImageButton tutButton;
 
     public MainMenuScreen(final Cog game) {
         this.game = game;
@@ -42,6 +56,47 @@ public class MainMenuScreen implements Screen {
         Label title = new Label("Call of Goosulhu", UiStyles.label(menuFont));
         TextButton playButton = new TextButton("PLAY", UiStyles.button(menuFont));
         TextButton quitButton = new TextButton("QUIT", UiStyles.button(menuFont));
+        Texture tutTexture = new Texture(Gdx.files.internal(TUT_BUTTON));
+
+        tutTexture.setFilter(
+            Texture.TextureFilter.Nearest,
+            Texture.TextureFilter.Nearest
+        );
+
+        tutButton = new ImageButton(
+            new TextureRegionDrawable(new TextureRegion(tutTexture))
+        );
+
+        Texture emptyTomeTexture = new Texture(
+            Gdx.files.internal(Assets.SPELL_TOME_EMPTY)
+        );
+
+        tutMenu = new TutMenu(emptyTomeTexture);
+
+        tutorialActor = new Actor() {
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+                tutMenu.draw((SpriteBatch) batch, stage.getViewport());
+            }
+        };
+
+        tutorialActor.setVisible(false);
+        tutorialActor.setSize(
+            stage.getViewport().getWorldWidth(),
+            stage.getViewport().getWorldHeight()
+        );
+
+        tutButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                tutorialOpen = true;
+                mainTable.setVisible(false);
+                tutButton.setVisible(false);
+                tutorialActor.setVisible(true);
+                tutorialControls.setVisible(true);
+            }
+        });
+
 
         playButton.addListener(new ChangeListener() {
             @Override
@@ -57,16 +112,46 @@ public class MainMenuScreen implements Screen {
             }
         });
 
-        Table table = new Table();
-        table.setFillParent(true);
+        mainTable = new Table();
+        mainTable.setFillParent(true);
 
-        table.add(title).padBottom(50).colspan(2);
-        table.row();
+        mainTable.add(title).padBottom(50).colspan(2);
+        mainTable.row();
 
-        table.add(playButton);
-        table.add(quitButton);
+        mainTable.add(playButton);
+        mainTable.add(quitButton);
 
-        stage.addActor(table);
+        stage.addActor(mainTable);
+
+        tutButton.setSize(80,80);
+        tutButton.setPosition(20, 20);
+
+        stage.addActor(tutButton);
+
+        TextButton backButton = new TextButton(
+            "BACK",
+            UiStyles.button(menuFont)
+        );
+
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                tutorialOpen = false;
+                tutorialActor.setVisible(false);
+                tutorialControls.setVisible(false);
+                mainTable.setVisible(true);
+                tutButton.setVisible(true);
+            }
+        });
+
+        tutorialControls = new Table();
+        tutorialControls.setFillParent(true);
+        tutorialControls.bottom();
+        tutorialControls.add(backButton).padBottom(20);
+        tutorialControls.setVisible(false);
+
+        stage.addActor(tutorialActor);
+        stage.addActor(tutorialControls);
     }
 
     @Override
