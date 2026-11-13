@@ -16,13 +16,18 @@ public class Goose extends Entity {
     // CONSTANTS
     //------------
 
-    // For the "?" that appears above a confused goose
+    // For the "?" that appears above a confused goose AND the "!" that appears above alerted geese
+    private static TextureRegion alertIcon;
     private static TextureRegion confusedIcon;
     private static float ICON_GAP = 2f;
     private static final float ICON_BOB = 1.5f;
     private static final float ICON_POP_SECONDS = 0.15f;
     private static final float ICON_FADE_SECONDS = 0.3f;
     private static final float ICON_SCALE = 1.5f;
+
+    public static void setAlertIcon(TextureRegion region){
+        alertIcon = region;
+    }
 
     public static void setConfusedIcon(TextureRegion region){
         confusedIcon = region;
@@ -100,23 +105,28 @@ public class Goose extends Entity {
         } else {
             batch.draw(frame, position.x, position.y, FRAME_SIZE, FRAME_SIZE);
         }
-        renderConfusedIcon(batch);
+
+        if (gooseAI.isAlerted()) {
+            renderIcon(batch, alertIcon, gooseAI.getAlertElapsed(), gooseAI.getAlertRemaining());
+
+        } else if (gooseAI.isConfused()){
+            renderIcon(batch, confusedIcon, gooseAI.getConfusedElapsed(), gooseAI.getConfusedRemaining());
+        }
     }
 
-    // The "?" fades in and out above the goose's head
-    private void renderConfusedIcon(SpriteBatch batch){
-        if (confusedIcon == null || !(gooseAI.isConfused())){
+    // The "?" and "!" fade in and out above the goose's head
+    private void renderIcon(SpriteBatch batch, TextureRegion icon, float elapsed, float remaining){
+        if (icon == null){
             return;
         }
 
-        float elapsed = gooseAI.getConfusedElapsed();
         float pop = Math.min(1f, elapsed / ICON_POP_SECONDS);
-        float alpha = Math.min(1f, gooseAI.getConfusedRemaining() / ICON_FADE_SECONDS);
-        float w = confusedIcon.getRegionWidth() * pop * ICON_SCALE;
-        float h = confusedIcon.getRegionHeight() * pop * ICON_SCALE;
+        float alpha = Math.min(1f, remaining / ICON_FADE_SECONDS);
+        float w = icon.getRegionWidth() * pop * ICON_SCALE;
+        float h = icon.getRegionHeight() * pop * ICON_SCALE;
         float bob = (float) Math.sin(elapsed * 6f) * ICON_BOB;
         batch.setColor(1f, 1f, 1f, alpha);
-        batch.draw(confusedIcon, position.x - 5f + FRAME_SIZE / 2f - w / 2f, position.y + FRAME_SIZE + ICON_GAP + bob, w, h);
+        batch.draw(icon, position.x + FRAME_SIZE / 2f - w / 2f, position.y + FRAME_SIZE + ICON_GAP + bob, w, h);
         batch.setColor(1f, 1f, 1f, 1f);
     }
 

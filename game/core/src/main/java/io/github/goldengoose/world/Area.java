@@ -55,6 +55,7 @@ public class Area implements Disposable {
         tallGrass = new TallGrass(map);
         eventManager.register(tallGrass);
         Goose.setConfusedIcon(new TextureRegion(assets.getTexture(Assets.CONFUSED_ICON)));
+        Goose.setAlertIcon(new TextureRegion(assets.getTexture(Assets.ALERT_ICON)));
         Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
         Bread.setSpinAnimation(new Animation<TextureRegion>(0.05f, assets.getAtlas(Assets.BREAD_SPIN).findRegions("bread_spin"), Animation.PlayMode.LOOP));
 
