@@ -117,7 +117,7 @@ public class GameScreen implements Screen {
         if (debug) renderDebug();
 
         hudViewport.apply();
-        hud.draw(game.batch, hudViewport, hudFont);
+        hud.draw(game.batch, hudViewport, hudFont, session.getSpellTome(),session.getKeyState());
 
         shapes.setProjectionMatrix(hudViewport.getCamera().combined);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
@@ -198,7 +198,9 @@ public class GameScreen implements Screen {
             if (paused) return false;
             if (button == Input.Buttons.LEFT) {
                 worldViewport.unproject(mouseWorldPosition.set(screenX, screenY));
-                session.getSpellTome().activateSelectedSpell(mouseWorldPosition);
+                if (!session.clickDoor(mouseWorldPosition)) {
+                    session.getSpellTome().activateSelectedSpell(mouseWorldPosition);
+                }
                 return true;
             }
             return false;
