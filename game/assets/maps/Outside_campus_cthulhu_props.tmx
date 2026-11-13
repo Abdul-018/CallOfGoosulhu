@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="18" nextobjectid="985">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="21" nextobjectid="1025">
  <properties>
   <property name="based_on" value="Outside_campus_MAIN.tmx"/>
   <property name="theme" value="cthulhu"/>
@@ -212,8 +212,8 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2684357773,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1275,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1276,1274,0,0,3246,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1273,3242,1273,0,0,0,1276,0,0,0,1273,0,1275,0,0,0,0,0,0,0,0,0,
-3242,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1276,0,1275,0,0,3221228685,1273,0,1275,1273,0,0,0,1275,0,3213,9647,3213,0,0,0,0,0,0,0,0,
-0,10703,3243,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1275,0,1276,1274,1275,0,0,0,3213,0,0,0,0,0,0,0,0,0,0,0,0,
+3242,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1276,0,1275,0,0,3221228685,1273,0,1275,0,2950,2952,0,1275,0,3213,9647,3213,0,0,0,0,0,0,0,0,
+0,10703,3243,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1275,0,1276,1274,0,2982,2984,0,3213,0,0,0,0,0,0,0,0,0,0,0,0,
 0,10735,3242,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1273,0,3243,0,0,1273,3213,3213,0,3213,1275,1273,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1275,0,0,0,0,3243,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1274,0,0,0,3246,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -230,6 +230,7 @@
  </layer>
  <layer id="13" name="Tall Grass (extra layer)" width="50" height="50">
   <properties>
+   <property name="tall_grass" type="bool" value="true"/>
    <property name="ySort" type="bool" value="true"/>
   </properties>
   <data encoding="csv">
@@ -287,6 +288,7 @@
  </layer>
  <layer id="14" name="Tall Grass (extra layer 1)" width="50" height="50">
   <properties>
+   <property name="tall_grass" type="bool" value="true"/>
    <property name="ySort" type="bool" value="true"/>
   </properties>
   <data encoding="csv">
@@ -344,6 +346,7 @@
  </layer>
  <layer id="12" name="Tall Grass" width="50" height="50">
   <properties>
+   <property name="tall_grass" type="bool" value="true"/>
    <property name="ySort" type="bool" value="true"/>
   </properties>
   <data encoding="csv">
@@ -689,7 +692,6 @@
   <object id="953" name="bench" gid="23195" x="992" y="1152" width="64" height="64"/>
   <object id="954" name="bench" gid="23195" x="1152" y="1152" width="64" height="64"/>
   <object id="955" name="tree_round_small_2" gid="23242" x="32" y="1184" width="64" height="96"/>
-  <object id="956" name="pothole" gid="23219" x="1088" y="1216" width="64" height="64"/>
   <object id="957" name="gravestone_2" gid="23212" x="1216" y="1216" width="32" height="64"/>
   <object id="958" name="weeds_2" gid="23245" x="0" y="1248" width="32" height="64"/>
   <object id="959" name="bench_side" gid="23196" x="704" y="1248" width="32" height="96"/>
@@ -776,6 +778,97 @@
 1225,890,890,889,1226,890,1226,1226,889,889,1226,890,1226,890,1226,889,1226,889,890,890,889,890,1226,890,1227,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="18" name="Spawns">
+  <object id="988" name="start" x="783.881" y="1454.02">
+   <point/>
+  </object>
+  <object id="989" name="ian_wand_front" x="385.131" y="1422.63">
+   <point/>
+  </object>
+  <object id="1017" name="ron_cooke_exit" x="1065.99" y="1185.19" width="33.5657" height="13.9179"/>
+  <object id="1018" x="1314.99" y="1419.63"/>
+  <object id="1024" name="keyCard" x="955.424" y="319.128" width="36.8526" height="32.148"/>
+ </objectgroup>
+ <objectgroup id="20" name="GooseSpawns">
+  <object id="990" x="96.5447" y="1471.67">
+   <point/>
+  </object>
+  <object id="991" x="33.0285" y="508.765">
+   <point/>
+  </object>
+  <object id="992" x="129.573" y="347.434">
+   <point/>
+  </object>
+  <object id="993" x="351.88" y="449.06">
+   <point/>
+  </object>
+  <object id="994" x="607.851" y="539.888">
+   <point/>
+  </object>
+  <object id="995" x="672.637" y="412.856">
+   <point/>
+  </object>
+  <object id="996" x="799.67" y="257.241">
+   <point/>
+  </object>
+  <object id="997" x="896.214" y="158.791">
+   <point/>
+  </object>
+  <object id="998" x="994.029" y="221.672">
+   <point/>
+  </object>
+  <object id="999" x="927.973" y="384.909">
+   <point/>
+  </object>
+  <object id="1000" x="864.456" y="540.523">
+   <point/>
+  </object>
+  <object id="1001" x="1280.49" y="381.733">
+   <point/>
+  </object>
+  <object id="1002" x="1409.43" y="191.184">
+   <point/>
+  </object>
+  <object id="1003" x="1471.67" y="353.15">
+   <point/>
+  </object>
+  <object id="1004" x="1568.22" y="542.429">
+   <point/>
+  </object>
+  <object id="1005" x="1567.58" y="797.764">
+   <point/>
+  </object>
+  <object id="1006" x="1471.67" y="990.854">
+   <point/>
+  </object>
+  <object id="1007" x="1344.64" y="1053.73">
+   <point/>
+  </object>
+  <object id="1008" x="1055.64" y="1214.43">
+   <point/>
+  </object>
+  <object id="1009" x="766.641" y="1086.76">
+   <point/>
+  </object>
+  <object id="1010" x="832.698" y="733.613">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="19" name="Doors">
+  <object id="987" x="363.077" y="1316.87" width="76.8477" height="50.6828">
+   <properties>
+    <property name="locked" type="bool" value="true"/>
+    <property name="target_map" value="ian_wand.tmx"/>
+    <property name="target_spawn" value="front"/>
+   </properties>
+  </object>
+  <object id="1013" name="ron_cooke_door" x="1074.44" y="1048.5" width="60.0657" height="54.6812">
+   <properties>
+    <property name="target_map" value="Ron_Cooke_Interior_MAIN.tmx"/>
+    <property name="target_spawn" value="from_campus"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="5" name="Collision" visible="0">
   <object id="195" name="Lake 1" type="water" x="1504" y="1056" width="96" height="32"/>
   <object id="196" name="Lake 2" type="water" x="1440" y="1088" width="160" height="32"/>

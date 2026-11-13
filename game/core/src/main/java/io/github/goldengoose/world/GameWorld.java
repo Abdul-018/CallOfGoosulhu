@@ -2,11 +2,18 @@ package io.github.goldengoose.world;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.goose.Goose;
 import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.player.Player;
+import io.github.goldengoose.hidden_events.HiddenEvent;
+import io.github.goldengoose.goose.Bread;
+import io.github.goldengoose.ui.KeyCard;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,15 +24,53 @@ public class GameWorld {
     private final List<Entity> depthEntities = new ArrayList<>();
     private final List<Entity> pendingEntities = new ArrayList<>();
     private final Player player;
+    private final GameSession session;
 
-    public GameWorld(Assets assets) {
-        player = new Player(assets.getTexture(Assets.PLAYER));
+    public GameWorld(GameSession session, TiledMap map, Assets assets) {
+        this.session = session;
+        this.player = session.getPlayer();
         entities.add(player);
-        entities.add(new Goose(player, new Vector2(200, 200), assets));
+
+        MapLayer gooseSpawns = map.getLayers().get("GooseSpawns");
+        if (gooseSpawns != null) {
+            for (MapObject spawn : gooseSpawns.getObjects()) {
+                float x = spawn.getProperties().get("x", Float.class);
+                float y = spawn.getProperties().get("y", Float.class);
+                entities.add(new Goose(player, new Vector2(x, y), assets));
+            }
+        }
+        MapLayer spawns = map.getLayers().get("Spawns");
+        if (spawns == null) throw new IllegalStateException("No 'Spawns' layer");
+
+        MapObject keyCard = spawns.getObjects().get("keyCard");
+        if (keyCard == null) return;
+        if (!(keyCard instanceof RectangleMapObject rect)) throw new IllegalStateException("'keyCard' is not a Rectangle");
+
+        KeyCardItem keyCardItem = new KeyCardItem(session, rect.getRectangle(), assets.getTexture(Assets.KEYCARD_ITEM));
+        addEntity(keyCardItem);
 
     }
     public Player getPlayer() {
         return player;
+    }
+    public KeyState getKeyState() { return session.getKeyState(); }
+    public void setKeyState(KeyState state) { session.setKeyState(state); }
+
+    public List<Goose> getGeese() {
+        List<Goose> geese = new ArrayList<>();
+        for (Entity entity : entities) {
+            if (entity instanceof Goose goose) {
+                geese.add(goose);
+            }
+        }
+        return geese;
+    }
+
+    public void removePlayer() {
+        entities.remove(player);
+    }
+    public void addPlayer() {
+        if (!entities.contains(player)) entities.add(player);
     }
 
     public void addEntity(Entity entity) {
@@ -56,7 +101,9 @@ public class GameWorld {
     public void render(SpriteBatch batch) {
         for (Entity entity : entities) {
             entity.render(batch);
+
         }
+
     }
 
     public void renderGround(SpriteBatch batch) {
@@ -69,6 +116,12 @@ public class GameWorld {
         for (Entity entity : entities) {
             if (entity instanceof Goose goose) {
                 goose.renderDebug(shapes);
+            }
+            if (entity instanceof HiddenEvent event) {
+                event.renderDebug(shapes);
+            }
+            if (entity instanceof Bread bread) {
+                bread.renderDebug(shapes);
             }
         }
     }
