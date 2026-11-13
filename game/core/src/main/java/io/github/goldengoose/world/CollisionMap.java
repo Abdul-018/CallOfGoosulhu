@@ -39,8 +39,8 @@ public class CollisionMap {
     }
 
     private boolean overlaps(Polygon polygon, Rectangle box) {
-        if (!polygon.getBoundingRectangle().overlaps(box)) return false;   // quick reject
-        if (polygon.contains(box.x, box.y)) return true;                   // box is inside the polygon
+        if (!polygon.getBoundingRectangle().overlaps(box)) return false;
+        if (polygon.contains(box.x, box.y)) return true;
 
         float[] v = polygon.getTransformedVertices();
         for (int i = 0; i < v.length; i += 2) {
