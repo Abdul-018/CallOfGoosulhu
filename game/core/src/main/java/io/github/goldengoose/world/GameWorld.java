@@ -36,7 +36,7 @@ public class GameWorld {
             for (MapObject spawn : gooseSpawns.getObjects()) {
                 float x = spawn.getProperties().get("x", Float.class);
                 float y = spawn.getProperties().get("y", Float.class);
-                entities.add(new Goose(player, new Vector2(x, y), assets));
+                entities.add(new Goose(player, new Vector2(x, y), collision, assets));
             }
         }
         MapLayer spawns = map.getLayers().get("Spawns");
