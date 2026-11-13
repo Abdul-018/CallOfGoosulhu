@@ -19,7 +19,7 @@ public class Player extends Entity {
     // CONSTANTS
     //------------
     private static final float SPEED = 120f;
-    private static final float MUD_SPEED = 40f;
+    private static final float MUD_SPEED = 60f;
 
     // Amelia frames are 16x32 on the sheet, drawn at double size to match our 32px tiles
     private static final int FRAME_WIDTH = 16;
