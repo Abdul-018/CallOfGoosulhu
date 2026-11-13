@@ -40,6 +40,8 @@ public class Area implements Disposable {
     private final HiddenEventsHandler eventManager;
     private final TallGrass tallGrass;
     private final TiledMapTileLayer mudLayer;
+    private float grassStrength = 0f;
+    private static final float GRASS_FADE_SPEED = 4f;
 
     private final Animation<TextureRegion> prompt;
     private final List<Door> doors = new ArrayList<>();
@@ -79,6 +81,13 @@ public class Area implements Disposable {
     public void update(float delta) {
         eventManager.update(delta);
         checkMudPuddles();
+
+        float target = tallGrass.getFadeAlpha() < 1f ? 1f : 0f;
+        if (grassStrength < target){
+            grassStrength = Math.min(target, grassStrength + GRASS_FADE_SPEED * delta);
+        } else if (grassStrength > target){
+            grassStrength = Math.max(target, grassStrength - GRASS_FADE_SPEED * delta);
+        }
     }
 
     private void checkMudPuddles() {
@@ -100,7 +109,8 @@ public class Area implements Disposable {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         world.renderGround(batch);
-        depthRenderer.setGrassAlpha(tallGrass.getFadeAlpha());
+        Player player = world.getPlayer();
+        depthRenderer.setGrassFade(player.getPosition().x + player.getWidth() / 2f, player.getPosition().y, grassStrength);
         depthRenderer.render(batch, world.getDepthEntities(), view);
         batch.end();
 

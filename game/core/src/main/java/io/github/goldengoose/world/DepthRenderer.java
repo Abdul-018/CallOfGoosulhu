@@ -27,9 +27,17 @@ public class DepthRenderer {
     private final int[] flatLayers;
     // Tiles that are sorted based on Y, duh
     private final List<YSortedTile> ySortedTiles = new ArrayList<>();
-    // How transparent the tall grass tiles are drawn, duh
-    private float grassAlpha = 1f;
-    // Using this as a minimum for solids, anything under will be considered a shadow
+    // Grass within this distance of the player is as transparent as it gets
+    private static final float GRASS_FADE_INNER = 25f;
+    // Grass further away from the player than this is solid;
+    private static final float GRASS_FADE_OUTER = 100f;
+    // How transparent the grass right next to the player is (1f = solid, 0 = completely invisible)
+    private static final float GRASS_ALPHA_MIN = 0.25f;
+
+    // Where the player is standing and how strong the fade is
+    private float grassFocusX;
+    private float grassFocusY;
+    private float grassStrength = 0f;
     private static final int SOLID_ALPHA = 200;
 
     private final Map<Texture, Pixmap> pixmaps = new HashMap<>();
@@ -96,8 +104,24 @@ public class DepthRenderer {
     }
 
     // How transparent grass it drawn
-    public void setGrassAlpha(float alpha){
-        grassAlpha = alpha;
+    public void setGrassFade(float focusX, float focusY, float strength){
+        grassFocusX = focusX;
+        grassFocusY = focusY;
+        grassStrength = strength;
+    }
+
+    private float grassAlphaFor(float tileCentreX, float tileCentreY){
+        float dx = tileCentreX - grassFocusX;
+        float dy = tileCentreY - grassFocusY;
+        float distance  = (float) Math.sqrt((dx * dx) + (dy * dy));
+
+        float t = (distance - GRASS_FADE_INNER) / (GRASS_FADE_OUTER - GRASS_FADE_INNER);
+        t = Math.max(0f, Math.min(1f, t));
+        // smooth edges
+        t = t * t * (3f - (2f * t));
+
+        float nearAlpha = GRASS_ALPHA_MIN + (1f  - GRASS_ALPHA_MIN) * t;
+        return 1f + (nearAlpha - 1f) * grassStrength;
     }
     /** Layer indices to pass to OrthogonalTiledMapRenderer.render(int[]). */
     public int[] getFlatLayers() {
@@ -136,12 +160,16 @@ public class DepthRenderer {
         if (tile.flipX()) { x += w; width = -w; }
         if (tile.flipY()) { y += h; height = -h; }
 
-        // Fading the grass
-        if (tile.grassLayer && grassAlpha < 1f) {
-            batch.setColor(1f, 1f, 1f, grassAlpha);
-            batch.draw(region, x, y, width, height);
-            batch.setColor(1f, 1f, 1f, 1f);
-            return;
+        // Fading the grass - each tile gets its own opacity assigned by how far away it is from the player
+        if (tile.grassLayer() && grassStrength > 0f) {
+            float alpha = grassAlphaFor(tile.x() + w/ 2f, tile.y() + h/ 2f);
+            if(alpha < 1f){
+                batch.setColor(1f, 1f, 1f, alpha);
+                batch.draw(region, x, y, width, height);
+                batch.setColor(1f, 1f, 1f, 1f);
+                return;
+            }
+
         }
 
         batch.draw(region, x, y, width, height);
