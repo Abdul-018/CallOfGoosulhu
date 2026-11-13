@@ -460,9 +460,6 @@
 </data>
  </layer>
  <layer id="7" name="Buildings" width="50" height="50">
-  <properties>
-   <property name="ySort" type="bool" value="true"/>
-  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -656,7 +653,7 @@
   <object id="917" name="car_wreck_grey" gid="23201" x="0" y="608" width="128" height="96"/>
   <object id="918" name="street_lamp_double_left" gid="23233" x="672" y="608" width="64" height="128"/>
   <object id="919" name="street_lamp_double_right" gid="23234" x="800" y="608" width="64" height="128"/>
-  <object id="920" name="street_lamp_double_left" gid="23233" x="896" y="608" width="64" height="128"/>
+  <object id="920" name="street_lamp_double_left" gid="23233" x="875.113" y="532.906" width="64" height="128"/>
   <object id="921" name="weeds_1" gid="23244" x="704" y="640" width="32" height="64"/>
   <object id="922" name="flowers_small" gid="23210" x="0" y="672" width="32" height="32"/>
   <object id="923" name="street_lamp" gid="23232" x="0" y="672" width="32" height="128"/>
@@ -1002,7 +999,7 @@
   <object id="806" name="Street lamp 11" type="lamp" x="579" y="468" width="14" height="12"/>
   <object id="807" name="Street lamp 14" type="lamp" x="707" y="626" width="14" height="12"/>
   <object id="808" name="Street lamp 12" type="lamp" x="803" y="596" width="14" height="12"/>
-  <object id="809" name="Street lamp 13" type="lamp" x="937" y="596" width="14" height="12"/>
+  <object id="809" name="Street lamp 13" type="lamp" x="916.813" y="517.857" width="14" height="12"/>
   <object id="810" name="Street lamp 2" type="lamp" x="1315" y="212" width="14" height="12"/>
   <object id="811" name="Street lamp 3" type="lamp" x="1475" y="242" width="14" height="12"/>
   <object id="812" name="Street lamp 23" type="lamp" x="643" y="1364" width="14" height="12"/>
