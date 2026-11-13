@@ -26,7 +26,7 @@ public class GameWorld {
     private final Player player;
     private final GameSession session;
 
-    public GameWorld(GameSession session, TiledMap map, Assets assets) {
+    public GameWorld(GameSession session, TiledMap map, CollisionMap collision, Assets assets) {
         this.session = session;
         this.player = session.getPlayer();
         entities.add(player);

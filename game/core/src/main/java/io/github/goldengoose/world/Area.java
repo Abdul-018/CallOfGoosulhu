@@ -39,7 +39,7 @@ public class Area implements Disposable {
 
     private final Animation<TextureRegion> prompt;
     private final List<Door> doors = new ArrayList<>();
-    private Door ignoredDoor;
+    private final CollisionMap collision;
 
     public Area(String name, GameSession session, Assets assets, Viewport viewport) {
         this.name = name;
@@ -47,7 +47,8 @@ public class Area implements Disposable {
         mapRenderer = new OrthogonalTiledMapRenderer(map);
         depthRenderer = new DepthRenderer(map);
         lighting = new GameLighting(map, viewport);
-        world = new GameWorld(session, map, assets);
+        collision = new CollisionMap(map);
+        world = new GameWorld(session, map, collision, assets);
 
         // Hidden events for this area
         eventManager = new HiddenEventsHandler(world);
@@ -152,6 +153,10 @@ public class Area implements Disposable {
 
     public List<Door> getDoors() {
         return doors;
+    }
+
+    public CollisionMap getCollision() {
+        return collision;
     }
 
     @Override

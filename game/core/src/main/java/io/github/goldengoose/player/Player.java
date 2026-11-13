@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import io.github.goldengoose.world.CollisionMap;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.util.InputManager;
 
@@ -54,6 +55,8 @@ public class Player extends Entity {
     private boolean transformed = false;
     private boolean inMud = false;
 
+    private CollisionMap collision;
+
     public Player(Texture texture) {
         this.texture = texture;
         idleAnimations = createRowAnimations(texture, IDLE_ROW, IDLE_FRAME_TIME);
@@ -93,11 +96,13 @@ public class Player extends Entity {
         this.inMud = inMud;
     }
 
+    public void setCollision(CollisionMap collision) { this.collision = collision; }
+
     @Override
     public void update(float deltaTime) {
         float speed = inMud ? MUD_SPEED : SPEED;
         velocity.set(InputManager.getHorizontal(), InputManager.getVertical()).nor();
-        position.mulAdd(velocity, speed * deltaTime);
+        moveBy(velocity.x * speed * deltaTime, velocity.y * speed * deltaTime, collision);
 
         moving = !velocity.isZero();
         if (moving) {
