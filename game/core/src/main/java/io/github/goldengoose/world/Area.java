@@ -16,8 +16,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import io.github.goldengoose.assets.Assets;
+import io.github.goldengoose.hidden_events.KeycardMagnetiser;
 import io.github.goldengoose.lighting.GameLighting;
-import io.github.goldengoose.player.Player;
 import io.github.goldengoose.goose.Bread;
 import io.github.goldengoose.hidden_events.BreadDispenser;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
@@ -36,16 +36,18 @@ public class Area implements Disposable {
     private final GameWorld world;
     private final HiddenEventsHandler eventManager;
     private final TallGrass tallGrass;
+
+    private final Animation<TextureRegion> prompt;
     private final List<Door> doors = new ArrayList<>();
     private Door ignoredDoor;
 
-    public Area(String name, Player player, Assets assets, Viewport viewport) {
+    public Area(String name, GameSession session, Assets assets, Viewport viewport) {
         this.name = name;
         map = new TmxMapLoader().load("maps/" + name + ".tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
         depthRenderer = new DepthRenderer(map);
         lighting = new GameLighting(map, viewport);
-        world = new GameWorld(player, map, assets);
+        world = new GameWorld(session, map, assets);
 
         // Hidden events for this area
         eventManager = new HiddenEventsHandler(world);
@@ -54,13 +56,14 @@ public class Area implements Disposable {
         Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
         Bread.setSpinAnimation(new Animation<TextureRegion>(0.05f, assets.getAtlas(Assets.BREAD_SPIN).findRegions("bread_spin"), Animation.PlayMode.LOOP));
 
+        TextureRegion[] keyFrames = TextureRegion.split(assets.getTexture(Assets.INTERACT_KEY), 16, 16)[0];
+        prompt = new Animation<TextureRegion>(0.5f, keyFrames);
+        prompt.setPlayMode(Animation.PlayMode.LOOP);
         if (name.equals("Outside_campus_cthulhu_props")) {
-            TextureRegion[] keyFrames = TextureRegion.split(assets.getTexture(Assets.INTERACT_KEY), 16, 16)[0];
-            Animation<TextureRegion> prompt = new Animation<TextureRegion>(0.5f, keyFrames);
-            prompt.setPlayMode(Animation.PlayMode.LOOP);
             eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, 500, 150, 64, 64));
         }
         loadDoors();
+        loadMagnetiser();
     }
 
     public void update(float delta) {
@@ -121,10 +124,23 @@ public class Area implements Disposable {
             if (targetMap == null || targetSpawn == null) {
                 throw new IllegalStateException("Door '" + object.getName() + "' in " + name + " needs target_map and target_spawn");
             }
-            doors.add(new Door(rect.getRectangle(), targetMap.replace(".tmx", ""), targetSpawn));
+            boolean locked = p.get("locked", false, Boolean.class);
+            doors.add(new Door(rect.getRectangle(), targetMap.replace(".tmx", ""), targetSpawn, locked));
         }
     }
 
+
+    private void loadMagnetiser() {
+        MapLayer layer = map.getLayers().get("Interactables");
+        if (layer == null) return;
+
+        MapObject magnetiserObject = layer.getObjects().get("keycard_magnetiser");
+        if (magnetiserObject == null) return;
+        if (!(magnetiserObject instanceof RectangleMapObject rect)) throw new IllegalStateException("'keycard_magnetiser' is not a Rectangle");
+
+        KeycardMagnetiser magnetiser = new KeycardMagnetiser(world, prompt, rect.getRectangle());
+        eventManager.register(magnetiser);
+    }
 
     public GameWorld getWorld() {
         return world;
