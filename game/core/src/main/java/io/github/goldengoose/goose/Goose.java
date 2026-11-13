@@ -111,6 +111,10 @@ public class Goose extends Entity {
         return gooseAI.isSwarming();
     }
 
+    public boolean isChasing(){
+        return gooseAI.isChasing();
+    }
+
     public void renderDebug(ShapeRenderer shapes) {
         gooseAI.renderDebug(shapes);
     }
