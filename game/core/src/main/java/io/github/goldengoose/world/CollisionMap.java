@@ -1,5 +1,7 @@
 package io.github.goldengoose.world;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
@@ -47,5 +49,11 @@ public class CollisionMap {
             if (Intersector.intersectSegmentRectangle(v[i], v[i + 1], v[j], v[j + 1], box)) return true;
         }
         return false;
+    }
+
+    public void renderDebug(ShapeRenderer shapes) {
+        shapes.setColor(Color.RED);
+        for (Rectangle r : rects) shapes.rect(r.x, r.y, r.width, r.height);
+        for (Polygon p : polygons) shapes.polygon(p.getTransformedVertices());
     }
 }
