@@ -192,7 +192,8 @@ public class GooseAI {
             ? CHASING_SPEED
             : IDLE_SPEED;
 
-        goose.getPosition().mulAdd(velocity, speed * deltaTime);
+        //goose.getPosition().mulAdd(velocity, speed * deltaTime);
+        goose.moveBy(velocity.x * speed * deltaTime, velocity.y * speed * deltaTime, goose.getCollision());
     }
 
     private void wander(float deltaTime) {

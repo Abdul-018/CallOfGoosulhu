@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.player.Player;
 import io.github.goldengoose.assets.Assets;
+import io.github.goldengoose.world.CollisionMap;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.util.Utilities;
 
@@ -28,6 +29,7 @@ public class Goose extends Entity {
 
     private final GooseAI gooseAI = new GooseAI(this);
     private final Player player;
+    private final CollisionMap collision;
 
     private boolean honk;
     private float trappedTimer = 0f;
@@ -37,9 +39,10 @@ public class Goose extends Entity {
 
     private float stateTime = 0f;
 
-    public Goose(Player player, Vector2 position, Assets assets) {
+    public Goose(Player player, Vector2 position, CollisionMap collision, Assets assets) {
         walkAnimations = Utilities.createAnimations(assets.getTexture(Assets.GOOSE_WALK), WALK_FRAME_TIME, FRAME_SIZE);
         runAnimations = Utilities.createAnimations(assets.getTexture(Assets.GOOSE_RUN), RUN_FRAME_TIME, FRAME_SIZE);
+        this.collision = collision;
 
         this.player = player;
         this.position.set(position);
@@ -122,6 +125,8 @@ public class Goose extends Entity {
     public Player getPlayer() {
         return player;
     }
+
+    public CollisionMap getCollision() {  return collision; }
 
     @Override
     public float getWidth() {
