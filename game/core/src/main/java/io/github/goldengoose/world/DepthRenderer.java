@@ -29,6 +29,8 @@ public class DepthRenderer {
     private final List<YSortedTile> ySortedTiles = new ArrayList<>();
     // How transparent the tall grass tiles are drawn, duh
     private float grassAlpha = 1f;
+    // Using this as a minimum for solids, anything under will be considered a shadow
+    private static final int SOLID_ALPHA = 200;
 
     private final Map<Texture, Pixmap> pixmaps = new HashMap<>();
     private final Map<TiledMapTile, Integer> bottomGaps = new HashMap<>();
@@ -70,7 +72,7 @@ public class DepthRenderer {
                     continue;
                 }
                 int base = y;
-                float sortY = base * th + transparentRowsAtBottom(layer.getCell(x, base).getTile());
+                float sortY = base * th + gapAtBottom(layer, x, base);
                 while (y < layer.getHeight() && layer.getCell(x, y) != null) {
                     TiledMapTileLayer.Cell cell = layer.getCell(x, y);
                     ySortedTiles.add(new YSortedTile(cell.getTile(), x * tw, y * th, 1f, 1f,
@@ -159,12 +161,23 @@ public class DepthRenderer {
 
             for (int row = h - 1; row >= 0; row--) {
                 for (int col = 0; col < w; col++) {
-                    if ((pixmap.getPixel(x0 + col, y0 + row) & 0xFF) != 0) {   // alpha byte
+                    if ((pixmap.getPixel(x0 + col, y0 + row) & 0xFF) >= SOLID_ALPHA) {   // alpha byte
                         return h - 1 - row;
                     }
                 }
             }
             return h;
         });
+    }
+
+    private float gapAtBottom(TiledMapTileLayer layer, int x, int base) {
+        float gap = 0;
+        for (int y = base; y < layer.getHeight() && layer.getCell(x, y) != null; y++) {
+            TiledMapTile tile = layer.getCell(x, y).getTile();
+            int rows = transparentRowsAtBottom(tile);
+            gap += rows;
+            if (rows < tile.getTextureRegion().getRegionHeight()) break;   // found solid art in this tile
+        }
+        return gap;
     }
 }
