@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -22,6 +23,7 @@ import io.github.goldengoose.goose.Bread;
 import io.github.goldengoose.hidden_events.BreadDispenser;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
 import io.github.goldengoose.hidden_events.TallGrass;
+import io.github.goldengoose.player.Player;
 import io.github.goldengoose.goose.Goose;
 
 import java.util.ArrayList;
@@ -37,10 +39,12 @@ public class Area implements Disposable {
     private final GameWorld world;
     private final HiddenEventsHandler eventManager;
     private final TallGrass tallGrass;
+    private final TiledMapTileLayer mudLayer;
 
     private final Animation<TextureRegion> prompt;
     private final List<Door> doors = new ArrayList<>();
-    private Door ignoredDoor;
+    private final CollisionMap collision;
+    private final Rectangle feet = new Rectangle();
 
     public Area(String name, GameSession session, Assets assets, Viewport viewport) {
         this.name = name;
@@ -48,7 +52,9 @@ public class Area implements Disposable {
         mapRenderer = new OrthogonalTiledMapRenderer(map);
         depthRenderer = new DepthRenderer(map);
         lighting = new GameLighting(map, viewport);
-        world = new GameWorld(session, map, assets);
+        collision = new CollisionMap(map);
+        world = new GameWorld(session, map, collision, assets);
+        mudLayer = (TiledMapTileLayer) map.getLayers().get("Mud Puddles");
 
         // Hidden events for this area
         eventManager = new HiddenEventsHandler(world);
@@ -76,18 +82,15 @@ public class Area implements Disposable {
     }
 
     private void checkMudPuddles() {
-        com.badlogic.gdx.maps.tiled.TiledMapTileLayer mudLayer =
-            (com.badlogic.gdx.maps.tiled.TiledMapTileLayer) map.getLayers().get("Mud Puddles");
         if (mudLayer == null) return;
 
-        float px = world.getPlayer().position.x + world.getPlayer().getWidth() / 2;
-        float py = world.getPlayer().position.y + world.getPlayer().getHeight() / 2;
+        Player player = world.getPlayer();
+        player.getHitbox(feet);
 
-        int tileX = (int) (px / 32);
-        int tileY = (int) (py / 32);
+        int tileX = (int) ((feet.x + feet.width / 2f) / mudLayer.getTileWidth());
+        int tileY = (int) ((feet.y + feet.height / 2f) / mudLayer.getTileHeight());
 
-        boolean inMud = mudLayer.getCell(tileX, tileY) != null;
-        world.getPlayer().setInMud(inMud);
+        player.setInMud(mudLayer.getCell(tileX, tileY) != null);
     }
 
     public void render(SpriteBatch batch, OrthographicCamera camera, Rectangle view) {
@@ -156,6 +159,10 @@ public class Area implements Disposable {
 
     public List<Door> getDoors() {
         return doors;
+    }
+
+    public CollisionMap getCollision() {
+        return collision;
     }
 
     @Override

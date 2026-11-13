@@ -8,20 +8,24 @@ public class PatienceSystem {
 
     private static final float RESTORE_PER_SECOND = 0.1f;
     private static final float DRAIN_PER_SECOND = 0.08f;
+    private static final float CHASE_DRAIN = 0.4f;
+
     private float patience = 1.0f;
 
     public void update(float delta, List<Goose> geese) {
-        boolean anyGooseSwarming = false;
+        // Patience scales with number of geese surrounding player
+        float pressure = 0f;
 
         for (Goose goose : geese) {
             if (goose.isSwarming()) {
-                anyGooseSwarming = true;
-                break;
+                pressure += 1f;
+            } else if (goose.isChasing()){
+                pressure += CHASE_DRAIN;
             }
         }
 
-        if (anyGooseSwarming) {
-            patience -= DRAIN_PER_SECOND * delta;
+        if (pressure > 0) {
+            patience -= DRAIN_PER_SECOND * pressure * delta;
         } else {
             patience += RESTORE_PER_SECOND * delta;
         }
