@@ -28,7 +28,7 @@ public class Assets {
     public static final String VIGNETTE_0 = "ui/vignette_0.png";
     public static final String VIGNETTE_1 = "ui/vignette_1.png";
     public static final String VIGNETTE_2 = "ui/vignette_2.png";
-
+    public static final String CONFUSED_ICON = "question_mark.png";
     private final AssetManager manager = new AssetManager();
 
     public void load() {
@@ -55,6 +55,7 @@ public class Assets {
         manager.load(VIGNETTE_0, Texture.class);
         manager.load(VIGNETTE_1, Texture.class);
         manager.load(VIGNETTE_2, Texture.class);
+        manager.load(CONFUSED_ICON, Texture.class);
         manager.finishLoading();
     }
 

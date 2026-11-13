@@ -10,9 +10,10 @@ import java.util.List;
 
 /**
  * Works out which tall grass cells belong to a specific patch. Done so that transparency is specific to each patch
+ * Using the floodfill algorithm
+ * WORK IN PROGRESS.
  *
  *
- */
 public class GrassPatches {
     public static final int NONE = -1;
     private final String GRASS_LAYER_PROPERTY = "tall_grass";
@@ -53,5 +54,5 @@ public class GrassPatches {
     }
 }
 
-
+*/
 

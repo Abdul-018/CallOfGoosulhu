@@ -22,6 +22,7 @@ import io.github.goldengoose.goose.Bread;
 import io.github.goldengoose.hidden_events.BreadDispenser;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
 import io.github.goldengoose.hidden_events.TallGrass;
+import io.github.goldengoose.goose.Goose;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,12 +54,14 @@ public class Area implements Disposable {
         eventManager = new HiddenEventsHandler(world);
         tallGrass = new TallGrass(map);
         eventManager.register(tallGrass);
+        Goose.setConfusedIcon(new TextureRegion(assets.getTexture(Assets.CONFUSED_ICON)));
         Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
         Bread.setSpinAnimation(new Animation<TextureRegion>(0.05f, assets.getAtlas(Assets.BREAD_SPIN).findRegions("bread_spin"), Animation.PlayMode.LOOP));
 
         TextureRegion[] keyFrames = TextureRegion.split(assets.getTexture(Assets.INTERACT_KEY), 16, 16)[0];
         prompt = new Animation<TextureRegion>(0.5f, keyFrames);
         prompt.setPlayMode(Animation.PlayMode.LOOP);
+
         if (name.equals("Outside_campus_cthulhu_props")) {
             eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, 500, 150, 64, 64));
         }

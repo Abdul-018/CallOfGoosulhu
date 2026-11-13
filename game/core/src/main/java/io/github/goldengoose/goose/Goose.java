@@ -15,6 +15,19 @@ public class Goose extends Entity {
     //------------
     // CONSTANTS
     //------------
+
+    // For the "?" that appears above a confused goose
+    private static TextureRegion confusedIcon;
+    private static float ICON_GAP = 2f;
+    private static final float ICON_BOB = 1.5f;
+    private static final float ICON_POP_SECONDS = 0.15f;
+    private static final float ICON_FADE_SECONDS = 0.3f;
+    private static final float ICON_SCALE = 1.5f;
+
+    public static void setConfusedIcon(TextureRegion region){
+        confusedIcon = region;
+    }
+
     private static final int FRAME_SIZE = 32;
     private static final float WALK_FRAME_TIME = 0.12f;
     private static final float RUN_FRAME_TIME = 0.08f;
@@ -87,6 +100,24 @@ public class Goose extends Entity {
         } else {
             batch.draw(frame, position.x, position.y, FRAME_SIZE, FRAME_SIZE);
         }
+        renderConfusedIcon(batch);
+    }
+
+    // The "?" fades in and out above the goose's head
+    private void renderConfusedIcon(SpriteBatch batch){
+        if (confusedIcon == null || !(gooseAI.isConfused())){
+            return;
+        }
+
+        float elapsed = gooseAI.getConfusedElapsed();
+        float pop = Math.min(1f, elapsed / ICON_POP_SECONDS);
+        float alpha = Math.min(1f, gooseAI.getConfusedRemaining() / ICON_FADE_SECONDS);
+        float w = confusedIcon.getRegionWidth() * pop * ICON_SCALE;
+        float h = confusedIcon.getRegionHeight() * pop * ICON_SCALE;
+        float bob = (float) Math.sin(elapsed * 6f) * ICON_BOB;
+        batch.setColor(1f, 1f, 1f, alpha);
+        batch.draw(confusedIcon, position.x - 5f + FRAME_SIZE / 2f - w / 2f, position.y + FRAME_SIZE + ICON_GAP + bob, w, h);
+        batch.setColor(1f, 1f, 1f, 1f);
     }
 
     @Override
