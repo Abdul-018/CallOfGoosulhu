@@ -141,7 +141,7 @@ public class DepthRenderer {
             batch.setColor(1f, 1f, 1f, grassAlpha);
             batch.draw(region, x, y, width, height);
             batch.setColor(1f, 1f, 1f, 1f);
-            return; // NEW
+            return;
         }
 
         batch.draw(region, x, y, width, height);
