@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="21" nextobjectid="1034">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="21" nextobjectid="1035">
  <properties>
   <property name="based_on" value="Outside_campus_MAIN.tmx"/>
   <property name="theme" value="cthulhu"/>
@@ -787,6 +787,7 @@
   <object id="1030" name="ron_cooke_exit" x="1088.08" y="1136.1">
    <point/>
   </object>
+  <object id="1034" name="bread_dispenser" x="854.083" y="472.25" width="58.25" height="55.9167"/>
  </objectgroup>
  <objectgroup id="20" name="GooseSpawns">
   <object id="990" x="96.5447" y="1471.67">
@@ -928,7 +929,7 @@
   <object id="727" name="Tree 16" type="tree" x="390.358" y="1546" width="18.4719" height="19"/>
   <object id="728" name="Tree 18" type="tree" x="184" y="1578" width="48" height="19"/>
   <object id="729" name="Junk pile 1" type="prop" x="1484" y="264" width="104" height="52"/>
-  <object id="730" name="Junk pile 2" type="prop" x="12" y="1288" width="104" height="52"/>
+  <object id="730" name="Junk pile 2" type="prop" x="10.6667" y="1288.33" width="101.333" height="45.3333"/>
   <object id="731" name="Wrecked car 2" type="prop" x="518" y="1488" width="116" height="76"/>
   <object id="732" name="Wrecked car 1" type="prop" x="6" y="528" width="116" height="76"/>
   <object id="733" name="Tree 13" type="tree" x="10" y="1098" width="45" height="19"/>

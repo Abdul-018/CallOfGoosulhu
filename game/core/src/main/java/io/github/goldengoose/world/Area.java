@@ -24,6 +24,7 @@ import io.github.goldengoose.hidden_events.BreadDispenser;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
 import io.github.goldengoose.hidden_events.TallGrass;
 import io.github.goldengoose.player.Player;
+import io.github.goldengoose.goose.Goose;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,8 @@ public class Area implements Disposable {
     private final HiddenEventsHandler eventManager;
     private final TallGrass tallGrass;
     private final TiledMapTileLayer mudLayer;
+    private float grassStrength = 0f;
+    private static final float GRASS_FADE_SPEED = 4f;
 
     private final Animation<TextureRegion> prompt;
     private final List<Door> doors = new ArrayList<>();
@@ -59,22 +62,30 @@ public class Area implements Disposable {
         eventManager = new HiddenEventsHandler(world);
         tallGrass = new TallGrass(map);
         eventManager.register(tallGrass);
+        Goose.setConfusedIcon(new TextureRegion(assets.getTexture(Assets.CONFUSED_ICON)));
+        Goose.setAlertIcon(new TextureRegion(assets.getTexture(Assets.ALERT_ICON)));
         Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
         Bread.setSpinAnimation(new Animation<TextureRegion>(0.05f, assets.getAtlas(Assets.BREAD_SPIN).findRegions("bread_spin"), Animation.PlayMode.LOOP));
 
         TextureRegion[] keyFrames = TextureRegion.split(assets.getTexture(Assets.INTERACT_KEY), 16, 16)[0];
         prompt = new Animation<TextureRegion>(0.5f, keyFrames);
         prompt.setPlayMode(Animation.PlayMode.LOOP);
-        if (name.equals("Outside_campus_cthulhu_props")) {
-            eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, 500, 150, 64, 64));
-        }
+
         loadDoors();
         loadMagnetiser();
+        loadBreadDispenser(assets);
     }
 
     public void update(float delta) {
         eventManager.update(delta);
         checkMudPuddles();
+
+        float target = tallGrass.getFadeAlpha() < 1f ? 1f : 0f;
+        if (grassStrength < target){
+            grassStrength = Math.min(target, grassStrength + GRASS_FADE_SPEED * delta);
+        } else if (grassStrength > target){
+            grassStrength = Math.max(target, grassStrength - GRASS_FADE_SPEED * delta);
+        }
     }
 
     private void checkMudPuddles() {
@@ -96,7 +107,8 @@ public class Area implements Disposable {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         world.renderGround(batch);
-        depthRenderer.setGrassAlpha(tallGrass.getFadeAlpha());
+        Player player = world.getPlayer();
+        depthRenderer.setGrassFade(player.getPosition().x + player.getWidth() / 2f, player.getPosition().y, grassStrength);
         depthRenderer.render(batch, world.getDepthEntities(), view);
         batch.end();
 
@@ -143,6 +155,18 @@ public class Area implements Disposable {
 
         KeycardMagnetiser magnetiser = new KeycardMagnetiser(world, prompt, rect.getRectangle());
         eventManager.register(magnetiser);
+    }
+
+    private void loadBreadDispenser(Assets assets){
+        MapLayer layer = map.getLayers().get("Spawns");   // CHANGED: reuse the existing layer, same as the keycard
+        if (layer == null) return;
+
+        MapObject object = layer.getObjects().get("bread_dispenser");
+        if (object == null) return;
+        if (!(object instanceof RectangleMapObject rect)) throw new IllegalStateException("'bread_dispenser' is not a Rectangle");
+
+        Rectangle r = rect.getRectangle();
+        eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, r.x, r.y, r.width, r.height));
     }
 
     public GameWorld getWorld() {

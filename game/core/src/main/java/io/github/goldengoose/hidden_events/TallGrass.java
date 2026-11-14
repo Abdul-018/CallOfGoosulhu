@@ -28,9 +28,9 @@ public class TallGrass extends HiddenEvent {
     private static final String GRASS_LAYER_PROPERTY = "tall_grass";
     private static final float TILE_SIZE = 32f;
     // How long the player is able to hide in the tall grass
-    private static final float HIDE_DURATION_SECONDS = 3f;
+    private static final float HIDE_DURATION_SECONDS = 30f;
     // Cooldown timer before player can hide again
-    private static final float COOLDOWN_SECONDS = 5f;
+    private static final float COOLDOWN_SECONDS = 0f;
     private static final float FADED_ALPHA = 0.5f;
     private static final float FEET_OFFSET = 4f;
 
