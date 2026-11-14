@@ -71,11 +71,9 @@ public class Area implements Disposable {
         prompt = new Animation<TextureRegion>(0.5f, keyFrames);
         prompt.setPlayMode(Animation.PlayMode.LOOP);
 
-        if (name.equals("Outside_campus_cthulhu_props")) {
-            eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, 500, 150, 64, 64));
-        }
         loadDoors();
         loadMagnetiser();
+        loadBreadDispenser(assets);
     }
 
     public void update(float delta) {
@@ -157,6 +155,18 @@ public class Area implements Disposable {
 
         KeycardMagnetiser magnetiser = new KeycardMagnetiser(world, prompt, rect.getRectangle());
         eventManager.register(magnetiser);
+    }
+
+    private void loadBreadDispenser(Assets assets){
+        MapLayer layer = map.getLayers().get("Spawns");   // CHANGED: reuse the existing layer, same as the keycard
+        if (layer == null) return;
+
+        MapObject object = layer.getObjects().get("bread_dispenser");
+        if (object == null) return;
+        if (!(object instanceof RectangleMapObject rect)) throw new IllegalStateException("'bread_dispenser' is not a Rectangle");
+
+        Rectangle r = rect.getRectangle();
+        eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, r.x, r.y, r.width, r.height));
     }
 
     public GameWorld getWorld() {

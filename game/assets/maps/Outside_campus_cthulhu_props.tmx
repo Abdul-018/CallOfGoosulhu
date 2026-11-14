@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="21" nextobjectid="1034">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="21" nextobjectid="1035">
  <properties>
   <property name="based_on" value="Outside_campus_MAIN.tmx"/>
   <property name="theme" value="cthulhu"/>
@@ -787,6 +787,7 @@
   <object id="1030" name="ron_cooke_exit" x="1088.08" y="1136.1">
    <point/>
   </object>
+  <object id="1034" name="bread_dispenser" x="860.333" y="448" width="36" height="32.6667"/>
  </objectgroup>
  <objectgroup id="20" name="GooseSpawns">
   <object id="990" x="96.5447" y="1471.67">
