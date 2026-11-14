@@ -36,7 +36,7 @@ public class GameOverScreen implements Screen {
 
         font = Utilities.createFont(CogFonts.CRISTOFORO, 64);
 
-        String message = won ? "Congratulations!" : "Game Over";
+        String message = won ? "Congratulations!\nYou Escaped The Goosulhu!" : "Better Luck Next Time";
 
         Label title = new Label(message, UiStyles.label(font));
         TextButton playAgain = new TextButton("PLAY AGAIN", UiStyles.button(font));
