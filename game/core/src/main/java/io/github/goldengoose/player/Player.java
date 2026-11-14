@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.world.CollisionMap;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.util.InputManager;
+import io.github.goldengoose.audio.AudioManager;
+import io.github.goldengoose.assets.Assets;
 
 import java.util.Arrays;
 
@@ -39,6 +41,8 @@ public class Player extends Entity {
     private static final int FACING_UP = 1;
     private static final int FACING_LEFT = 2;
     private static final int FACING_DOWN = 3;
+
+    private static final int[] STEP_FRAMES = {1, 4};
     //------------
     // END CONSTANTS
     //------------
@@ -56,6 +60,8 @@ public class Player extends Entity {
     private boolean inMud = false;
 
     private CollisionMap collision;
+    private AudioManager audio;
+    private int lastFrameIndex = -1;
 
     public Player(Texture texture) {
         this.texture = texture;
@@ -97,6 +103,7 @@ public class Player extends Entity {
     }
 
     public void setCollision(CollisionMap collision) { this.collision = collision; }
+    public void setAudio(AudioManager audio) {this.audio = audio; }
 
     @Override
     public void update(float deltaTime) {
@@ -111,6 +118,27 @@ public class Player extends Entity {
 
         // Legs move slower in mud so the feet don't look like they're sliding (FR_MUD)
         stateTime += deltaTime * (speed / SPEED);
+        updateFootsteps();
+    }
+    private void updateFootsteps() {
+        if (audio == null || transformed || !moving) {
+            lastFrameIndex = -1;
+            return;
+        }
+        int frame = walkAnimations[facing].getKeyFrameIndex(stateTime);
+        if (frame != lastFrameIndex) {
+            lastFrameIndex = frame;
+            for (int stepFrame : STEP_FRAMES) {
+                if (frame == stepFrame) {
+                    audio.playRandom(Assets.SFX_FOOTSTEPS, 0.6f, 0.15f);
+
+                    if (isHidden()) {
+                        audio.playRandom(Assets.SFX_GRASS_RUSTLE, 1f, 0.2f); // NEW
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     /**

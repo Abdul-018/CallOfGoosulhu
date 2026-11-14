@@ -11,6 +11,7 @@ import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.world.CollisionMap;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.util.Utilities;
+import io.github.goldengoose.audio.AudioManager;
 
 public class Goose extends Entity {
     //------------
@@ -49,6 +50,7 @@ public class Goose extends Entity {
     private final Player player;
     private final CollisionMap collision;
 
+    private AudioManager audio;
     private boolean honk;
     private float trappedTimer = 0f;
 
@@ -140,7 +142,16 @@ public class Goose extends Entity {
             gooseAI.addSeparationFrom(otherGoose);
         }
     }
+    public void setAudio(AudioManager audio){
+        this.audio = audio;
+    }
 
+    public void onAlerted(){
+        if (audio == null) return;
+        float cx = position.x + getWidth() / 2f;
+        float cy = position.y + getHeight() / 2f;
+        audio.playRandomAt(Assets.SFX_GOOSE_HONK, cx, cy, 1f, 0.12f);
+    }
     public void distractBy(Bread bread) {
         gooseAI.distractBy(bread);
     }
