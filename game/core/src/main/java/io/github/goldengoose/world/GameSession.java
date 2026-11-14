@@ -27,6 +27,7 @@ public class GameSession implements Disposable {
     private final GameTimer timer = new GameTimer(5 * 60);
     private final SpellTome spellTome;
     private final PatienceSystem patienceSystem = new PatienceSystem();
+    private final ObjectiveSystem objectiveSystem = new ObjectiveSystem();
     private KeyState keyState = KeyState.NONE;
 
     private final Map<String, Area> areas = new HashMap<>();
@@ -56,7 +57,7 @@ public class GameSession implements Disposable {
         spellTome.update(delta);
         timer.update(delta);
         patienceSystem.update(delta, currentArea.getWorld().getGeese());
-    }
+        objectiveSystem.update(delta, keyState, currentArea.getName(), player.getPosition());    }
 
     public boolean clickDoor(Vector2 worldPos) {
         for (Door door : currentArea.getDoors()) {
@@ -96,6 +97,7 @@ public class GameSession implements Disposable {
     public GameTimer getTimer()   { return timer; }
     public SpellTome getSpellTome() { return spellTome; }
     public PatienceSystem getPatienceSystem() { return patienceSystem; }
+    public ObjectiveSystem getObjectiveSystem() { return objectiveSystem; }
     public KeyState getKeyState() { return keyState; }
     public void setKeyState(KeyState state) { keyState = state; }
 

@@ -63,7 +63,8 @@ public class Hud implements Disposable {
 
         if (secondsLeft <= 29f) {
             float pulse = 0.6f + 0.4f * MathUtils.sin(clock * 6f);
-            font.setColor(0f, pulse, 0f, 1f);
+            font.setColor(pulse, 0f, 0f, 1f);
+
         } else {
             font.setColor(Color.WHITE);
         }
