@@ -17,7 +17,8 @@ public class GooseAI {
         CHASING,
         SWARMING,
         // Walking to / At a piece of bread
-        DISTRACTED
+        DISTRACTED,
+        FLEEING
     }
 
     //------------------------------------------------------------------
@@ -25,11 +26,13 @@ public class GooseAI {
     //------------------------------------------------------------------
     private static final float IDLE_SPEED = 20f;
     private static final float CHASING_SPEED = 40f;
+    private static final float FLEE_SPEED = 50f;
 
     // Min and max x/y dist goose will wander from current pos when idle
     private static final float MIN_WANDER_RANGE = 40f;
     private static final float MAX_WANDER_RANGE = 80f;
 
+    private static final float FLEE_LINGER = 0.5f;
 
     // Min and max time goose will wait after idle walk
     private static final float MIN_IDLE_WAIT = 5f;
@@ -101,6 +104,9 @@ public class GooseAI {
     private final Vector2 toBread = new Vector2();
     private static final float VISION_DOT_THRESHOLD = (float) Math.cos(Math.toRadians(VISION_HALF_ANGLE_DEGREES));
 
+    private final Vector2 fleeFrom = new Vector2();
+    private float fleeTimer = 0f;
+
     private final Vector2 gooseCentre = new Vector2();
     private final Vector2 playerCentre = new Vector2();
 
@@ -123,6 +129,13 @@ public class GooseAI {
                 state = GooseState.IDLE;
             } // NEW
         } // NEW
+
+        if (fleeTimer > 0f) {
+            fleeTimer -= deltaTime;
+            state = GooseState.FLEEING;
+        } else if (state == GooseState.FLEEING) {
+            state = GooseState.IDLE;
+        }
 
         // Geese can no longer hear/see the player when they are hiding in the tall grass (isHidden())
         boolean playerHidden = goose.getPlayer().isHidden();
@@ -181,7 +194,12 @@ public class GooseAI {
 
         velocity.setZero();
 
-        if (state == GooseState.CHASING) {
+        if (state == GooseState.FLEEING) {
+            hasIdleTarget = false;
+            idleWaiting = false;
+            flee();
+        }
+        else if (state == GooseState.CHASING) {
             hasIdleTarget = false;
             idleWaiting = false;
 
@@ -222,8 +240,8 @@ public class GooseAI {
             applySeparation();
         }
 
-        float speed = state != GooseState.IDLE
-            ? CHASING_SPEED
+        float speed = state == GooseState.FLEEING ? FLEE_SPEED
+            : state != GooseState.IDLE   ? CHASING_SPEED
             : IDLE_SPEED;
 
         //goose.getPosition().mulAdd(velocity, speed * deltaTime);
@@ -365,6 +383,21 @@ public class GooseAI {
         }
     }
 
+    public void scareFrom(Vector2 source) {
+        fleeFrom.set(source);
+        fleeTimer = FLEE_LINGER;
+    }
+
+    private void flee() {
+        velocity.set(gooseCentre).sub(fleeFrom);
+        if (velocity.isZero()) {
+            velocity.set(1f, 0f).setAngleDeg(MathUtils.random(360f));
+        }
+        velocity.nor();
+        facingDirection.set(velocity);
+        applySeparation();
+    }
+
     // Geese behaviour whilst distracted: Walking to bread, then standing by it (eating)
     private void feed() {
         bread.getCentre(breadCentre);
@@ -402,7 +435,8 @@ public class GooseAI {
 
     // Run animation play when gong to bread?
     public boolean isRunning() {
-        return state == GooseState.CHASING || (state == GooseState.DISTRACTED && !eating);
+        return state == GooseState.CHASING || state == GooseState.FLEEING
+            || (state == GooseState.DISTRACTED && !eating);
     }
 
     public boolean isConfused() {

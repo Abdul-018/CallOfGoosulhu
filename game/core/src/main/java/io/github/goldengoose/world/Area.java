@@ -58,7 +58,6 @@ public class Area implements Disposable {
         world = new GameWorld(session, map, collision, assets);
         mudLayer = (TiledMapTileLayer) map.getLayers().get("Mud Puddles");
 
-        // Hidden events for this area
         eventManager = new HiddenEventsHandler(world);
         tallGrass = new TallGrass(map);
         eventManager.register(tallGrass);
@@ -144,7 +143,6 @@ public class Area implements Disposable {
         }
     }
 
-
     private void loadMagnetiser() {
         MapLayer layer = map.getLayers().get("Interactables");
         if (layer == null) return;
@@ -158,7 +156,7 @@ public class Area implements Disposable {
     }
 
     private void loadBreadDispenser(Assets assets){
-        MapLayer layer = map.getLayers().get("Spawns");   // CHANGED: reuse the existing layer, same as the keycard
+        MapLayer layer = map.getLayers().get("Spawns");
         if (layer == null) return;
 
         MapObject object = layer.getObjects().get("bread_dispenser");
@@ -169,21 +167,11 @@ public class Area implements Disposable {
         eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, r.x, r.y, r.width, r.height));
     }
 
-    public GameWorld getWorld() {
-        return world;
-    }
-
-    public HiddenEventsHandler getEventManager() {
-        return eventManager;
-    }
-
-    public List<Door> getDoors() {
-        return doors;
-    }
-
-    public CollisionMap getCollision() {
-        return collision;
-    }
+    public GameWorld getWorld() { return world; }
+    public HiddenEventsHandler getEventManager() { return eventManager; }
+    public List<Door> getDoors() { return doors; }
+    public CollisionMap getCollision() { return collision; }
+    public String getName() { return name; }
 
     @Override
     public void dispose() {

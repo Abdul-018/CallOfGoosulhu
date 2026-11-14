@@ -36,6 +36,7 @@ public class GameScreen implements Screen {
     private final PauseMenu pauseMenu;
     private final TomeMenu tomeMenu;
     private final BitmapFont hudFont = Utilities.createFont(CogFonts.CRISTOFORO, 24);
+    private final BitmapFont objectiveFont = Utilities.createFont(CogFonts.CRISTOFORO, 20);
     private final Hud hud;
     private final Rectangle viewRect = new Rectangle();
     private final GameSession session;
@@ -87,7 +88,7 @@ public class GameScreen implements Screen {
 
             if (session.getTimer().isTimeUp() && gameOverTimer < 0) {
                 gameOverTimer = 2f;
-                gameOverWon = true;
+                gameOverWon = false;
             }
             if (session.getPatienceSystem().isTransformed() && gameOverTimer < 0) {
                 session.getPlayer().transformIntoGoose(game.assets.getTexture(Assets.GOOSE_WALK));
@@ -101,7 +102,7 @@ public class GameScreen implements Screen {
                 }
             }
         }
-        // Camera follows the player
+
         session.getPlayer().getCentre(playerPos);
         OrthographicCamera camera = (OrthographicCamera) worldViewport.getCamera();
         camera.position.set(playerPos.x, playerPos.y, 0f);
@@ -117,7 +118,7 @@ public class GameScreen implements Screen {
         if (debug) renderDebug();
 
         hudViewport.apply();
-        hud.draw(game.batch, hudViewport, hudFont, session.getSpellTome(),session.getKeyState());
+        hud.draw(game.batch, hudViewport, hudFont, session.getSpellTome(), session.getKeyState());
 
         shapes.setProjectionMatrix(hudViewport.getCamera().combined);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
@@ -128,6 +129,8 @@ public class GameScreen implements Screen {
         game.batch.begin();
         session.getSpellTome().drawSprites(game.batch, hudViewport);
         game.batch.end();
+
+        drawObjective();
 
         if (paused && !overlayVisible) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -183,6 +186,33 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void drawObjective() {
+        ObjectiveSystem obj = session.getObjectiveSystem();
+        if (!obj.isVisible()) return;
+
+        float w = hudViewport.getWorldWidth();
+        float h = hudViewport.getWorldHeight();
+        float alpha = obj.getAlpha();
+        float textY = h * 0.95f;
+        String text = obj.getCurrentObjective();
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        game.batch.setProjectionMatrix(hudViewport.getCamera().combined);
+        game.batch.begin();
+
+        objectiveFont.setColor(1f, 1f, 1f, alpha);
+        objectiveFont.draw(game.batch, text, -2, textY, w, Align.center, false);
+        objectiveFont.draw(game.batch, text,  2, textY, w, Align.center, false);
+        objectiveFont.draw(game.batch, text,  0, textY + 2, w, Align.center, false);
+        objectiveFont.draw(game.batch, text,  0, textY - 2, w, Align.center, false);
+
+        objectiveFont.setColor(0f, 0f, 0f, alpha);
+        objectiveFont.draw(game.batch, text, 0, textY, w, Align.center, false);
+
+        objectiveFont.setColor(Color.WHITE);
+        game.batch.end();
+    }
+
     private void showOverlay(boolean won) {
         if (!overlayVisible) {
             overlayVisible = true;
@@ -227,10 +257,11 @@ public class GameScreen implements Screen {
         pauseMenu.dispose();
         tomeMenu.dispose();
         hudFont.dispose();
+        objectiveFont.dispose();
         hud.dispose();
         if (overlayFont != null) overlayFont.dispose();
     }
-    // Unused overrides
+
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
