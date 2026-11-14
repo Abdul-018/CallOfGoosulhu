@@ -100,7 +100,7 @@ public class Goose extends Entity {
             row = ROW_FRONT;
         }
 
-        Animation<TextureRegion>[] animations = gooseAI.isChasing() ? runAnimations : walkAnimations;
+        Animation<TextureRegion>[] animations = gooseAI.isRunning() ? runAnimations : walkAnimations;
         TextureRegion frame = animations[row].getKeyFrame(stateTime);
 
         if (flip) {
@@ -143,6 +143,10 @@ public class Goose extends Entity {
 
     public void distractBy(Bread bread) {
         gooseAI.distractBy(bread);
+    }
+
+    public void scareFrom(Vector2 source) {
+        gooseAI.scareFrom(source);
     }
 
     // True if standing on honk ring on piece of bread
