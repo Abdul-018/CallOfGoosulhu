@@ -29,7 +29,7 @@ public class Assets {
     public static final String VIGNETTE_1 = "ui/vignette_1.png";
     public static final String VIGNETTE_2 = "ui/vignette_2.png";
     public static final String CONFUSED_ICON = "question_mark.png";
-    public static final String ALERT_ICON = "exclaimation_mark.png";
+    public static final String ALERT_ICON = "honk.png";
     private final AssetManager manager = new AssetManager();
 
     public void load() {
