@@ -49,9 +49,7 @@ public class PauseMenu {
             }
         });
 
-        TextButton quitDesktop =
-            new TextButton("QUIT TO DESKTOP", UiStyles.button(buttonFont));
-
+        TextButton quitDesktop = new TextButton("QUIT TO DESKTOP", UiStyles.button(buttonFont));
         quitDesktop.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -60,63 +58,50 @@ public class PauseMenu {
         });
 
         table.setFillParent(true);
-
         table.add(title).padBottom(50).colspan(2);
         table.row();
-
         table.add(quitMenu);
         table.add(quitDesktop);
-        Texture emptyToomeTexture = new Texture(
-            Gdx.files.internal(Assets.SPELL_TOME_EMPTY)
-        );
+
+        Texture emptyToomeTexture = new Texture(Gdx.files.internal(Assets.SPELL_TOME_EMPTY));
         tutMenu = new TutMenu(emptyToomeTexture);
         tutorialActor = new Actor() {
             @Override
             public void draw(Batch batch, float parentAlpha) {
-                tutMenu.draw(
-                    (SpriteBatch) batch,
-                    stage.getViewport()
-                );
+                tutMenu.draw((SpriteBatch) batch, stage.getViewport());
             }
         };
 
         tutorialActor.setVisible(false);
         stage.addActor(tutorialActor);
-        Texture tutTexture = new Texture(Gdx.files.internal(TUT_BUTTON));
 
-        ImageButton tutButton = new ImageButton(
-            new TextureRegionDrawable(new TextureRegion(tutTexture))
-        );
+        Texture tutTexture = new Texture(Gdx.files.internal(TUT_BUTTON));
+        ImageButton tutButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(tutTexture)));
 
         tutButton.addListener(new ChangeListener() {
-                                  @Override
-                                  public void changed(ChangeEvent event, Actor actor) {
-                                      tutorialOpen = true;
-                                      table.setVisible(false);
-                                      tutorialActor.setVisible(true);
-                                      tutorialControls.setVisible(true);
-                                  }
-                              });
-            table.row();
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                tutorialOpen = true;
+                tutMenu.setOpen(true);
+                table.setVisible(false);
+                tutorialActor.setVisible(true);
+                tutorialControls.setVisible(true);
+            }
+        });
 
-        table.add(tutButton)
-            .colspan(2)
-            .center()
-            .size(80,80)
-            .padTop(5)
-            .padRight(35);
-
+        table.row();
+        table.row();
         stage.addActor(table);
+        tutButton.setSize(80, 80);
+        tutButton.setPosition(20, 20);
+        stage.addActor(tutButton);
 
-        TextButton backButton = new TextButton(
-            "BACK",
-            UiStyles.button(buttonFont)
-        );
-
+        TextButton backButton = new TextButton("BACK", UiStyles.button(buttonFont));
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 tutorialOpen = false;
+                tutMenu.setOpen(false);
                 tutorialActor.setVisible(false);
                 tutorialControls.setVisible(false);
                 table.setVisible(true);
@@ -127,22 +112,31 @@ public class PauseMenu {
         tutorialControls.setFillParent(true);
         tutorialControls.bottom();
         tutorialControls.add(backButton).padBottom(20);
-
         tutorialControls.setVisible(false);
-        stage.addActor(tutorialControls);
 
+        stage.addActor(tutorialControls);
     }
-    public boolean isTutorialOpen() {
-        return tutorialOpen;
-    }
-    public void setVisible(boolean visible) {
-        table.setVisible(visible);
+
+    public boolean isTutorialOpen() { return tutorialOpen; }
+
+    public void setVisible(boolean visible) { table.setVisible(visible); }
+
+    public void closeTutorial() {
+        tutorialOpen = false;
+        tutMenu.setOpen(false);
+        tutorialActor.setVisible(false);
+        tutorialControls.setVisible(false);
+        table.setVisible(true);
     }
 
     public Stage getStage() { return stage; }
 
-    public void act(float delta) { stage.act(delta); }
-
+    public void act(float delta) {
+        stage.act(delta);
+        if (tutorialOpen) {
+            stage.getRoot().fire(new com.badlogic.gdx.scenes.scene2d.Event());
+        }
+    }
     public void draw() { stage.draw(); }
 
     public void resize(int width, int height) { stage.getViewport().update(width, height, true); }

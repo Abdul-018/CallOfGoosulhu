@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import static io.github.goldengoose.assets.Assets.TUT_BUTTON;
 import io.github.goldengoose.ui.TutMenu;
 import com.badlogic.gdx.graphics.g2d.Batch;
+
 public class MainMenuScreen implements Screen {
 
     final Cog game;
@@ -32,9 +33,7 @@ public class MainMenuScreen implements Screen {
     private Stage stage;
     private BitmapFont menuFont;
     private TutMenu tutMenu;
-    private boolean tutorialOpen = false;
     private Actor tutorialActor;
-    private Table tutorialControls;
     private Table mainTable;
     private ImageButton tutButton;
 
@@ -46,7 +45,6 @@ public class MainMenuScreen implements Screen {
     public void show() {
         stage = new Stage(new ScreenViewport(), game.batch);
         Gdx.input.setInputProcessor(stage);
-
         createMenu();
     }
 
@@ -57,46 +55,46 @@ public class MainMenuScreen implements Screen {
         TextButton playButton = new TextButton("PLAY", UiStyles.button(menuFont));
         TextButton quitButton = new TextButton("QUIT", UiStyles.button(menuFont));
         Texture tutTexture = new Texture(Gdx.files.internal(TUT_BUTTON));
+        tutTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
-        tutTexture.setFilter(
-            Texture.TextureFilter.Nearest,
-            Texture.TextureFilter.Nearest
-        );
+        tutButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(tutTexture)));
 
-        tutButton = new ImageButton(
-            new TextureRegionDrawable(new TextureRegion(tutTexture))
-        );
-
-        Texture emptyTomeTexture = new Texture(
-            Gdx.files.internal(Assets.SPELL_TOME_EMPTY)
-        );
-
+        Texture emptyTomeTexture = new Texture(Gdx.files.internal(Assets.SPELL_TOME_EMPTY));
         tutMenu = new TutMenu(emptyTomeTexture);
 
         tutorialActor = new Actor() {
             @Override
             public void draw(Batch batch, float parentAlpha) {
-                tutMenu.draw((SpriteBatch) batch, stage.getViewport());
+                if (tutMenu.isOpen()) {
+                    tutMenu.draw((SpriteBatch) batch, stage.getViewport());
+                }
             }
         };
 
-        tutorialActor.setVisible(false);
-        tutorialActor.setSize(
-            stage.getViewport().getWorldWidth(),
-            stage.getViewport().getWorldHeight()
-        );
+        tutorialActor.setSize(0, 0);
+        Table tutorialControls = new Table();
+        tutorialControls.setFillParent(true);
+        tutorialControls.bottom();
+
+        TextButton backButton = new TextButton("BACK", UiStyles.button(menuFont));
+        tutorialControls.add(backButton).padBottom(20);
+        tutorialControls.setVisible(false);
+
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                tutMenu.setOpen(false);
+                tutorialControls.setVisible(false);
+            }
+        });
 
         tutButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                tutorialOpen = true;
-                mainTable.setVisible(false);
-                tutButton.setVisible(false);
-                tutorialActor.setVisible(true);
+                tutMenu.setOpen(true);
                 tutorialControls.setVisible(true);
             }
         });
-
 
         playButton.addListener(new ChangeListener() {
             @Override
@@ -114,41 +112,16 @@ public class MainMenuScreen implements Screen {
 
         mainTable = new Table();
         mainTable.setFillParent(true);
-
         mainTable.add(title).padBottom(50).colspan(2);
         mainTable.row();
-
         mainTable.add(playButton);
         mainTable.add(quitButton);
 
         stage.addActor(mainTable);
 
-        tutButton.setSize(80,80);
+        tutButton.setSize(80, 80);
         tutButton.setPosition(20, 20);
-
         stage.addActor(tutButton);
-
-        TextButton backButton = new TextButton(
-            "BACK",
-            UiStyles.button(menuFont)
-        );
-
-        backButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                tutorialOpen = false;
-                tutorialActor.setVisible(false);
-                tutorialControls.setVisible(false);
-                mainTable.setVisible(true);
-                tutButton.setVisible(true);
-            }
-        });
-
-        tutorialControls = new Table();
-        tutorialControls.setFillParent(true);
-        tutorialControls.bottom();
-        tutorialControls.add(backButton).padBottom(20);
-        tutorialControls.setVisible(false);
 
         stage.addActor(tutorialActor);
         stage.addActor(tutorialControls);
@@ -157,17 +130,14 @@ public class MainMenuScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(Color.BLACK);
-
         stage.act(delta);
         stage.draw();
     }
-
 
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
-
 
     @Override
     public void dispose() {
@@ -175,7 +145,6 @@ public class MainMenuScreen implements Screen {
         menuFont.dispose();
     }
 
-    // Unused overrides
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}

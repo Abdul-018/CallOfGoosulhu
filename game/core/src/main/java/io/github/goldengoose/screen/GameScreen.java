@@ -72,6 +72,7 @@ public class GameScreen implements Screen {
         if (!tomeOpen && InputManager.pause()) {
             paused = !paused;
             pauseMenu.setVisible(paused);
+            pauseMenu.closeTutorial();
         }
         if ((paused == tomeOpen) && InputManager.tome()) {
             tomeOpen = !tomeOpen;
@@ -141,6 +142,12 @@ public class GameScreen implements Screen {
             shapes.end();
             pauseMenu.act(delta);
             pauseMenu.draw();
+
+            if (pauseMenu.isTutorialOpen()) {
+                session.getSpellTome().setVisible(false);
+            } else {
+                session.getSpellTome().setVisible(true);
+            }
         }
 
         if (tomeOpen) {
