@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -22,6 +23,8 @@ import io.github.goldengoose.goose.Bread;
 import io.github.goldengoose.hidden_events.BreadDispenser;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
 import io.github.goldengoose.hidden_events.TallGrass;
+import io.github.goldengoose.player.Player;
+import io.github.goldengoose.goose.Goose;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +39,14 @@ public class Area implements Disposable {
     private final GameWorld world;
     private final HiddenEventsHandler eventManager;
     private final TallGrass tallGrass;
+    private final TiledMapTileLayer mudLayer;
+    private float grassStrength = 0f;
+    private static final float GRASS_FADE_SPEED = 4f;
 
     private final Animation<TextureRegion> prompt;
     private final List<Door> doors = new ArrayList<>();
-    private Door ignoredDoor;
+    private final CollisionMap collision;
+    private final Rectangle feet = new Rectangle();
 
     public Area(String name, GameSession session, Assets assets, Viewport viewport) {
         this.name = name;
@@ -47,43 +54,50 @@ public class Area implements Disposable {
         mapRenderer = new OrthogonalTiledMapRenderer(map);
         depthRenderer = new DepthRenderer(map);
         lighting = new GameLighting(map, viewport);
-        world = new GameWorld(session, map, assets);
+        collision = new CollisionMap(map);
+        world = new GameWorld(session, map, collision, assets);
+        mudLayer = (TiledMapTileLayer) map.getLayers().get("Mud Puddles");
 
         // Hidden events for this area
         eventManager = new HiddenEventsHandler(world);
         tallGrass = new TallGrass(map);
         eventManager.register(tallGrass);
+        Goose.setConfusedIcon(new TextureRegion(assets.getTexture(Assets.CONFUSED_ICON)));
+        Goose.setAlertIcon(new TextureRegion(assets.getTexture(Assets.ALERT_ICON)));
         Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
         Bread.setSpinAnimation(new Animation<TextureRegion>(0.05f, assets.getAtlas(Assets.BREAD_SPIN).findRegions("bread_spin"), Animation.PlayMode.LOOP));
 
         TextureRegion[] keyFrames = TextureRegion.split(assets.getTexture(Assets.INTERACT_KEY), 16, 16)[0];
         prompt = new Animation<TextureRegion>(0.5f, keyFrames);
         prompt.setPlayMode(Animation.PlayMode.LOOP);
-        if (name.equals("Outside_campus_cthulhu_props")) {
-            eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, 500, 150, 64, 64));
-        }
+
         loadDoors();
         loadMagnetiser();
+        loadBreadDispenser(assets);
     }
 
     public void update(float delta) {
         eventManager.update(delta);
         checkMudPuddles();
+
+        float target = tallGrass.getFadeAlpha() < 1f ? 1f : 0f;
+        if (grassStrength < target){
+            grassStrength = Math.min(target, grassStrength + GRASS_FADE_SPEED * delta);
+        } else if (grassStrength > target){
+            grassStrength = Math.max(target, grassStrength - GRASS_FADE_SPEED * delta);
+        }
     }
 
     private void checkMudPuddles() {
-        com.badlogic.gdx.maps.tiled.TiledMapTileLayer mudLayer =
-            (com.badlogic.gdx.maps.tiled.TiledMapTileLayer) map.getLayers().get("Mud Puddles");
         if (mudLayer == null) return;
 
-        float px = world.getPlayer().position.x + world.getPlayer().getWidth() / 2;
-        float py = world.getPlayer().position.y + world.getPlayer().getHeight() / 2;
+        Player player = world.getPlayer();
+        player.getHitbox(feet);
 
-        int tileX = (int) (px / 32);
-        int tileY = (int) (py / 32);
+        int tileX = (int) ((feet.x + feet.width / 2f) / mudLayer.getTileWidth());
+        int tileY = (int) ((feet.y + feet.height / 2f) / mudLayer.getTileHeight());
 
-        boolean inMud = mudLayer.getCell(tileX, tileY) != null;
-        world.getPlayer().setInMud(inMud);
+        player.setInMud(mudLayer.getCell(tileX, tileY) != null);
     }
 
     public void render(SpriteBatch batch, OrthographicCamera camera, Rectangle view) {
@@ -93,7 +107,8 @@ public class Area implements Disposable {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         world.renderGround(batch);
-        depthRenderer.setGrassAlpha(tallGrass.getFadeAlpha());
+        Player player = world.getPlayer();
+        depthRenderer.setGrassFade(player.getPosition().x + player.getWidth() / 2f, player.getPosition().y, grassStrength);
         depthRenderer.render(batch, world.getDepthEntities(), view);
         batch.end();
 
@@ -142,6 +157,18 @@ public class Area implements Disposable {
         eventManager.register(magnetiser);
     }
 
+    private void loadBreadDispenser(Assets assets){
+        MapLayer layer = map.getLayers().get("Spawns");   // CHANGED: reuse the existing layer, same as the keycard
+        if (layer == null) return;
+
+        MapObject object = layer.getObjects().get("bread_dispenser");
+        if (object == null) return;
+        if (!(object instanceof RectangleMapObject rect)) throw new IllegalStateException("'bread_dispenser' is not a Rectangle");
+
+        Rectangle r = rect.getRectangle();
+        eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, r.x, r.y, r.width, r.height));
+    }
+
     public GameWorld getWorld() {
         return world;
     }
@@ -152,6 +179,10 @@ public class Area implements Disposable {
 
     public List<Door> getDoors() {
         return doors;
+    }
+
+    public CollisionMap getCollision() {
+        return collision;
     }
 
     @Override

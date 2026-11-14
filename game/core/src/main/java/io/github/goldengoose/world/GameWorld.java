@@ -25,10 +25,12 @@ public class GameWorld {
     private final List<Entity> pendingEntities = new ArrayList<>();
     private final Player player;
     private final GameSession session;
+    private final CollisionMap collision;
 
-    public GameWorld(GameSession session, TiledMap map, Assets assets) {
+    public GameWorld(GameSession session, TiledMap map, CollisionMap collision, Assets assets) {
         this.session = session;
         this.player = session.getPlayer();
+        this.collision = collision;
         entities.add(player);
 
         MapLayer gooseSpawns = map.getLayers().get("GooseSpawns");
@@ -36,7 +38,7 @@ public class GameWorld {
             for (MapObject spawn : gooseSpawns.getObjects()) {
                 float x = spawn.getProperties().get("x", Float.class);
                 float y = spawn.getProperties().get("y", Float.class);
-                entities.add(new Goose(player, new Vector2(x, y), assets));
+                entities.add(new Goose(player, new Vector2(x, y), collision, assets));
             }
         }
         MapLayer spawns = map.getLayers().get("Spawns");
@@ -124,6 +126,7 @@ public class GameWorld {
                 bread.renderDebug(shapes);
             }
         }
+        collision.renderDebug(shapes);
     }
 
     public void emitLights(GameLighting lighting) {

@@ -82,6 +82,7 @@ public class GameSession implements Disposable {
         if (currentArea != null) currentArea.getWorld().removePlayer();
 
         currentArea = areas.computeIfAbsent(areaName, name -> new Area(name, this, assets, worldViewport));
+        player.setCollision(currentArea.getCollision());
 
         currentArea.getWorld().addPlayer();
         currentArea.getSpawn(spawnName, tmp);
