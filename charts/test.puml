@@ -162,7 +162,7 @@ endlegend
 **** Visuals <<jack>><<prog>>
 ***** Becomes transparent when player \nwalks through it <<jack>><<done>>
 ***** Grass sways when player \nwalks through it <<jack>><<prog>>
-***** Chasing geese are confused\n when player hides <<jack>><<prog>>
+***** Chasing geese are confused\n when player hides <<jack>><<done>>
 **** Functionality <<jack>><<done>>
 ***** Geese cannot detect player <<jack>><<done>>
 
@@ -177,11 +177,11 @@ endlegend
 *** Defeat screen <<lisa>><<done>>
 
 ** 10. Audio and\n Dialogue <<prog>>
-*** Audio handler <<jack>><<prog>>
-**** Background music
-**** Goose honking <<jack>><<prog>>
-**** Environmental sound effects <<jack>><<prog>>
-**** Spell sound effects
-**** Event and transition sound effects
+*** Audio handler <<jack>><<done>>
+**** Background music <<jack>><<done>>
+**** Goose honking <<jack>><<done>>
+**** Environmental sound effects <<jack>><<done>>
+**** Spell sound effects <<jack>><<prog>>
+**** Event and transition sound effects <<jack>><<prog>>
 **** Speech bubbles/subtitles
 @endwbs
