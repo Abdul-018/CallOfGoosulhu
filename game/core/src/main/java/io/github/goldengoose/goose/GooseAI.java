@@ -137,6 +137,7 @@ public class GooseAI {
         } else if (detected) {
             state = GooseState.CHASING;
             alertTimer = ALERT_SECONDS;
+            goose.onAlerted();
         }
 
         // Swarming goose goes back to chasing once player has left this range
