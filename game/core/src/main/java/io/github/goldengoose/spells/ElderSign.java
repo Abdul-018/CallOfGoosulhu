@@ -23,6 +23,9 @@ public class ElderSign extends Entity {
 
     private static final float RADIUS = 24f;
     private static final float LIFETIME = 8f;
+    private static final float SCARE_RADIUS = 120f;
+
+    private final Vector2 otherCentre = new Vector2();
 
     private float lifetime = LIFETIME;
     private boolean triggered = false;
@@ -92,20 +95,6 @@ public class ElderSign extends Entity {
     @Override
     public int getRenderLayer() {
         return RenderLayer.GROUND;
-    }
-
-    public void checkGoose(Goose goose) {
-//        if (triggered || lifetime <= 0f) return;
-//
-//        if (position.dst2(goose.getPosition()) <= RADIUS * RADIUS) {
-//            goose.getPosition().set(
-//                position.x - goose.getWidth() / 2f,
-//                position.y - goose.getHeight() / 2f
-//            );
-//            goose.trap(lifetime);
-//            triggered = true;
-//        }
-
     }
 
     @Override
