@@ -116,6 +116,11 @@ public class GameScreen implements Screen {
 
         session.getArea().render(game.batch, camera, viewRect);
 
+        game.batch.setProjectionMatrix(camera.combined);
+        game.batch.begin();
+        session.draw(game.batch);
+        game.batch.end();
+
         if (debug) renderDebug();
 
         hudViewport.apply();

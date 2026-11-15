@@ -85,17 +85,14 @@ public class GameSession implements Disposable {
 
     public void draw(SpriteBatch batch) {
         if (overlappingDoor != null) {
-            boolean showPrompt = getWorld().getKeyState() == KeyState.UNMAGNETISED;
-            if (showPrompt) {
-                batch.setColor(1f, 1f, 1f, 1f);
-            }
+            batch.setColor(1f, 1f, 1f, 1f);
 
-            if (showPrompt && prompt != null) {
+            if (prompt != null) {
                 TextureRegion icon = prompt.getKeyFrame(pulseTime, true);
                 float iw = icon.getRegionWidth();
                 float ih = icon.getRegionHeight();
                 float bob = (float) Math.sin(pulseTime * PROMPT_BOB_SPEED) * PROMPT_BOB;
-                batch.draw(icon, zoneX + zoneWidth / 2f - iw / 2f, zoneY + PROMPT_GAP + bob, iw, ih);
+                batch.draw(icon, overlappingDoor.bounds().x + overlappingDoor.bounds().width / 2f - iw / 2f, overlappingDoor.bounds().y + PROMPT_GAP + bob, iw, ih);
             }
         }
     }
