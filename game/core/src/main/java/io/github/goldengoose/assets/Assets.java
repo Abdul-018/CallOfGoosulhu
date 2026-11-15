@@ -50,7 +50,8 @@ public class Assets {
     public static final String SFX_PENTAGRAM_TRIGGER = "audio/sfx/spells/spellTrigger.wav";
     public static final String SFX_ELDER_SIGN_SPELL = "audio/sfx/spells/spellTrigger.wav";
     public static final String SFX_SPELL_FAIL = "audio/sfx/spells/spellFail.wav";
-    public static final String SFX_DISPENSER = "audio/sfx/dispenser.wav";
+    public static final String SFX_DISPENSER = "audio/sfx/breadDispense.wav";
+    public static final String SFX_BREAD_DISPENSED = "audio/sfx/breadDispense.wav";
     public static final String SFX_KEYCARD_PICKUP = "audio/sfx/pickup.wav";
     public static final String SFX_DOOR = "audio/sfx/door.wav";
     public static final String MUSIC_OUTSIDE = "audio/music/outside.wav";
@@ -86,7 +87,7 @@ public class Assets {
     };
 
     private static final String[] SOUNDS = {
-        SFX_PENTAGRAM_TRIGGER, SFX_SPELL_FAIL, SFX_ELDER_SIGN_SPELL, SFX_DISPENSER, SFX_KEYCARD_PICKUP, SFX_DOOR
+        SFX_PENTAGRAM_TRIGGER, SFX_SPELL_FAIL, SFX_ELDER_SIGN_SPELL, SFX_DISPENSER, SFX_BREAD_DISPENSED, SFX_DOOR
     };
 
     private static final String[] MUSIC_TRACKS = {

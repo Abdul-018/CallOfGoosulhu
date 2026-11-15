@@ -11,6 +11,7 @@ import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.world.GameWorld;
 import io.github.goldengoose.goose.Bread;
 import io.github.goldengoose.util.InputManager;
+import io.github.goldengoose.assets.Assets;
 
 /**
  * FR_BREAD_DISPENSER: "Dispense bread that distracts nearby geese."
@@ -92,6 +93,12 @@ public class BreadDispenser extends HiddenEvent {
             state = State.RISING;
             stateTime = 0f;
         }
+
+        if (trigger()) {
+            state = State.RISING;
+            stateTime = 0f;
+            world.getAudio().playAt(Assets.SFX_DISPENSER, zoneX + zoneWidth / 2f, zoneY); // NEW
+        }
     }
 
     @Override
@@ -123,6 +130,7 @@ public class BreadDispenser extends HiddenEvent {
 
         } else if (state == State.SHAKING && stateTime >= SHAKE_SECONDS) {
             dispenseBread();
+            world.getAudio().playAt(Assets.SFX_BREAD_DISPENSED, zoneX + zoneWidth / 2f, zoneY);
             state = State.EMPTY;
             stateTime = 0f;
         }
