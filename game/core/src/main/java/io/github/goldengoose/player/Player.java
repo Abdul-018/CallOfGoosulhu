@@ -43,6 +43,7 @@ public class Player extends Entity {
     private static final int FACING_DOWN = 3;
 
     private static final int[] STEP_FRAMES = {1, 4};
+    private static final float PULL_SPIN = 720f;
     //------------
     // END CONSTANTS
     //------------
@@ -58,6 +59,7 @@ public class Player extends Entity {
     private int hidingCount = 0;
     private boolean transformed = false;
     private boolean inMud = false;
+    private float pulling = 0f;
 
     private CollisionMap collision;
     private AudioManager audio;
@@ -100,6 +102,10 @@ public class Player extends Entity {
 
     public void setInMud(boolean inMud) {
         this.inMud = inMud;
+    }
+
+    public void setPulling(float pulling) {
+        this.pulling = pulling;
     }
 
     public void setCollision(CollisionMap collision) { this.collision = collision; }
@@ -159,7 +165,9 @@ public class Player extends Entity {
 
         Animation<TextureRegion>[] animations = moving ? walkAnimations : idleAnimations;
         TextureRegion frame = animations[facing].getKeyFrame(stateTime);
-        batch.draw(frame, position.x, position.y, DRAW_WIDTH, DRAW_HEIGHT);
+        float scale = 1f - pulling;
+        batch.draw(frame, position.x, position.y, DRAW_WIDTH / 2f, DRAW_HEIGHT / 2f, DRAW_WIDTH, DRAW_HEIGHT,
+            scale, scale, pulling * PULL_SPIN);
     }
 
     public void beginHiding() {
