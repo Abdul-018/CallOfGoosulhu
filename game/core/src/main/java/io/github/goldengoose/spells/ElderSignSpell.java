@@ -15,8 +15,6 @@ public class ElderSignSpell extends Spell {
         name = "Elder Sign";
         castSound = Assets.SFX_ELDER_SIGN_SPELL;
         description = "Inscribe a dispersing circle on the ground. Geese flee the symbol until it fades.";
-        castSound = Assets.SFX_ELDER_SIGN_SPELL;
-
         range = 120f;
         cooldown = 10f;
     }

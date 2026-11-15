@@ -13,7 +13,6 @@ import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.util.Utilities;
 import io.github.goldengoose.world.Entity;
 import io.github.goldengoose.audio.AudioManager;
-import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.world.RenderLayer;
 
 public class ElderSign extends Entity {
@@ -40,6 +39,7 @@ public class ElderSign extends Entity {
 
     public ElderSign(Vector2 centre, Texture texture, AudioManager audio) {
         this.audio = audio;
+        audio.playAt(Assets.SFX_ELDER_SIGN_SPELL, position.x + RADIUS, position.y + RADIUS);
         this.position.set(centre.x - RADIUS, centre.y - RADIUS);
         this.texture = texture;
         if (rows == null) {
@@ -115,14 +115,9 @@ public class ElderSign extends Entity {
         goose.getCentre(otherCentre);
         if (centre.dst2(otherCentre) <= SCARE_RADIUS * SCARE_RADIUS) {
             goose.scareFrom(centre);
-            playTrapSound();
         }
     }
 
-    private void playTrapSound(){
-        if (audio == null) return;
-        audio.playAt(Assets.SFX_ELDER_SIGN_SPELL, position.x + RADIUS, position.y + RADIUS);
-    }
     public boolean isTriggered() {
         return triggered;
     }
