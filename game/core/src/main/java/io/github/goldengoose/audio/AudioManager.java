@@ -53,7 +53,7 @@ public class AudioManager implements Disposable {
     private static final Map<String, String> AREA_MUSIC = new HashMap<>();
     static {
         AREA_MUSIC.put("Outside_campus_cthulhu_props", Assets.MUSIC_OUTSIDE);
-        AREA_MUSIC.put("ian_wand", Assets.MUSIC_IAN_WAND);
+        AREA_MUSIC.put("Ian_Wand_Interior_MAIN", Assets.MUSIC_IAN_WAND);
         AREA_MUSIC.put("Ron_Cooke_Interior_MAIN", Assets.MUSIC_RON_COOKE);
     }
     //------------------------------------------------------------------
