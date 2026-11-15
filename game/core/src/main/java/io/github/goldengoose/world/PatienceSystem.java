@@ -7,8 +7,8 @@ import java.util.List;
 public class PatienceSystem {
 
     private static final float RESTORE_PER_SECOND = 0.1f;
-    private static final float DRAIN_PER_SECOND = 0.08f;
-    private static final float CHASE_DRAIN = 0.4f;
+    private static final float DRAIN_PER_SECOND = 0.053f;
+    private static final float CHASE_DRAIN = 0.267f;
 
     private float patience = 1.0f;
 
@@ -17,6 +17,7 @@ public class PatienceSystem {
         float pressure = 0f;
 
         for (Goose goose : geese) {
+            if (goose.isTrapped()) continue;
             if (goose.isSwarming()) {
                 pressure += 1f;
             } else if (goose.isChasing()){
