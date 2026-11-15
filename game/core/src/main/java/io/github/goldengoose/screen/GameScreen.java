@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -15,6 +16,7 @@ import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.assets.CogFonts;
 import io.github.goldengoose.ui.Hud;
 import io.github.goldengoose.ui.PauseMenu;
+import io.github.goldengoose.ui.TentacleFade;
 import io.github.goldengoose.ui.TomeMenu;
 import io.github.goldengoose.util.InputManager;
 import io.github.goldengoose.util.Utilities;
@@ -24,6 +26,9 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.graphics.Color;
 
 public class GameScreen implements Screen {
+    private static final float ENDING_LENGTH = 3f;
+    private static final float ENDING_ZOOM = 0.25f;
+
     private final Cog game;
     private final Viewport worldViewport = new FitViewport(600, 450);
     private final Viewport hudViewport = new ScreenViewport();
@@ -39,16 +44,15 @@ public class GameScreen implements Screen {
     private final BitmapFont objectiveFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 40);    private final Hud hud;
     private final Rectangle viewRect = new Rectangle();
     private final GameSession session;
+    private final TentacleFade tentacleFade;
 
     private boolean paused = true;
     private boolean tomeOpen = false;
     private boolean debug = false;
-    private boolean overlayVisible = false;
-    private boolean overlayWon = false;
-    private float overlaySlide = 0f;
-    private BitmapFont overlayFont;
+    private boolean gameOver = false;
     private float gameOverTimer = -1f;
     private boolean gameOverWon = false;
+    private float endingTime = -1f;
 
     public GameScreen(final Cog game) {
         this.game = game;
@@ -56,6 +60,7 @@ public class GameScreen implements Screen {
         pauseMenu = new PauseMenu(game);
         tomeMenu = new TomeMenu(game, game.assets.getTexture(Assets.SPELL_TOME_EMPTY), session.getSpellTome());
         hud = new Hud(game.assets, 5 * 60);
+        tentacleFade = new TentacleFade(game.assets);
         multiplexer.addProcessor(pauseMenu.getStage());
         multiplexer.addProcessor(session.getSpellTome().getInputProcessor());
         multiplexer.addProcessor(gameInput);
@@ -79,18 +84,24 @@ public class GameScreen implements Screen {
             session.getSpellTome().setVisible(!tomeOpen);
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) debug = !debug;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F3))  {
+            debug = !debug;
+            session.setDebug(debug);
+        }
 
         if (!paused) {
             session.update(delta);
             hud.update(delta, session.getTimer().getSecondsRemaining());
             hud.updatePatience(session.getPatienceSystem().getPatience());
 
-            if (session.getTimer().isTimeUp() && gameOverTimer < 0) {
+            if (session.getTimer().isTimeUp() && !gameOver) {
+                gameOver = true;
+                session.getPlayer().transformIntoGoose(game.assets.getTexture(Assets.GOOSE_WALK));
                 gameOverTimer = 2f;
                 gameOverWon = false;
             }
-            if (session.getPatienceSystem().isTransformed() && gameOverTimer < 0) {
+            if (session.getPatienceSystem().isTransformed() && !gameOver) {
+                gameOver = true;
                 session.getPlayer().transformIntoGoose(game.assets.getTexture(Assets.GOOSE_WALK));
                 gameOverTimer = 2f;
                 gameOverWon = false;
@@ -98,14 +109,26 @@ public class GameScreen implements Screen {
             if (gameOverTimer > 0) {
                 gameOverTimer -= delta;
                 if (gameOverTimer <= 0) {
-                    showOverlay(gameOverWon);
+                    endingTime = 0f;
                 }
             }
+            if (endingTime >= 0f) {
+                endingTime += delta;
+                if (endingTime >= ENDING_LENGTH) {
+                    game.changeScreen(new EndCutsceneScreen(game, gameOverWon));
+                }
+            }
+        }
+
+        float ending = 0f;
+        if (endingTime >= 0f) {
+            ending = Math.min(endingTime / ENDING_LENGTH, 1f);
         }
 
         session.getPlayer().getCentre(playerPos);
         OrthographicCamera camera = (OrthographicCamera) worldViewport.getCamera();
         camera.position.set(playerPos.x, playerPos.y, 0f);
+        camera.zoom = MathUtils.lerp(1f, ENDING_ZOOM, ending);
         worldViewport.apply();
 
         viewRect.set(camera.position.x - camera.viewportWidth / 2, camera.position.y - camera.viewportHeight / 2,
@@ -137,7 +160,7 @@ public class GameScreen implements Screen {
 
         drawObjective();
 
-        if (paused && !overlayVisible) {
+        if (paused) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             shapes.setProjectionMatrix(hudViewport.getCamera().combined);
             shapes.begin(ShapeRenderer.ShapeType.Filled);
@@ -161,36 +184,9 @@ public class GameScreen implements Screen {
             game.batch.end();
         }
 
-        if (overlayVisible) {
-            overlaySlide = Math.min(overlaySlide + delta * 2f, 1f);
-            float w = hudViewport.getWorldWidth();
-            float h = hudViewport.getWorldHeight();
-            float panelH = h;
-            float panelY = h - overlaySlide * panelH;
-
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            shapes.setProjectionMatrix(hudViewport.getCamera().combined);
-            shapes.begin(ShapeRenderer.ShapeType.Filled);
-            shapes.setColor(0f, 0f, 0f, 0.7f);
-            shapes.rect(0, panelY, w, panelH);
-            shapes.end();
-
-            String message = overlayWon ? "Congratulations!\nYou Escaped The Goosulhu!" : "Better Luck Next Time";
-            game.batch.setProjectionMatrix(hudViewport.getCamera().combined);
-            game.batch.begin();
-            overlayFont.draw(game.batch, message, 0, panelY + panelH * 0.6f, w, Align.center, false);
-            overlayFont.draw(game.batch, "'R' to Play Again      'M' to Menu", 0, panelY + panelH * 0.35f, w, Align.center, false);
-            game.batch.end();
-        }
-
-        if (overlayVisible) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-                game.changeScreen(new GameScreen(game));
-            }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-                game.changeScreen(new MainMenuScreen(game));
-            }
-        }
+        float tentacles = Math.max(ending * 2f - 1f, 0f);
+        hudViewport.apply();
+        tentacleFade.draw(game.batch, hudViewport, tentacles);
 
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
@@ -222,15 +218,6 @@ public class GameScreen implements Screen {
 
         objectiveFont.setColor(Color.WHITE);
         game.batch.end();
-    }
-
-    private void showOverlay(boolean won) {
-        if (!overlayVisible) {
-            overlayVisible = true;
-            overlayWon = won;
-            overlayFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 64);
-            paused = true;
-        }
     }
 
     private final InputAdapter gameInput = new InputAdapter() {
@@ -270,7 +257,7 @@ public class GameScreen implements Screen {
         hudFont.dispose();
         objectiveFont.dispose();
         hud.dispose();
-        if (overlayFont != null) overlayFont.dispose();
+        tentacleFade.dispose();
     }
 
     @Override public void pause() {}

@@ -48,6 +48,8 @@ public class GameSession implements Disposable {
 
     private final Animation<TextureRegion> prompt;
 
+    private boolean debug;
+
     public GameSession(Assets assets, AudioManager audio, Viewport worldViewport, String startArea, String startSpawn) {
         this.assets = assets;
         this.worldViewport = worldViewport;
@@ -101,7 +103,7 @@ public class GameSession implements Disposable {
         for (Door door : currentArea.getDoors()) {
             if (!door.bounds().contains(worldPos)) continue;
 
-            if (isInRange(door) && (!door.locked() || keyState == KeyState.MAGNETISED)) {
+            if (isInRange(door) && (!door.locked() || keyState == KeyState.MAGNETISED || debug)) {
                 pendingDoor = door;
             }
             return true;
@@ -112,7 +114,7 @@ public class GameSession implements Disposable {
     private void checkDoors() {
         Rectangle feet = new Rectangle(player.position.x, player.position.y, player.getWidth(), player.getHeight());
         for (Door door : currentArea.getDoors()) {
-            if (door.bounds().overlaps(feet) && (!door.locked() || keyState == KeyState.MAGNETISED)) {
+            if (door.bounds().overlaps(feet) && (!door.locked() || keyState == KeyState.MAGNETISED || debug)) {
                 overlappingDoor = door;
                 if (InputManager.interact()) {
                     pendingDoor = door;
@@ -157,6 +159,7 @@ public class GameSession implements Disposable {
     public void setKeyState(KeyState state) { keyState = state; }
     public AudioManager getAudio() { return audio; }
     public Animation<TextureRegion> getPrompt() { return prompt; }
+    public void setDebug(boolean debug) { this.debug = debug; }
 
     @Override
     public void dispose() {
