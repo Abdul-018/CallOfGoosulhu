@@ -97,6 +97,8 @@ public class Assets {
     public static final String ALERT_ICON = "honk.png";
     public static final String GOOSE_NORMAL = "cutscene/goose_normal.png";
     public static final String PORTAL = "cutscene/portal.png";
+    public static final String BUBBLE_WHAT = "cutscene/bubble_what.png";
+    public static final String BUBBLE_COFFEE = "cutscene/bubble_coffee.png";
     private final AssetManager manager = new AssetManager();
 
     public void load() {
@@ -127,6 +129,8 @@ public class Assets {
         manager.load(ALERT_ICON, Texture.class);
         manager.load(GOOSE_NORMAL, Texture.class);
         manager.load(PORTAL, Texture.class);
+        manager.load(BUBBLE_WHAT, Texture.class);
+        manager.load(BUBBLE_COFFEE, Texture.class);
         loadAudio();
         manager.finishLoading();
     }
