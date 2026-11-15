@@ -13,6 +13,7 @@ import io.github.goldengoose.spells.PentagramTrapSpell;
 import io.github.goldengoose.spells.SpellTome;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
 import io.github.goldengoose.audio.AudioManager;
+import io.github.goldengoose.util.InputManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +64,9 @@ public class GameSession implements Disposable {
         audio.update(delta);
         timer.update(delta);
         patienceSystem.update(delta, currentArea.getWorld().getGeese());
-        objectiveSystem.update(delta, keyState, currentArea.getName(), player.getPosition());    }
+        objectiveSystem.update(delta, keyState, currentArea.getName(), player.getPosition());
+        checkDoors();
+    }
 
     public boolean clickDoor(Vector2 worldPos) {
         for (Door door : currentArea.getDoors()) {
@@ -75,6 +78,18 @@ public class GameSession implements Disposable {
             return true;
         }
         return false;
+    }
+
+    private void checkDoors() {
+        Rectangle feet = new Rectangle(player.position.x, player.position.y, player.getWidth(), player.getHeight());
+        for (Door door : currentArea.getDoors()) {
+            if (door.bounds().overlaps(feet) && (!door.locked() || keyState == KeyState.MAGNETISED)) {
+                if (InputManager.interact()) {
+                    pendingDoor = door;
+                }
+                return;
+            }
+        }
     }
 
     private boolean isInRange(Door door) {
