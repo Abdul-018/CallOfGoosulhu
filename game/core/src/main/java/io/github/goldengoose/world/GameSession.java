@@ -12,6 +12,7 @@ import io.github.goldengoose.spells.ElderSignSpell;
 import io.github.goldengoose.spells.PentagramTrapSpell;
 import io.github.goldengoose.spells.SpellTome;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
+import io.github.goldengoose.audio.AudioManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class GameSession implements Disposable {
     private final SpellTome spellTome;
     private final PatienceSystem patienceSystem = new PatienceSystem();
     private final ObjectiveSystem objectiveSystem = new ObjectiveSystem();
+    private final AudioManager audio;
     private KeyState keyState = KeyState.NONE;
 
     private final Map<String, Area> areas = new HashMap<>();
@@ -44,6 +46,8 @@ public class GameSession implements Disposable {
         spellTome.addSpell(new PentagramTrapSpell(this, assets));
         spellTome.addSpell(new ElderSignSpell(this, assets));
 
+        this.audio = new AudioManager(assets);
+
         enter(startArea, startSpawn);
     }
 
@@ -55,6 +59,8 @@ public class GameSession implements Disposable {
         currentArea.getWorld().update(delta);
         currentArea.update(delta);
         spellTome.update(delta);
+        audio.setListener(player.position.x + player.getWidth() / 2f, player.position.y + player.getHeight() / 2f);
+        audio.update(delta);
         timer.update(delta);
         patienceSystem.update(delta, currentArea.getWorld().getGeese());
         objectiveSystem.update(delta, keyState, currentArea.getName(), player.getPosition());    }
@@ -88,6 +94,9 @@ public class GameSession implements Disposable {
         currentArea.getWorld().addPlayer();
         currentArea.getSpawn(spawnName, tmp);
         player.setPosition(tmp.x, tmp.y);
+        audio.playAreaMusic(areaName);
+        player.setAudio(audio);
+        player.setInMud(false);
     }
 
     public Area getArea()         { return currentArea; }
@@ -100,9 +109,13 @@ public class GameSession implements Disposable {
     public ObjectiveSystem getObjectiveSystem() { return objectiveSystem; }
     public KeyState getKeyState() { return keyState; }
     public void setKeyState(KeyState state) { keyState = state; }
+    public AudioManager getAudio() { return audio; }
 
     @Override
     public void dispose() {
-        for (Area area : areas.values()) area.dispose();
+        for (Area area : areas.values()) {
+            area.dispose();
+            audio.dispose();
+        }
     }
 }

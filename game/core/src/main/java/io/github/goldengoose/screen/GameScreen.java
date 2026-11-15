@@ -171,11 +171,11 @@ public class GameScreen implements Screen {
             shapes.rect(0, panelY, w, panelH);
             shapes.end();
 
-            String message = overlayWon ? "Congratulations!" : "Game Over";
+            String message = overlayWon ? "Congratulations!\nYou Escaped The Goosulhu!" : "Better Luck Next Time";
             game.batch.setProjectionMatrix(hudViewport.getCamera().combined);
             game.batch.begin();
             overlayFont.draw(game.batch, message, 0, panelY + panelH * 0.6f, w, Align.center, false);
-            overlayFont.draw(game.batch, "R - Play Again      M - Menu", 0, panelY + panelH * 0.35f, w, Align.center, false);
+            overlayFont.draw(game.batch, "'R' to Play Again      'M' to Menu", 0, panelY + panelH * 0.35f, w, Align.center, false);
             game.batch.end();
         }
 

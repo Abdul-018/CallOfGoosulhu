@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ public class SpellTome {
     private final Texture texture;
     private final List<Spell> spells = new ArrayList<>();
     private int selectedSpell = 0;
+
+    // THIS IS REQUIRED FOR ASSESSMENT 1, Items used counter: UR_COUNTER
+    private int spellsUsedCounter;
 
     private boolean visible = true;
 
@@ -98,7 +102,12 @@ public class SpellTome {
 
         if (spell == null) return false;
 
-        return spell.activate(worldPos);
+        boolean casted = spell.activate(worldPos);
+        if (casted) {
+            spellsUsedCounter++;
+            //System.out.println(spellsUsedCounter);
+        }
+        return casted;
     }
 
     /**
