@@ -42,7 +42,7 @@ public class Player extends Entity {
     private static final int FACING_LEFT = 2;
     private static final int FACING_DOWN = 3;
 
-    private static final int[] STEP_FRAMES = {1, 4};
+    public static final int[] STEP_FRAMES = {1, 4};
     //------------
     // END CONSTANTS
     //------------

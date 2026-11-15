@@ -13,6 +13,7 @@ import io.github.goldengoose.world.CollisionMap;
  * CHASING: Chasing the player
  * SWARMING: Attempt to surround the player
  */
+
 public class GooseAI {
     enum GooseState {
         IDLE,

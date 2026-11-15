@@ -54,9 +54,17 @@ public class Assets {
     public static final String SFX_BREAD_DISPENSED = "audio/sfx/breadDispense.wav";
     public static final String SFX_KEYCARD_PICKUP = "audio/sfx/pickup.wav";
     public static final String SFX_DOOR = "audio/sfx/door.wav";
+    public static final String SFX_SPLASH = "audio/sfx/bread_splash.wav";
+    public static final String SFX_PORTAL_PULL = "pull.wav";
+    public static final String SFX_PORTAL_OPEN = "audio/sfx/womanGasping.wav";
+
+
     public static final String MUSIC_OUTSIDE = "audio/music/outside.wav";
     public static final String MUSIC_IAN_WAND = "audio/music/ian_wand.wav";
     public static final String MUSIC_RON_COOKE = "audio/music/ron_cooke.wav";
+    public static final String MUSIC_HAPPY_CUTSCENE = "audio/music/cutScene.wav";
+    public static final String MUSIC_PORTAL_CUTSCENE = "audio/music/portal.wav";
+
 
     public static final String[] SFX_FOOTSTEPS = {
         "audio/sfx/footsteps/footstep1.wav",
@@ -87,11 +95,12 @@ public class Assets {
     };
 
     private static final String[] SOUNDS = {
-        SFX_PENTAGRAM_TRIGGER, SFX_SPELL_FAIL, SFX_ELDER_SIGN_SPELL, SFX_DISPENSER, SFX_BREAD_DISPENSED, SFX_DOOR
+        SFX_PENTAGRAM_TRIGGER, SFX_SPELL_FAIL, SFX_ELDER_SIGN_SPELL, SFX_DISPENSER, SFX_BREAD_DISPENSED, SFX_DOOR, SFX_SPLASH,
+        SFX_PORTAL_OPEN, SFX_PORTAL_PULL
     };
 
     private static final String[] MUSIC_TRACKS = {
-        MUSIC_OUTSIDE, MUSIC_IAN_WAND, MUSIC_RON_COOKE
+        MUSIC_OUTSIDE, MUSIC_IAN_WAND, MUSIC_RON_COOKE, MUSIC_PORTAL_CUTSCENE, MUSIC_HAPPY_CUTSCENE
     };
 
 

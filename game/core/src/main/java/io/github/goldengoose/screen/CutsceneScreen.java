@@ -27,6 +27,8 @@ import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.assets.CogFonts;
 import io.github.goldengoose.util.Utilities;
 import io.github.goldengoose.world.DepthRenderer;
+import io.github.goldengoose.audio.AudioManager;
+import io.github.goldengoose.player.Player;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,8 +50,10 @@ public class CutsceneScreen implements Screen {
     private static final float VIGNETTE_SHAKE = 6f;
     private static final float VIGNETTE_START_ZOOM = 1.8f;
     private static final float VIGNETTE_END_ZOOM = 1.05f;
+    private int lastWalkFrame = -1;
 
     private final Cog game;
+    private final AudioManager audio;
     private final Viewport worldViewport = new FitViewport(600, 450);
     private final Viewport hudViewport = new ScreenViewport();
     private final ShapeRenderer shapes = new ShapeRenderer();
@@ -80,6 +84,7 @@ public class CutsceneScreen implements Screen {
 
     public CutsceneScreen(final Cog game) {
         this.game = game;
+        this.audio = game.audio;
 
         map = new TmxMapLoader().load("maps/Outside_campus_normal.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
@@ -93,6 +98,7 @@ public class CutsceneScreen implements Screen {
         TextureRegion[][] amelia = TextureRegion.split(game.assets.getTexture(Assets.PLAYER), 16, 32);
         idle = new Animation<>(0.15f, Arrays.copyOf(amelia[1], 6));
         walk = new Animation<>(0.1f, Arrays.copyOf(amelia[2], 6));
+        walk.setPlayMode(Animation.PlayMode.LOOP);
 
         TextureRegion[][] portalFrames = TextureRegion.split(game.assets.getTexture(Assets.PORTAL), PORTAL_SIZE, PORTAL_SIZE);
         float openFrameTime = (PULL_START - PORTAL_START) / 6f;
@@ -102,11 +108,30 @@ public class CutsceneScreen implements Screen {
         gooseBob = new Animation<>(0.4f, TextureRegion.split(game.assets.getTexture(Assets.GOOSE_NORMAL), GOOSE_SIZE, GOOSE_SIZE)[0]);
         bread = new TextureRegion(game.assets.getTexture(Assets.BREAD));
         vignette = new TextureRegion(game.assets.getTexture(Assets.VIGNETTE_2));
+
+        audio.playMusic(Assets.MUSIC_HAPPY_CUTSCENE);
     }
 
     private Vector2 getPoint(String name) {
         MapProperties point = map.getLayers().get("Cutscene").getObjects().get(name).getProperties();
         return new Vector2(point.get("x", Float.class), point.get("y", Float.class));
+    }
+    private boolean crossed(float before, float at) {
+        return before < at && time >= at;
+    }
+
+    private void playCues(float before) {
+        if (crossed(before, FEED_START + THROW_TIME)) {
+            audio.play(Assets.SFX_SPLASH, 0.9f, 0.1f);
+        }
+        if (crossed(before, PORTAL_START)) {
+            audio.play(Assets.SFX_PORTAL_OPEN, 1f, 0f);
+        }
+        if (crossed(before, PULL_START)) {
+            audio.play(Assets.SFX_PORTAL_PULL, 1f, 0f);
+            audio.playRandom(Assets.SFX_GOOSE_HONK, 1f, 0.12f);
+            audio.playMusic(Assets.MUSIC_PORTAL_CUTSCENE);
+        }
     }
 
     private float progress(float start, float end) {
@@ -115,7 +140,11 @@ public class CutsceneScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        float before  = time;
         time += delta;
+        audio.update(delta);
+        playCues(before);
+        playFootsteps();
         boolean skipPressed = Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
         if ((time >= END || skipPressed) && !finished) {
             finished = true;
@@ -255,6 +284,19 @@ public class CutsceneScreen implements Screen {
         batch.setColor(1f, 1f, 1f, 1f);
         skipFont.draw(batch, "SPACE - Skip", 0, 40, screenWidth - 20, Align.right, false);
         batch.end();
+    }
+
+    private void playFootsteps() {
+        if (time >= FEED_START) return;
+        int frame = walk.getKeyFrameIndex(time);
+        if (frame == lastWalkFrame) return;
+        lastWalkFrame = frame;
+        for (int stepFrame : Player.STEP_FRAMES) {
+            if (frame == stepFrame) {
+                audio.playRandom(Assets.SFX_FOOTSTEPS, 0.6f, 0.15f);
+                break;
+            }
+        }
     }
 
     @Override
