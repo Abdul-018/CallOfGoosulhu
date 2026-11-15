@@ -40,9 +40,8 @@ public class GameScreen implements Screen {
 
     private final PauseMenu pauseMenu;
     private final TomeMenu tomeMenu;
-    private final BitmapFont hudFont = Utilities.createFont(CogFonts.CRISTOFORO, 24);
-    private final BitmapFont objectiveFont = Utilities.createFont(CogFonts.CRISTOFORO, 20);
-    private final Hud hud;
+    private final BitmapFont hudFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 24);
+    private final BitmapFont objectiveFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 40);    private final Hud hud;
     private final Rectangle viewRect = new Rectangle();
     private final GameSession session;
     private final TentacleFade tentacleFade;
@@ -77,6 +76,7 @@ public class GameScreen implements Screen {
         if (!tomeOpen && InputManager.pause()) {
             paused = !paused;
             pauseMenu.setVisible(paused);
+            pauseMenu.closeTutorial();
         }
         if ((paused == tomeOpen) && InputManager.tome()) {
             tomeOpen = !tomeOpen;
@@ -161,6 +161,12 @@ public class GameScreen implements Screen {
             shapes.end();
             pauseMenu.act(delta);
             pauseMenu.draw();
+
+            if (pauseMenu.isTutorialOpen()) {
+                session.getSpellTome().setVisible(false);
+            } else {
+                session.getSpellTome().setVisible(true);
+            }
         }
 
         if (tomeOpen) {

@@ -48,7 +48,7 @@ public class CutsceneScreen implements Screen {
     private final Cog game;
     private final Viewport worldViewport = new FitViewport(600, 450);
     private final Viewport hudViewport = new ScreenViewport();
-    private final BitmapFont skipFont = Utilities.createFont(CogFonts.CRISTOFORO, 24);
+    private final BitmapFont skipFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 24);
     private final Rectangle viewRect = new Rectangle();
 
     private final TiledMap map;
