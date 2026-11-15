@@ -79,7 +79,10 @@ public class GameScreen implements Screen {
             session.getSpellTome().setVisible(!tomeOpen);
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) debug = !debug;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F3))  {
+            debug = !debug;
+            session.setDebug(debug);
+        }
 
         if (!paused) {
             session.update(delta);
