@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.goldengoose.Cog;
 import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.assets.CogFonts;
+import io.github.goldengoose.audio.AudioManager;
 import io.github.goldengoose.ui.TentacleFade;
 import io.github.goldengoose.util.Utilities;
 import io.github.goldengoose.world.DepthRenderer;
@@ -48,6 +49,7 @@ public class EndCutsceneScreen implements Screen {
     private static final float BUBBLE_TAIL_X = 8f;
 
     private final Cog game;
+    private final AudioManager audio;
     private final boolean won;
     private final Viewport worldViewport = new FitViewport(600, 450);
     private final Viewport hudViewport = new ScreenViewport();
@@ -75,6 +77,7 @@ public class EndCutsceneScreen implements Screen {
 
     public EndCutsceneScreen(final Cog game, boolean won) {
         this.game = game;
+        this.audio = game.audio;
         this.won = won;
 
         map = new TmxMapLoader().load("maps/Outside_campus_normal.tmx");
@@ -93,6 +96,8 @@ public class EndCutsceneScreen implements Screen {
 
         whatBubble = new TextureRegion(game.assets.getTexture(Assets.BUBBLE_WHAT));
         coffeeBubble = new TextureRegion(game.assets.getTexture(Assets.BUBBLE_COFFEE));
+
+        audio.playMusic(Assets.MUSIC_HAPPY_CUTSCENE);
     }
 
     private Vector2 getPoint(String name) {
@@ -106,6 +111,7 @@ public class EndCutsceneScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        audio.update(delta);
         time += delta;
         boolean skipPressed = Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
         if ((time >= END || skipPressed) && !finished) {
@@ -208,6 +214,7 @@ public class EndCutsceneScreen implements Screen {
         tentacleFade.dispose();
         shapes.dispose();
         skipFont.dispose();
+        audio.dispose();
     }
 
     @Override public void show() {}

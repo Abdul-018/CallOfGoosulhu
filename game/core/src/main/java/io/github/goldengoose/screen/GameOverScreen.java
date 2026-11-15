@@ -17,6 +17,7 @@ import io.github.goldengoose.Cog;
 import io.github.goldengoose.assets.CogFonts;
 import io.github.goldengoose.ui.UiStyles;
 import io.github.goldengoose.util.Utilities;
+import io.github.goldengoose.audio.AudioManager;
 
 public class GameOverScreen implements Screen {
 
