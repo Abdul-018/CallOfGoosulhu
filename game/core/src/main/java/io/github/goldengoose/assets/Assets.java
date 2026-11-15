@@ -47,8 +47,8 @@ public class Assets {
     //---------------------------------------------------------------------------------//
 
     // Placeholder file paths
-    public static final String SFX_PENTAGRAM_TRIGGER = "audio/sfx/spells/pentagramTrigger.wav";
-    public static final String SFX_ELDER_SIGN_SPELL = "audio/sfx/spells/elerSign.wav";
+    public static final String SFX_PENTAGRAM_TRIGGER = "audio/sfx/spells/spellTrigger.wav";
+    public static final String SFX_ELDER_SIGN_SPELL = "audio/sfx/spells/spellTrigger.wav";
     public static final String SFX_SPELL_FAIL = "audio/sfx/spells/spellFail.wav";
     public static final String SFX_DISPENSER = "audio/sfx/dispenser.wav";
     public static final String SFX_KEYCARD_PICKUP = "audio/sfx/keycard_pickup.wav";

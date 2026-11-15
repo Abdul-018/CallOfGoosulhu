@@ -7,10 +7,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.goose.Goose;
 import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.util.Utilities;
 import io.github.goldengoose.world.Entity;
+import io.github.goldengoose.audio.AudioManager;
+import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.world.RenderLayer;
 
 public class ElderSign extends Entity {
@@ -29,12 +32,14 @@ public class ElderSign extends Entity {
 
     private float lifetime = LIFETIME;
     private boolean triggered = false;
+    private final AudioManager audio;
 
     static Animation<TextureRegion>[] rows;
     static Animation<TextureRegion> grow;
     static Animation<TextureRegion> shimmer;
 
-    public ElderSign(Vector2 centre, Texture texture) {
+    public ElderSign(Vector2 centre, Texture texture, AudioManager audio) {
+        this.audio = audio;
         this.position.set(centre.x - RADIUS, centre.y - RADIUS);
         this.texture = texture;
         if (rows == null) {
@@ -110,9 +115,14 @@ public class ElderSign extends Entity {
         goose.getCentre(otherCentre);
         if (centre.dst2(otherCentre) <= SCARE_RADIUS * SCARE_RADIUS) {
             goose.scareFrom(centre);
+            playTrapSound();
         }
     }
 
+    private void playTrapSound(){
+        if (audio == null) return;
+        audio.playAt(Assets.SFX_ELDER_SIGN_SPELL, position.x + RADIUS, position.y + RADIUS);
+    }
     public boolean isTriggered() {
         return triggered;
     }

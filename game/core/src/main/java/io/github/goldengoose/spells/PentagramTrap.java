@@ -137,6 +137,7 @@ public class PentagramTrap extends Entity {
         if (audio == null) return;
         audio.playAt(Assets.SFX_PENTAGRAM_TRIGGER, position.x + RADIUS, position.y + RADIUS);
     }
+
     public boolean isTriggered() {
         return triggered;
     }
