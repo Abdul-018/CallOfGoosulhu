@@ -30,6 +30,12 @@ import io.github.goldengoose.world.DepthRenderer;
 import java.util.Arrays;
 import java.util.Collections;
 
+
+/**
+ * UR_ALTER_CAMPUS, FR_POND_TRANSITION: "The game starts with the player falling into the pond which transports the player to an alternative campus." <br>
+ *
+ * Starting cutscene for the game
+ */
 public class StartCutsceneScreen implements Screen {
     private static final float FEED_START = 4f;
     private static final float PORTAL_START = 6.5f;

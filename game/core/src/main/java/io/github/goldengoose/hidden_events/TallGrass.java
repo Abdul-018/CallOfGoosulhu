@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * FR_HIDE: "Makes the avatar undetectable in tall grass  for 30 seconds"
+ *
  * Makes the player hide in tall grass (For how long?) - 3 seconds like req1 says?
  *
  * Have given every layer of "tall grass" in the map collision objects a new property boolean "tall_grass".

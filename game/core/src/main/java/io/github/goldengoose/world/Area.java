@@ -29,7 +29,9 @@ import io.github.goldengoose.goose.Goose;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * UR_CAMPUS_MAP: "The game must take place on a UoY campus-style map with limits to where the player should be able to go"
+ */
 public class Area implements Disposable {
     private final String name;
     private final TiledMap map;
