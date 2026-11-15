@@ -58,6 +58,7 @@ public class StartCutsceneScreen implements Screen {
     private static final float VIGNETTE_START_ZOOM = 1.8f;
     private static final float VIGNETTE_END_ZOOM = 1.05f;
     private int lastWalkFrame = -1;
+    private static final float PLAYER_MIDDLE = 16f * SCALE;
 
     private final Cog game;
     private final AudioManager audio;
@@ -75,6 +76,7 @@ public class StartCutsceneScreen implements Screen {
     private final Vector2 throwSpot;
     private final Vector2 portal;
     private final Vector2[] gooseStarts;
+    private final Vector2 tmpTarget = new Vector2();
 
     private final Animation<TextureRegion> idle;
     private final Animation<TextureRegion> walk;
@@ -163,7 +165,7 @@ public class StartCutsceneScreen implements Screen {
         float fading = progress(FADE_START, END);
 
         if (pulling > 0f) {
-            playerPos.set(throwSpot).lerp(portal, pulling);
+            playerPos.set(throwSpot).lerp(tmpTarget.set(portal.x, portal.y - PLAYER_MIDDLE), pulling);
         } else {
             playerPos.set(playerStart).lerp(throwSpot, walking);
         }
