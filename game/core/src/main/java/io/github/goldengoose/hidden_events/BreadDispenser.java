@@ -89,15 +89,14 @@ public class BreadDispenser extends HiddenEvent {
     @Override
     protected void onEnter(Entity entity) {
         playerInside = true; // NEW
-        if (state == State.HIDDEN) {
-            state = State.RISING;
-            stateTime = 0f;
+        if (state != State.HIDDEN) {
+            return;
         }
 
         if (trigger()) {
             state = State.RISING;
             stateTime = 0f;
-            world.getAudio().playAt(Assets.SFX_DISPENSER, zoneX + zoneWidth / 2f, zoneY); 
+            world.getAudio().playAt(Assets.SFX_DISPENSER, zoneX + zoneWidth / 2f, zoneY);
         }
     }
 
