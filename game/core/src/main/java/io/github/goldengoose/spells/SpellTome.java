@@ -169,10 +169,10 @@ public class SpellTome {
                 if (spells.isEmpty()) return false;
 
                 if (keycode == Input.Keys.RIGHT) {
-                    selectSpell((selectedSpell + 1) % spells.size());
+                    if (visible) selectSpell((selectedSpell + 1) % spells.size());
                     return true;
                 } else if (keycode == Input.Keys.LEFT) {
-                    selectSpell(
+                    if (visible) selectSpell(
                         (selectedSpell - 1 + spells.size()) % spells.size()
                     );
                     return true;

@@ -9,6 +9,13 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import io.github.goldengoose.assets.CogFonts;
 
 public class Utilities {
+    private static final float REFERENCE_SCREEN_HEIGHT = 1080f;
+
+    /** How much bigger text needs to be on player's monitor, so it's the same size as on a 1080p screen */
+    public static float getTextScale() {
+        return Gdx.graphics.getDisplayMode().height / REFERENCE_SCREEN_HEIGHT;
+    }
+
     public static BitmapFont createFont(CogFonts fontPath, int size) {
         FreeTypeFontGenerator generator =
             new FreeTypeFontGenerator(Gdx.files.internal(fontPath.toString()));
@@ -16,7 +23,7 @@ public class Utilities {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =
             new FreeTypeFontGenerator.FreeTypeFontParameter();
 
-        parameter.size = size;
+        parameter.size = Math.round(size * getTextScale());
 
         BitmapFont font = generator.generateFont(parameter);
 
