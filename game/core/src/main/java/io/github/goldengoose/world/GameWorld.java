@@ -14,6 +14,7 @@ import io.github.goldengoose.player.Player;
 import io.github.goldengoose.hidden_events.HiddenEvent;
 import io.github.goldengoose.goose.Bread;
 import io.github.goldengoose.ui.KeyCard;
+import io.github.goldengoose.audio.AudioManager;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,6 +27,7 @@ public class GameWorld {
     private final Player player;
     private final GameSession session;
     private final CollisionMap collision;
+    public AudioManager getAudio() { return session.getAudio(); } // NEW
 
     public GameWorld(GameSession session, TiledMap map, CollisionMap collision, Assets assets) {
         this.session = session;
