@@ -34,9 +34,9 @@ import java.util.Collections;
 
 public class EndCutsceneScreen implements Screen {
     private static final float WAKE_TIME = 2f;
-    private static final float STAND_UP = 3f;
-    private static final float FIRST_LINE = 3.5f;
-    private static final float SECOND_LINE = 6f;
+    private static final float STAND_START = 3f;
+    private static final float FIRST_LINE_START = 3.5f;
+    private static final float SECOND_LINE_START = 6f;
     private static final float WALK_START = 8.5f;
     private static final float FADE_START = 12f;
     private static final float END = 13f;
@@ -45,13 +45,14 @@ public class EndCutsceneScreen implements Screen {
     private static final float BUBBLE_SCALE = 2f;
     private static final float BUBBLE_POP_TIME = 0.15f;
     private static final float BUBBLE_GAP = 4f;
+    private static final float BUBBLE_TAIL_X = 8f;
 
     private final Cog game;
     private final boolean won;
     private final Viewport worldViewport = new FitViewport(600, 450);
     private final Viewport hudViewport = new ScreenViewport();
     private final ShapeRenderer shapes = new ShapeRenderer();
-    private final BitmapFont skipFont = Utilities.createFont(CogFonts.CRISTOFORO, 24);
+    private final BitmapFont skipFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 24);
     private final Rectangle viewRect = new Rectangle();
 
     private final TiledMap map;
@@ -136,19 +137,12 @@ public class EndCutsceneScreen implements Screen {
         drawBubble(batch);
         batch.end();
 
-        hudViewport.apply();
-        tentacleFade.draw(batch, hudViewport, 1f - waking);
-        drawFade(fading);
-
-        batch.setProjectionMatrix(hudViewport.getCamera().combined);
-        batch.begin();
-        skipFont.draw(batch, "SPACE - Skip", 0, 40, hudViewport.getWorldWidth() - 20, Align.right, false);
-        batch.end();
+        drawOverlay(batch, waking, fading);
     }
 
     private void drawPlayer(SpriteBatch batch) {
         TextureRegion frame;
-        if (time < STAND_UP) {
+        if (time < STAND_START) {
             frame = sit.getKeyFrame(time, true);
         } else if (time < WALK_START) {
             frame = idle.getKeyFrame(time, true);
@@ -164,12 +158,12 @@ public class EndCutsceneScreen implements Screen {
     private void drawBubble(SpriteBatch batch) {
         TextureRegion bubble;
         float shownFor;
-        if (time >= FIRST_LINE && time < SECOND_LINE) {
+        if (time >= FIRST_LINE_START && time < SECOND_LINE_START) {
             bubble = whatBubble;
-            shownFor = time - FIRST_LINE;
-        } else if (time >= SECOND_LINE && time < WALK_START) {
+            shownFor = time - FIRST_LINE_START;
+        } else if (time >= SECOND_LINE_START && time < WALK_START) {
             bubble = coffeeBubble;
-            shownFor = time - SECOND_LINE;
+            shownFor = time - SECOND_LINE_START;
         } else {
             return;
         }
@@ -177,20 +171,28 @@ public class EndCutsceneScreen implements Screen {
         float pop = Math.min(shownFor / BUBBLE_POP_TIME, 1f);
         float width = bubble.getRegionWidth() * BUBBLE_SCALE * pop;
         float height = bubble.getRegionHeight() * BUBBLE_SCALE * pop;
-        float x = playerPos.x - 8f;
+        float x = playerPos.x - BUBBLE_TAIL_X;
         float y = playerPos.y + 32 * SCALE + BUBBLE_GAP;
         batch.draw(bubble, x, y, width, height);
     }
 
-    private void drawFade(float fading) {
-        if (fading <= 0f) return;
+    private void drawOverlay(SpriteBatch batch, float waking, float fading) {
+        hudViewport.apply();
+        tentacleFade.draw(batch, hudViewport, 1f - waking);
 
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapes.setProjectionMatrix(hudViewport.getCamera().combined);
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0f, 0f, 0f, fading);
-        shapes.rect(0, 0, hudViewport.getWorldWidth(), hudViewport.getWorldHeight());
-        shapes.end();
+        if (fading > 0f) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            shapes.setProjectionMatrix(hudViewport.getCamera().combined);
+            shapes.begin(ShapeRenderer.ShapeType.Filled);
+            shapes.setColor(0f, 0f, 0f, fading);
+            shapes.rect(0, 0, hudViewport.getWorldWidth(), hudViewport.getWorldHeight());
+            shapes.end();
+        }
+
+        batch.setProjectionMatrix(hudViewport.getCamera().combined);
+        batch.begin();
+        skipFont.draw(batch, "SPACE - Skip", 0, 40, hudViewport.getWorldWidth() - 20, Align.right, false);
+        batch.end();
     }
 
     @Override
@@ -203,9 +205,9 @@ public class EndCutsceneScreen implements Screen {
     public void dispose() {
         map.dispose();
         mapRenderer.dispose();
+        tentacleFade.dispose();
         shapes.dispose();
         skipFont.dispose();
-        tentacleFade.dispose();
     }
 
     @Override public void show() {}
