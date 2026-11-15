@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.goldengoose.Cog;
 import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.assets.CogFonts;
+import io.github.goldengoose.player.Player;
 import io.github.goldengoose.ui.Hud;
 import io.github.goldengoose.ui.PauseMenu;
 import io.github.goldengoose.ui.TentacleFade;
@@ -28,6 +29,7 @@ import com.badlogic.gdx.graphics.Color;
 public class GameScreen implements Screen {
     private static final float ENDING_LENGTH = 3f;
     private static final float ENDING_ZOOM = 0.25f;
+    private static final float PULL_LENGTH = 1.5f;
 
     private final Cog game;
     private final Viewport worldViewport = new FitViewport(600, 450);
@@ -37,6 +39,9 @@ public class GameScreen implements Screen {
 
     private final Vector2 mouseWorldPosition = new Vector2();
     private final Vector2 playerPos = new Vector2();
+    private final Vector2 pullStart = new Vector2();
+    private final Vector2 pullEnd = new Vector2();
+    private final Rectangle playerFeet = new Rectangle();
 
     private final PauseMenu pauseMenu;
     private final TomeMenu tomeMenu;
@@ -53,6 +58,7 @@ public class GameScreen implements Screen {
     private float gameOverTimer = -1f;
     private boolean gameOverWon = false;
     private float endingTime = -1f;
+    private float pullTime = -1f;
 
     public GameScreen(final Cog game) {
         this.game = game;
@@ -105,6 +111,25 @@ public class GameScreen implements Screen {
                 session.getPlayer().transformIntoGoose(game.assets.getTexture(Assets.GOOSE_WALK));
                 gameOverTimer = 2f;
                 gameOverWon = false;
+            }
+            Player player = session.getPlayer();
+            Rectangle portal = session.getArea().getPortal();
+            if (portal != null && !gameOver && portal.overlaps(player.getHitbox(playerFeet))) {
+                gameOver = true;
+                gameOverWon = true;
+                pullTime = 0f;
+                pullStart.set(player.getPosition());
+                portal.getCenter(pullEnd);
+                pullEnd.sub(player.getWidth() / 2f, player.getHeight() / 2f);
+            }
+            if (pullTime >= 0f) {
+                pullTime += delta;
+                float pulling = Math.min(pullTime / PULL_LENGTH, 1f);
+                player.getPosition().set(pullStart).lerp(pullEnd, pulling);
+                player.setPulling(pulling);
+                if (pulling >= 1f && endingTime < 0f) {
+                    endingTime = 0f;
+                }
             }
             if (gameOverTimer > 0) {
                 gameOverTimer -= delta;

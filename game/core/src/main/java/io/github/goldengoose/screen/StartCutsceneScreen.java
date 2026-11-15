@@ -30,7 +30,7 @@ import io.github.goldengoose.world.DepthRenderer;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class CutsceneScreen implements Screen {
+public class StartCutsceneScreen implements Screen {
     private static final float FEED_START = 4f;
     private static final float PORTAL_START = 6.5f;
     private static final float PULL_START = 8.5f;
@@ -73,7 +73,7 @@ public class CutsceneScreen implements Screen {
     private float time = 0f;
     private boolean finished = false;
 
-    public CutsceneScreen(final Cog game) {
+    public StartCutsceneScreen(final Cog game) {
         this.game = game;
 
         map = new TmxMapLoader().load("maps/Outside_campus_normal.tmx");
