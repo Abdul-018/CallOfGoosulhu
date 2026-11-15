@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.goldengoose.world.CollisionMap;
 
 /**
+ * UR_GEESE, FR_GOOSE_CHASE: "Geese will swarm and obstruct the player until they are fed or an item is used on them."
+ *
  * Goose AI plan:
  * IDLE: Wander around the campus, has cone-like visual detection, circular audial detection
  * ALERT: possibly not needed

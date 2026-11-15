@@ -14,7 +14,8 @@ import io.github.goldengoose.assets.Assets;
 import java.util.Arrays;
 
 /**
- * The student the player controls. Walks in 8 directions and animates using the Amelia sheet. (UR_AVATAR, FR_MOVE_PLAYER)
+ * UR_AVATAR: "The player will control an avatar representing an undergraduate student" <br>
+ * FR_MOVE_PLAYER: "The system shall move the avatar in eight directions via the keyboard" <br>
  */
 public class Player extends Entity {
     //------------
@@ -43,6 +44,7 @@ public class Player extends Entity {
     private static final int FACING_DOWN = 3;
 
     public static final int[] STEP_FRAMES = {1, 4};
+    private static final float PULL_SPIN = 720f;
     //------------
     // END CONSTANTS
     //------------
@@ -58,6 +60,7 @@ public class Player extends Entity {
     private int hidingCount = 0;
     private boolean transformed = false;
     private boolean inMud = false;
+    private float pulling = 0f;
 
     private CollisionMap collision;
     private AudioManager audio;
@@ -87,6 +90,10 @@ public class Player extends Entity {
         return animations;
     }
 
+    /**
+     * FR_TRANSFORM: "Turns avatar into goose for 10 seconds, making it invisible to other geese"
+     * @param gooseTexture the goose texture to apply to the player
+     */
     public void transformIntoGoose(Texture gooseTexture) {
         if (!transformed) {
             transformed = true;
@@ -98,8 +105,16 @@ public class Player extends Entity {
         return transformed;
     }
 
+    /**
+     * FR_MUD: "Slow the avatar while in mud puddles unless boots equipped"
+     * @param inMud in mud or not
+     */
     public void setInMud(boolean inMud) {
         this.inMud = inMud;
+    }
+
+    public void setPulling(float pulling) {
+        this.pulling = pulling;
     }
 
     public void setCollision(CollisionMap collision) { this.collision = collision; }
@@ -159,7 +174,9 @@ public class Player extends Entity {
 
         Animation<TextureRegion>[] animations = moving ? walkAnimations : idleAnimations;
         TextureRegion frame = animations[facing].getKeyFrame(stateTime);
-        batch.draw(frame, position.x, position.y, DRAW_WIDTH, DRAW_HEIGHT);
+        float scale = 1f - pulling;
+        batch.draw(frame, position.x, position.y, DRAW_WIDTH / 2f, DRAW_HEIGHT / 2f, DRAW_WIDTH, DRAW_HEIGHT,
+            scale, scale, pulling * PULL_SPIN);
     }
 
     public void beginHiding() {

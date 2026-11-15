@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * UR_HIDDEN_EVENTS: The map contains 5 (2 for A1) hidden events including
+ *
  * The handler for hidden events
  *
  * It does three things:

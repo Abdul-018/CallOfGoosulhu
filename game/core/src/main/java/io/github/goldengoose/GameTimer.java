@@ -1,7 +1,7 @@
 package io.github.goldengoose;
 
 /**
- * Countdown for the match. (UR_GAME_TIMER)
+ * UR_GAME_TIMER: "The game lasts up to 5 real world minutes"
  */
 public class GameTimer {
     private float secondsRemaining;

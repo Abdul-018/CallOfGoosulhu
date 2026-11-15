@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.MathUtils;
 import io.github.goldengoose.goose.Goose;
 import java.util.List;
 
+/**
+ * FR_PATIENCE: "Will reduce the patience level on each nearby honk and refill when in a “safe” zone."
+ */
 public class PatienceSystem {
 
     private static final float RESTORE_PER_SECOND = 0.1f;

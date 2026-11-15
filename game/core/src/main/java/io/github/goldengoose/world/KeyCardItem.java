@@ -10,6 +10,9 @@ import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.player.Player;
 
+/**
+ * UR_FIND_KEY: "The player finds a key that allows them to escape to the portal."
+ */
 public class KeyCardItem extends Entity {
     private static final Color GLOW = new Color(0.6f, 0.9f, 1f, 1f);
 

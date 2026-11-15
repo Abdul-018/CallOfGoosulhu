@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.goldengoose.Cog;
 import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.assets.CogFonts;
+import io.github.goldengoose.player.Player;
 import io.github.goldengoose.ui.Hud;
 import io.github.goldengoose.ui.PauseMenu;
 import io.github.goldengoose.ui.TentacleFade;
@@ -25,9 +26,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.graphics.Color;
 
+/**
+ * UR_WIN: "The player must get to the escape portal by dispersing the obstructing geese, before the timer ends, to win." (See portal)
+ * FR_TIMER_COUNTDOWN: "The system shall end the game once timer is up"
+ */
 public class GameScreen implements Screen {
     private static final float ENDING_LENGTH = 3f;
     private static final float ENDING_ZOOM = 0.25f;
+    private static final float PULL_LENGTH = 1.5f;
 
     private final Cog game;
     private final Viewport worldViewport = new FitViewport(600, 450);
@@ -37,11 +43,15 @@ public class GameScreen implements Screen {
 
     private final Vector2 mouseWorldPosition = new Vector2();
     private final Vector2 playerPos = new Vector2();
+    private final Vector2 pullStart = new Vector2();
+    private final Vector2 pullEnd = new Vector2();
+    private final Rectangle playerFeet = new Rectangle();
 
     private final PauseMenu pauseMenu;
     private final TomeMenu tomeMenu;
     private final BitmapFont hudFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 24);
-    private final BitmapFont objectiveFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 40);    private final Hud hud;
+    private final BitmapFont objectiveFont = Utilities.smooth(Utilities.createFont(CogFonts.UNCIALANTIQUA, 40, 2f, Color.BLACK, Color.WHITE));
+    private final Hud hud;
     private final Rectangle viewRect = new Rectangle();
     private final GameSession session;
     private final TentacleFade tentacleFade;
@@ -53,6 +63,7 @@ public class GameScreen implements Screen {
     private float gameOverTimer = -1f;
     private boolean gameOverWon = false;
     private float endingTime = -1f;
+    private float pullTime = -1f;
 
     public GameScreen(final Cog game) {
         this.game = game;
@@ -105,6 +116,25 @@ public class GameScreen implements Screen {
                 session.getPlayer().transformIntoGoose(game.assets.getTexture(Assets.GOOSE_WALK));
                 gameOverTimer = 2f;
                 gameOverWon = false;
+            }
+            Player player = session.getPlayer();
+            Rectangle portal = session.getArea().getPortal();
+            if (portal != null && !gameOver && portal.overlaps(player.getHitbox(playerFeet))) {
+                gameOver = true;
+                gameOverWon = true;
+                pullTime = 0f;
+                pullStart.set(player.getPosition());
+                portal.getCenter(pullEnd);
+                pullEnd.sub(player.getWidth() / 2f, player.getHeight() / 2f);
+            }
+            if (pullTime >= 0f) {
+                pullTime += delta;
+                float pulling = Math.min(pullTime / PULL_LENGTH, 1f);
+                player.getPosition().set(pullStart).lerp(pullEnd, pulling);
+                player.setPulling(pulling);
+                if (pulling >= 1f && endingTime < 0f) {
+                    endingTime = 0f;
+                }
             }
             if (gameOverTimer > 0) {
                 gameOverTimer -= delta;
@@ -187,10 +217,6 @@ public class GameScreen implements Screen {
         float tentacles = Math.max(ending * 2f - 1f, 0f);
         hudViewport.apply();
         tentacleFade.draw(game.batch, hudViewport, tentacles);
-
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
-        }
     }
 
     private void drawObjective() {
@@ -199,23 +225,16 @@ public class GameScreen implements Screen {
 
         float w = hudViewport.getWorldWidth();
         float h = hudViewport.getWorldHeight();
-        float alpha = obj.getAlpha();
-        float textY = h * 0.95f;
-        String text = obj.getCurrentObjective();
+        float textWidth = w * 0.55f;
+
+        objectiveFont.getData().setScale(h / Gdx.graphics.getDisplayMode().height);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         game.batch.setProjectionMatrix(hudViewport.getCamera().combined);
         game.batch.begin();
-
-        objectiveFont.setColor(1f, 1f, 1f, alpha);
-        objectiveFont.draw(game.batch, text, -2, textY, w, Align.center, false);
-        objectiveFont.draw(game.batch, text,  2, textY, w, Align.center, false);
-        objectiveFont.draw(game.batch, text,  0, textY + 2, w, Align.center, false);
-        objectiveFont.draw(game.batch, text,  0, textY - 2, w, Align.center, false);
-
-        objectiveFont.setColor(0f, 0f, 0f, alpha);
-        objectiveFont.draw(game.batch, text, 0, textY, w, Align.center, false);
-
+        objectiveFont.setColor(1f, 1f, 1f, obj.getAlpha());
+        objectiveFont.draw(game.batch, obj.getCurrentObjective(),
+            (w - textWidth) / 2f, h * 0.95f, textWidth, Align.center, true);
         objectiveFont.setColor(Color.WHITE);
         game.batch.end();
     }

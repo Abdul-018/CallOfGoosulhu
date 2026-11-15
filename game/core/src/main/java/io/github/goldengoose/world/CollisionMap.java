@@ -15,6 +15,9 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * FR_BOUNDS: "System will prevent the avatar from being able to leave the map or pass through solid objects"
+ */
 public class CollisionMap {
     private final List<Rectangle> rects = new ArrayList<>();
     private final List<Polygon> polygons = new ArrayList<>();

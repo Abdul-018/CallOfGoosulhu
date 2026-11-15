@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.goldengoose.Cog;
@@ -36,9 +37,10 @@ public class GameOverScreen implements Screen {
 
         font = Utilities.createFont(CogFonts.UNCIALANTIQUA, 64);
 
-        String message = won ? "Congratulations!\nYou Escaped The Goosulhu!" : "Better Luck Next Time";
+        String message = won ? "Congratulations, you won!\nThanks for playing!" : "Better Luck Next Time";
 
         Label title = new Label(message, UiStyles.label(font));
+        title.setAlignment(Align.center);
         TextButton playAgain = new TextButton("PLAY AGAIN", UiStyles.button(font));
         TextButton menu = new TextButton("MENU", UiStyles.button(font));
 

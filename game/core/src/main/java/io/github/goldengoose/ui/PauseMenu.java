@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import io.github.goldengoose.Cog;
 import io.github.goldengoose.screen.MainMenuScreen;
 import io.github.goldengoose.assets.CogFonts;
@@ -23,10 +23,13 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
+/**
+ * UR_PAUSE_GAME, FR_PAUSE: "Player can pause the game at any time and game starts paused"
+ */
 public class PauseMenu {
     private final Stage stage;
-    private final BitmapFont titleFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 48);
-    private final BitmapFont buttonFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 16);
+    private final BitmapFont titleFont = Utilities.createUiFont(CogFonts.UNCIALANTIQUA, 36);
+    private final BitmapFont buttonFont = Utilities.createUiFont(CogFonts.UNCIALANTIQUA, 22);
 
     private final Table table = new Table();
 
@@ -37,9 +40,9 @@ public class PauseMenu {
     private Table tutorialControls;
 
     public PauseMenu(Cog game) {
-        stage = new Stage(new ScreenViewport(), game.batch);
+        stage = new Stage(new ExtendViewport(Utilities.UI_WIDTH, Utilities.UI_HEIGHT), game.batch);
 
-        Label title = new Label("Press 'P' to unpause", UiStyles.label(titleFont));
+        Label title = new Label("Press 'P' or 'Esc' to unpause", UiStyles.label(titleFont));
 
         TextButton quitMenu = new TextButton("QUIT TO MENU", UiStyles.button(buttonFont));
         quitMenu.addListener(new ChangeListener() {
@@ -60,8 +63,8 @@ public class PauseMenu {
         table.setFillParent(true);
         table.add(title).padBottom(50).colspan(2);
         table.row();
-        table.add(quitMenu);
-        table.add(quitDesktop);
+        table.add(quitMenu).padRight(20);
+        table.add(quitDesktop).padLeft(20);
 
         Texture emptyToomeTexture = new Texture(Gdx.files.internal(Assets.SPELL_TOME_EMPTY));
         tutMenu = new TutMenu(emptyToomeTexture);
@@ -119,7 +122,7 @@ public class PauseMenu {
 
     public boolean isTutorialOpen() { return tutorialOpen; }
 
-    public void setVisible(boolean visible) { table.setVisible(visible); }
+    public void setVisible(boolean visible) { stage.getRoot().setVisible(visible); }
 
     public void closeTutorial() {
         tutorialOpen = false;

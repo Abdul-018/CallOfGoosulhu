@@ -29,7 +29,9 @@ import io.github.goldengoose.goose.Goose;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * UR_CAMPUS_MAP: "The game must take place on a UoY campus-style map with limits to where the player should be able to go"
+ */
 public class Area implements Disposable {
     private final String name;
     private final TiledMap map;
@@ -47,6 +49,7 @@ public class Area implements Disposable {
     private final List<Door> doors = new ArrayList<>();
     private final CollisionMap collision;
     private final Rectangle feet = new Rectangle();
+    private Rectangle portal;
 
     public Area(String name, GameSession session, Assets assets, Viewport viewport) {
         this.name = name;
@@ -71,6 +74,7 @@ public class Area implements Disposable {
         loadDoors();
         loadMagnetiser();
         loadBreadDispenser(assets);
+        loadPortal();
     }
 
     public void update(float delta) {
@@ -168,11 +172,19 @@ public class Area implements Disposable {
         eventManager.register(new BreadDispenser(world, assets.getAtlas(Assets.BREAD_DISPENSER), prompt, r.x, r.y, r.width, r.height));
     }
 
+    private void loadPortal() {
+        if (!name.equals("Ian_Wand_Interior_MAIN")) return;
+
+        MapObject portalObject = map.getLayers().get("Interactables").getObjects().get("the_pit");
+        portal = ((RectangleMapObject) portalObject).getRectangle();
+    }
+
     public GameWorld getWorld() { return world; }
     public HiddenEventsHandler getEventManager() { return eventManager; }
     public List<Door> getDoors() { return doors; }
     public CollisionMap getCollision() { return collision; }
     public String getName() { return name; }
+    public Rectangle getPortal() { return portal; }
 
     @Override
     public void dispose() {

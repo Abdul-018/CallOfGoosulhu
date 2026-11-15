@@ -34,7 +34,13 @@ import io.github.goldengoose.player.Player;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class CutsceneScreen implements Screen {
+
+/**
+ * UR_ALTER_CAMPUS, FR_POND_TRANSITION: "The game starts with the player falling into the pond which transports the player to an alternative campus." <br>
+ *
+ * Starting cutscene for the game
+ */
+public class StartCutsceneScreen implements Screen {
     private static final float FEED_START = 4f;
     private static final float PORTAL_START = 6.5f;
     private static final float PULL_START = 8.5f;
@@ -82,7 +88,7 @@ public class CutsceneScreen implements Screen {
     private float time = 0f;
     private boolean finished = false;
 
-    public CutsceneScreen(final Cog game) {
+    public StartCutsceneScreen(final Cog game) {
         this.game = game;
         this.audio = game.audio;
 

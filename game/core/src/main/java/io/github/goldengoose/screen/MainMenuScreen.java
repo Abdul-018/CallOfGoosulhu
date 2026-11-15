@@ -8,25 +8,32 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.goldengoose.Cog;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.ui.UiStyles;
 import io.github.goldengoose.util.Utilities;
 import io.github.goldengoose.assets.CogFonts;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import static io.github.goldengoose.assets.Assets.TUT_BUTTON;
 import io.github.goldengoose.ui.TutMenu;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 public class MainMenuScreen implements Screen {
+    private static final float MENU_HEIGHT = 480f;
+    private static final float MENU_WIDTH = 640f;
+
+    private static final Color TEXT_COLOR = Color.valueOf("b5212d");
+    private static final Color OUTLINE_COLOR = Color.valueOf("d6b2b5");
+    private static final float OUTLINE_WIDTH = 2f;
+    private static final Color SHADOW_COLOR = Color.valueOf("000000");
+    private static final float SHADOW_OFFSET = 5f;
 
     final Cog game;
 
@@ -43,13 +50,21 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-        stage = new Stage(new ScreenViewport(), game.batch);
+        stage = new Stage(new ExtendViewport(MENU_WIDTH, MENU_HEIGHT), game.batch);
         Gdx.input.setInputProcessor(stage);
         createMenu();
     }
 
     private void createMenu() {
-        menuFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 64);
+        float toFontSize = 1080f / MENU_HEIGHT;
+        menuFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, Math.round(64 * toFontSize),
+            OUTLINE_WIDTH * toFontSize, TEXT_COLOR, OUTLINE_COLOR,
+            SHADOW_OFFSET * toFontSize, SHADOW_COLOR);
+        menuFont.getData().setScale(MENU_HEIGHT / Gdx.graphics.getDisplayMode().height);
+        menuFont.setUseIntegerPositions(false);
+        for (TextureRegion region : menuFont.getRegions()) {
+            region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
 
         Label title = new Label("Call of Goosulhu", UiStyles.label(menuFont));
         TextButton playButton = new TextButton("PLAY", UiStyles.button(menuFont));
@@ -99,7 +114,7 @@ public class MainMenuScreen implements Screen {
         playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.changeScreen(new CutsceneScreen(game));
+                game.changeScreen(new StartCutsceneScreen(game));
             }
         });
 
@@ -112,10 +127,16 @@ public class MainMenuScreen implements Screen {
 
         mainTable = new Table();
         mainTable.setFillParent(true);
-        mainTable.add(title).padBottom(50).colspan(2);
+        mainTable.add(title).colspan(2).expandY().top().padTop(6);
         mainTable.row();
-        mainTable.add(playButton);
-        mainTable.add(quitButton);
+        mainTable.add(playButton).padBottom(10);
+        mainTable.add(quitButton).padBottom(10);
+
+        Texture bgTexture = new Texture(Gdx.files.internal(Assets.TITLE_SCREEN));
+        bgTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        Image background = new Image(new TextureRegionDrawable(new TextureRegion(bgTexture)), Scaling.fill);
+        background.setFillParent(true);
+        stage.addActor(background);
 
         stage.addActor(mainTable);
 
