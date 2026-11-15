@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import io.github.goldengoose.assets.Assets;
 import io.github.goldengoose.lighting.GameLighting;
 import io.github.goldengoose.player.Player;
 
@@ -46,6 +47,7 @@ public class KeyCardItem extends Entity {
         if (playerBounds.overlaps(area)) {
             collected = true;
             session.setKeyState(KeyState.UNMAGNETISED);
+            session.getAudio().play(Assets.SFX_KEYCARD_PICKUP, 0.9f, 0.05f);
         }
     }
 
