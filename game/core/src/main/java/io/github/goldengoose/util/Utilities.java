@@ -11,6 +11,8 @@ import io.github.goldengoose.assets.CogFonts;
 
 public class Utilities {
     private static final float REFERENCE_SCREEN_HEIGHT = 1080f;
+    public static final float UI_WIDTH = 640f;
+    public static final float UI_HEIGHT = 480f;
 
     /** How much bigger text needs to be on player's monitor, so it's the same size as on a 1080p screen */
     public static float getTextScale() {
@@ -51,6 +53,27 @@ public class Utilities {
 
         generator.dispose();
 
+        return font;
+    }
+
+    public static BitmapFont createUiFont(CogFonts fontPath, float size) {
+        return createUiFont(fontPath, size, 0f, Color.WHITE, Color.BLACK);
+    }
+
+    public static BitmapFont createUiFont(CogFonts fontPath, float size, float borderWidth,
+                                          Color textColor, Color borderColor) {
+        float toFontSize = REFERENCE_SCREEN_HEIGHT / UI_HEIGHT;
+        BitmapFont font = createFont(fontPath, Math.round(size * toFontSize), borderWidth * toFontSize,
+            textColor, borderColor);
+        font.getData().setScale(UI_HEIGHT / Gdx.graphics.getDisplayMode().height);
+        return smooth(font);
+    }
+
+    public static BitmapFont smooth(BitmapFont font) {
+        font.setUseIntegerPositions(false);
+        for (TextureRegion region : font.getRegions()) {
+            region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
         return font;
     }
 

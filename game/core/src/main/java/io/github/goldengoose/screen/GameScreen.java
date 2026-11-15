@@ -41,7 +41,8 @@ public class GameScreen implements Screen {
     private final PauseMenu pauseMenu;
     private final TomeMenu tomeMenu;
     private final BitmapFont hudFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 24);
-    private final BitmapFont objectiveFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 40);    private final Hud hud;
+    private final BitmapFont objectiveFont = Utilities.smooth(Utilities.createFont(CogFonts.UNCIALANTIQUA, 40, 2f, Color.BLACK, Color.WHITE));
+    private final Hud hud;
     private final Rectangle viewRect = new Rectangle();
     private final GameSession session;
     private final TentacleFade tentacleFade;
@@ -199,23 +200,16 @@ public class GameScreen implements Screen {
 
         float w = hudViewport.getWorldWidth();
         float h = hudViewport.getWorldHeight();
-        float alpha = obj.getAlpha();
-        float textY = h * 0.95f;
-        String text = obj.getCurrentObjective();
+        float textWidth = w * 0.55f;
+
+        objectiveFont.getData().setScale(h / Gdx.graphics.getDisplayMode().height);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         game.batch.setProjectionMatrix(hudViewport.getCamera().combined);
         game.batch.begin();
-
-        objectiveFont.setColor(1f, 1f, 1f, alpha);
-        objectiveFont.draw(game.batch, text, -2, textY, w, Align.center, false);
-        objectiveFont.draw(game.batch, text,  2, textY, w, Align.center, false);
-        objectiveFont.draw(game.batch, text,  0, textY + 2, w, Align.center, false);
-        objectiveFont.draw(game.batch, text,  0, textY - 2, w, Align.center, false);
-
-        objectiveFont.setColor(0f, 0f, 0f, alpha);
-        objectiveFont.draw(game.batch, text, 0, textY, w, Align.center, false);
-
+        objectiveFont.setColor(1f, 1f, 1f, obj.getAlpha());
+        objectiveFont.draw(game.batch, obj.getCurrentObjective(),
+            (w - textWidth) / 2f, h * 0.95f, textWidth, Align.center, true);
         objectiveFont.setColor(Color.WHITE);
         game.batch.end();
     }

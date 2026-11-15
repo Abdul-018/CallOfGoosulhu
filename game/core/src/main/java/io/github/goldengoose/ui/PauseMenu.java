@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.goldengoose.Cog;
 import io.github.goldengoose.screen.MainMenuScreen;
@@ -25,8 +26,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class PauseMenu {
     private final Stage stage;
-    private final BitmapFont titleFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 48);
-    private final BitmapFont buttonFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, 16);
+    private final BitmapFont titleFont = Utilities.createUiFont(CogFonts.UNCIALANTIQUA, 36);
+    private final BitmapFont buttonFont = Utilities.createUiFont(CogFonts.UNCIALANTIQUA, 22);
 
     private final Table table = new Table();
 
@@ -37,7 +38,7 @@ public class PauseMenu {
     private Table tutorialControls;
 
     public PauseMenu(Cog game) {
-        stage = new Stage(new ScreenViewport(), game.batch);
+        stage = new Stage(new ExtendViewport(Utilities.UI_WIDTH, Utilities.UI_HEIGHT), game.batch);
 
         Label title = new Label("Press 'P' to unpause", UiStyles.label(titleFont));
 
@@ -60,8 +61,8 @@ public class PauseMenu {
         table.setFillParent(true);
         table.add(title).padBottom(50).colspan(2);
         table.row();
-        table.add(quitMenu);
-        table.add(quitDesktop);
+        table.add(quitMenu).padRight(20);
+        table.add(quitDesktop).padLeft(20);
 
         Texture emptyToomeTexture = new Texture(Gdx.files.internal(Assets.SPELL_TOME_EMPTY));
         tutMenu = new TutMenu(emptyToomeTexture);
