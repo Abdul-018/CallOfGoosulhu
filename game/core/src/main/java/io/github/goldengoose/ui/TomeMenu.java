@@ -77,8 +77,10 @@ public class TomeMenu {
         float pageTop = y + (PAGE_Y + PAGE_HEIGHT - PAGE_PADDING) * sy;
         float pageWidth = (PAGE_WIDTH - PAGE_PADDING * 2) * sx;
 
-        titleFont.getData().setScale(scale);
-        bodyFont.getData().setScale(scale);
+        // Text scaling: gotta stop it from scaling twice.
+        float textScale = scale / Utilities.getTextScale();
+        titleFont.getData().setScale(textScale);
+        bodyFont.getData().setScale(textScale);
 
         layout.setText(titleFont, currentSpell.getName(), INK, pageWidth, Align.center, true);
         titleFont.draw(batch, layout, pageX, pageTop);
