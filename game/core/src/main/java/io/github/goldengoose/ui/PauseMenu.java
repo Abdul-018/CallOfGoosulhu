@@ -23,6 +23,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
+/**
+ * UR_PAUSE_GAME, FR_PAUSE: "Player can pause the game at any time and game starts paused"
+ */
 public class PauseMenu {
     private final Stage stage;
     private final BitmapFont titleFont = Utilities.createUiFont(CogFonts.UNCIALANTIQUA, 36);

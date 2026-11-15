@@ -12,6 +12,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * UR_START_TOME: The player receives a spellbook with 5 (2 for A1) starting spells as the initial starting items. <br>
+ * UR_COUNTERS, FR_COUNTERS: Keeps track of the number of spells <br>
+ * FR_INVENTORY: "Used to store, select, use and pick up items (spells) in-game" <br>
+ */
 public class SpellTome {
     private static final float REFERENCE_WIDTH = 800f;
     private static final float SCALE_X = 2f;
