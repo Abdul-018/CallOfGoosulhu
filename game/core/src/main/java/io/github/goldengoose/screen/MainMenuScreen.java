@@ -29,6 +29,12 @@ public class MainMenuScreen implements Screen {
     private static final float MENU_HEIGHT = 480f;
     private static final float MENU_WIDTH = 640f;
 
+    private static final Color TEXT_COLOR = Color.valueOf("b5212d");
+    private static final Color OUTLINE_COLOR = Color.valueOf("d6b2b5");
+    private static final float OUTLINE_WIDTH = 2f;
+    private static final Color SHADOW_COLOR = Color.valueOf("000000");
+    private static final float SHADOW_OFFSET = 5f;
+
     final Cog game;
 
     private Stage stage;
@@ -50,7 +56,10 @@ public class MainMenuScreen implements Screen {
     }
 
     private void createMenu() {
-        menuFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, Math.round(64 * 1080f / MENU_HEIGHT));
+        float toFontSize = 1080f / MENU_HEIGHT;
+        menuFont = Utilities.createFont(CogFonts.UNCIALANTIQUA, Math.round(64 * toFontSize),
+            OUTLINE_WIDTH * toFontSize, TEXT_COLOR, OUTLINE_COLOR,
+            SHADOW_OFFSET * toFontSize, SHADOW_COLOR);
         menuFont.getData().setScale(MENU_HEIGHT / Gdx.graphics.getDisplayMode().height);
         menuFont.setUseIntegerPositions(false);
         for (TextureRegion region : menuFont.getRegions()) {
