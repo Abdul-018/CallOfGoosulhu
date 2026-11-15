@@ -33,6 +33,7 @@ public class Assets {
     public static final String VIGNETTE_0 = "ui/vignette_0.png";
     public static final String VIGNETTE_1 = "ui/vignette_1.png";
     public static final String VIGNETTE_2 = "ui/vignette_2.png";
+    public static final String TITLE_SCREEN = "ui/title_screen.png";
 
 
     //---------------------------------------------------------------------------------//
@@ -133,6 +134,7 @@ public class Assets {
         manager.load(PORTAL, Texture.class);
         manager.load(BUBBLE_WHAT, Texture.class);
         manager.load(BUBBLE_COFFEE, Texture.class);
+        manager.load(TITLE_SCREEN, Texture.class);
         loadAudio();
         manager.finishLoading();
     }

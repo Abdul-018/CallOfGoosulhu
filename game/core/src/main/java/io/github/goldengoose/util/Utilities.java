@@ -1,6 +1,7 @@
 package io.github.goldengoose.util;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -17,6 +18,21 @@ public class Utilities {
     }
 
     public static BitmapFont createFont(CogFonts fontPath, int size) {
+        return createFont(fontPath, size, 0f);
+    }
+
+    public static BitmapFont createFont(CogFonts fontPath, int size, float borderWidth) {
+        return createFont(fontPath, size, borderWidth, Color.WHITE, Color.BLACK);
+    }
+
+    public static BitmapFont createFont(CogFonts fontPath, int size, float borderWidth,
+                                        Color textColor, Color borderColor) {
+        return createFont(fontPath, size, borderWidth, textColor, borderColor, 0f, Color.BLACK);
+    }
+
+    public static BitmapFont createFont(CogFonts fontPath, int size, float borderWidth,
+                                        Color textColor, Color borderColor,
+                                        float shadowOffset, Color shadowColor) {
         FreeTypeFontGenerator generator =
             new FreeTypeFontGenerator(Gdx.files.internal(fontPath.toString()));
 
@@ -24,6 +40,12 @@ public class Utilities {
             new FreeTypeFontGenerator.FreeTypeFontParameter();
 
         parameter.size = Math.round(size * getTextScale());
+        parameter.color = textColor;
+        parameter.borderWidth = borderWidth * getTextScale();
+        parameter.borderColor = borderColor;
+        parameter.shadowOffsetX = Math.round(shadowOffset * getTextScale());
+        parameter.shadowOffsetY = Math.round(shadowOffset * getTextScale());
+        parameter.shadowColor = shadowColor;
 
         BitmapFont font = generator.generateFont(parameter);
 
