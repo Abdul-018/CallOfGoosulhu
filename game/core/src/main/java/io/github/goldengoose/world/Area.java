@@ -66,9 +66,7 @@ public class Area implements Disposable {
         Bread.setSprite(new TextureRegion(assets.getTexture(Assets.BREAD)));
         Bread.setSpinAnimation(new Animation<TextureRegion>(0.05f, assets.getAtlas(Assets.BREAD_SPIN).findRegions("bread_spin"), Animation.PlayMode.LOOP));
 
-        TextureRegion[] keyFrames = TextureRegion.split(assets.getTexture(Assets.INTERACT_KEY), 16, 16)[0];
-        prompt = new Animation<TextureRegion>(0.5f, keyFrames);
-        prompt.setPlayMode(Animation.PlayMode.LOOP);
+        prompt = session.getPrompt();
 
         loadDoors();
         loadMagnetiser();

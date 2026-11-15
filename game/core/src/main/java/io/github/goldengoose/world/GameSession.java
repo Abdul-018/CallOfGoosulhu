@@ -1,5 +1,8 @@
 package io.github.goldengoose.world;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -13,12 +16,16 @@ import io.github.goldengoose.spells.PentagramTrapSpell;
 import io.github.goldengoose.spells.SpellTome;
 import io.github.goldengoose.hidden_events.HiddenEventsHandler;
 import io.github.goldengoose.audio.AudioManager;
+import io.github.goldengoose.util.InputManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GameSession implements Disposable {
     private static final float DOOR_RANGE = 48f;
+    private static final float PROMPT_GAP = -20f;
+    private static final float PROMPT_BOB = 2f;
+    private static final float PROMPT_BOB_SPEED = 3f;
 
     private final Assets assets;
     private final Viewport worldViewport;
@@ -34,8 +41,12 @@ public class GameSession implements Disposable {
 
     private final Map<String, Area> areas = new HashMap<>();
     private Area currentArea;
+    private Door overlappingDoor;
     private Door pendingDoor;
+    private float pulseTime = 0f;
     private final Vector2 tmp = new Vector2();
+
+    private final Animation<TextureRegion> prompt;
 
     public GameSession(Assets assets, Viewport worldViewport, String startArea, String startSpawn) {
         this.assets = assets;
@@ -45,6 +56,10 @@ public class GameSession implements Disposable {
         spellTome = new SpellTome(assets.getTexture(Assets.SPELL_TOME));
         spellTome.addSpell(new PentagramTrapSpell(this, assets));
         spellTome.addSpell(new ElderSignSpell(this, assets));
+
+        TextureRegion[] keyFrames = TextureRegion.split(assets.getTexture(Assets.INTERACT_KEY), 16, 16)[0];
+        prompt = new Animation<>(0.5f, keyFrames);
+        prompt.setPlayMode(Animation.PlayMode.LOOP);
 
         this.audio = new AudioManager(assets);
 
@@ -63,7 +78,24 @@ public class GameSession implements Disposable {
         audio.update(delta);
         timer.update(delta);
         patienceSystem.update(delta, currentArea.getWorld().getGeese());
-        objectiveSystem.update(delta, keyState, currentArea.getName(), player.getPosition());    }
+        objectiveSystem.update(delta, keyState, currentArea.getName(), player.getPosition());
+        pulseTime += delta;
+        checkDoors();
+    }
+
+    public void draw(SpriteBatch batch) {
+        if (overlappingDoor != null) {
+            batch.setColor(1f, 1f, 1f, 1f);
+
+            if (prompt != null) {
+                TextureRegion icon = prompt.getKeyFrame(pulseTime, true);
+                float iw = icon.getRegionWidth();
+                float ih = icon.getRegionHeight();
+                float bob = (float) Math.sin(pulseTime * PROMPT_BOB_SPEED) * PROMPT_BOB;
+                batch.draw(icon, overlappingDoor.bounds().x + overlappingDoor.bounds().width / 2f - iw / 2f, overlappingDoor.bounds().y + PROMPT_GAP + bob, iw, ih);
+            }
+        }
+    }
 
     public boolean clickDoor(Vector2 worldPos) {
         for (Door door : currentArea.getDoors()) {
@@ -75,6 +107,20 @@ public class GameSession implements Disposable {
             return true;
         }
         return false;
+    }
+
+    private void checkDoors() {
+        Rectangle feet = new Rectangle(player.position.x, player.position.y, player.getWidth(), player.getHeight());
+        for (Door door : currentArea.getDoors()) {
+            if (door.bounds().overlaps(feet) && (!door.locked() || keyState == KeyState.MAGNETISED)) {
+                overlappingDoor = door;
+                if (InputManager.interact()) {
+                    pendingDoor = door;
+                }
+                return;
+            }
+        }
+        overlappingDoor = null;
     }
 
     private boolean isInRange(Door door) {
@@ -110,6 +156,7 @@ public class GameSession implements Disposable {
     public KeyState getKeyState() { return keyState; }
     public void setKeyState(KeyState state) { keyState = state; }
     public AudioManager getAudio() { return audio; }
+    public Animation<TextureRegion> getPrompt() { return prompt; }
 
     @Override
     public void dispose() {
