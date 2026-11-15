@@ -97,7 +97,7 @@ public class BreadDispenser extends HiddenEvent {
         if (trigger()) {
             state = State.RISING;
             stateTime = 0f;
-            world.getAudio().playAt(Assets.SFX_DISPENSER, zoneX + zoneWidth / 2f, zoneY); // NEW
+            world.getAudio().playAt(Assets.SFX_DISPENSER, zoneX + zoneWidth / 2f, zoneY); 
         }
     }
 
