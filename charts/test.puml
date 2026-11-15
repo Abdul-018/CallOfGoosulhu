@@ -175,12 +175,12 @@ endlegend
 *** Victory screen <<lisa>><<done>>
 *** Defeat screen <<lisa>><<done>>
 
-** 10. Audio and\n Dialogue <<prog>>
+** 10. Audio and\n Dialogue <<jack>><<done>>
 *** Audio handler <<jack>><<done>>
 **** Background music <<jack>><<done>>
 **** Goose honking <<jack>><<done>>
 **** Environmental sound effects <<jack>><<done>>
-**** Spell sound effects <<jack>><<prog>>
-**** Event and transition sound effects <<jack>><<prog>>
+**** Spell sound effects <<jack>><<done>>
+**** Event and transition sound effects <<jack>><<done>>
 **** Speech bubbles/subtitles <<jack>><<done>>
 @endwbs
