@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="22" nextobjectid="1041">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="22" nextobjectid="1043">
  <properties>
   <property name="based_on" value="Outside_campus_cthulhu_props.tmx" />
   <property name="theme" value="normal" />
@@ -528,6 +528,12 @@
    <point />
   </object>
   <object id="1040" name="goose_3" x="1040" y="1408">
+   <point />
+  </object>
+  <object id="1041" name="wake_spot" x="776" y="1444">
+   <point />
+  </object>
+  <object id="1042" name="walk_home" x="768" y="1090">
    <point />
   </object>
  </objectgroup>
