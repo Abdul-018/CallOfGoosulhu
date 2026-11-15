@@ -67,7 +67,7 @@ public class GameScreen implements Screen {
 
     public GameScreen(final Cog game) {
         this.game = game;
-        session = new GameSession(game.assets, worldViewport, "Outside_campus_cthulhu_props", "start");
+        session = new GameSession(game.assets, game.audio, worldViewport, "Outside_campus_cthulhu_props", "start");
         pauseMenu = new PauseMenu(game);
         tomeMenu = new TomeMenu(game, game.assets.getTexture(Assets.SPELL_TOME_EMPTY), session.getSpellTome());
         hud = new Hud(game.assets, 5 * 60);

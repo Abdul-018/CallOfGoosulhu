@@ -50,7 +50,7 @@ public class GameSession implements Disposable {
 
     private boolean debug;
 
-    public GameSession(Assets assets, Viewport worldViewport, String startArea, String startSpawn) {
+    public GameSession(Assets assets, AudioManager audio, Viewport worldViewport, String startArea, String startSpawn) {
         this.assets = assets;
         this.worldViewport = worldViewport;
         player = new Player(assets.getTexture(Assets.PLAYER));
@@ -63,7 +63,7 @@ public class GameSession implements Disposable {
         prompt = new Animation<>(0.5f, keyFrames);
         prompt.setPlayMode(Animation.PlayMode.LOOP);
 
-        this.audio = new AudioManager(assets);
+        this.audio = audio;
 
         enter(startArea, startSpawn);
     }
@@ -165,7 +165,6 @@ public class GameSession implements Disposable {
     public void dispose() {
         for (Area area : areas.values()) {
             area.dispose();
-            audio.dispose();
         }
     }
 }

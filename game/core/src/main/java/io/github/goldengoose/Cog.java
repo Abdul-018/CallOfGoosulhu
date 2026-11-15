@@ -5,11 +5,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.goldengoose.screen.MainMenuScreen;
 import io.github.goldengoose.assets.Assets;
+import io.github.goldengoose.audio.AudioManager;
 
 public class Cog extends Game {
     public SpriteBatch batch;
     public Assets assets;
-
+    public AudioManager audio;
     private Screen nextScreen;
 
     @Override
@@ -17,6 +18,7 @@ public class Cog extends Game {
         batch = new SpriteBatch();
         assets = new Assets();
         assets.load();
+        audio= new AudioManager(assets);
 
         this.setScreen(new MainMenuScreen(this));
     }
@@ -47,5 +49,6 @@ public class Cog extends Game {
 
         assets.dispose();
         batch.dispose();
+        audio.dispose();
     }
 }
