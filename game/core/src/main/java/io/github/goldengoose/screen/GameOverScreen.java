@@ -19,6 +19,9 @@ import io.github.goldengoose.ui.UiStyles;
 import io.github.goldengoose.util.Utilities;
 import io.github.goldengoose.audio.AudioManager;
 
+/**
+ * Last screen after the end cutscene. Shows the win or lose message with Play Again and Menu buttons.
+ */
 public class GameOverScreen implements Screen {
 
     private final Cog game;
