@@ -217,10 +217,6 @@ public class GameScreen implements Screen {
         float tentacles = Math.max(ending * 2f - 1f, 0f);
         hudViewport.apply();
         tentacleFade.draw(game.batch, hudViewport, tentacles);
-
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
-        }
     }
 
     private void drawObjective() {

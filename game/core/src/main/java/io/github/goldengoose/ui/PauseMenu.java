@@ -42,7 +42,7 @@ public class PauseMenu {
     public PauseMenu(Cog game) {
         stage = new Stage(new ExtendViewport(Utilities.UI_WIDTH, Utilities.UI_HEIGHT), game.batch);
 
-        Label title = new Label("Press 'P' to unpause", UiStyles.label(titleFont));
+        Label title = new Label("Press 'P' or 'Esc' to unpause", UiStyles.label(titleFont));
 
         TextButton quitMenu = new TextButton("QUIT TO MENU", UiStyles.button(buttonFont));
         quitMenu.addListener(new ChangeListener() {

@@ -12,7 +12,7 @@ import com.badlogic.gdx.Input;
  */
 public class InputManager {
     public static boolean pause() {
-        return Gdx.input.isKeyJustPressed(Input.Keys.P);
+        return Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE);
     }
 
     public static boolean tome() {
